@@ -25,7 +25,7 @@ import { attemptToFetchProduct, resetFetchProductState } from "../../../store/ac
 
 let productList = [];
 
-
+let grandTotal = 0.0;
 const Transaction = (props) => {
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState(DataHandler.columns());

@@ -32,7 +32,15 @@ const Patient = (props) => {
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
   const [isAddGroupButtons, setIsAddGroupButtons] = useState(false);
-
+  function payloadHandler() {
+    /*
+    const payload = {
+    from : `${DEFAULT_DATE_RANGE.from} 00:00:00`,
+    to: `${DEFAULT_DATE_RANGE.to} 23:59:00`
+  */
+  
+    return null;
+  }
   const createFormHandler = (data, mode) => {
     setItem(data);
     setMode(mode || 'create');

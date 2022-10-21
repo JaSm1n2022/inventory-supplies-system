@@ -33,7 +33,7 @@ let stockList = [];
 let patientList = [];
 let employeeList = [];
 
-
+let originalSource = undefined;
 
 const Distribution = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);

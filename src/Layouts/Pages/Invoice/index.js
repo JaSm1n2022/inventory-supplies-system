@@ -212,47 +212,26 @@ const Invoice = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={24} justify="space-between" style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10 }}>
+      <Grid container>
         <Grid item xs={12}>
 
-          <Typography variant="h3">Invoice Statement</Typography>
-          <br />
+          <Typography variant="h6">Invoice Statement</Typography>
+         
         </Grid>
         <Grid item xs={12}>
           <FilterTable filterRecordHandler={filterRecordHandler} />
-          <br />
+      
         </Grid>
 
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <Divider variant="fullWidth" style={{
-              height: '.02em',
-              border: 'solid 1px rgba(0, 0, 0, 0.12)'
-            }} orientation="horizontal" flexItem />
-          </Grid>
-          <br />
-        </Grid>
+      
 
-        <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container style={{ paddingBottom: 10 }}>
           <div style={{ display: 'inline-flex', gap: 10 }}>
             <Button
+             fontSize='small'
               onClick={() => createFormHandler()}
               variant="contained"
-              style={{
-                border: 'solid 1px #2196f3',
-                color: 'white',
-                background: '#2196f3',
-                fontFamily: "Roboto",
-                fontSize: "12px",
-                fontWeight: 500,
-                fontStretch: "normal",
-                fontStyle: "normal",
-                lineHeight: 1.71,
-                letterSpacing: "0.4px",
-                textAlign: "left",
-                cursor: 'pointer'
-              }}
-              component="span"
+              
               startIcon={<AddIcon />}
             >
               ADD INVOICE STATEMENT
