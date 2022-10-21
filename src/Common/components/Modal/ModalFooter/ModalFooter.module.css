@@ -1,0 +1,19 @@
+.modalFooter {
+  width: 100%;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 55px;
+  position: absolute;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  border-top: solid 1px #d4d4d4;
+}
+
+.actionContainer {
+    padding-right: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

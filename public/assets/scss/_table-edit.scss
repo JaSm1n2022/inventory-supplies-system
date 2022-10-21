@@ -1,0 +1,423 @@
+table {
+	td {
+		.table-items {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.calender-area {
+			width: calc(100% - 20px);
+			display: inline-block;
+			padding-right: 5px;
+			.date-time-box {
+				p {
+					line-height: 1;
+					margin-bottom: 0;
+					display: block;
+					overflow: hidden;
+				}
+				&.to {
+					display: none;
+
+					&.active {
+						display: block;
+					}
+				}
+				.expand-item {
+					display: none;
+				}
+				&.active {
+					.expand-item {
+						display: inline-block;
+					}
+				}
+			}
+
+			&.active {
+				.expand-item {
+					display: inline-block;
+				}
+			}
+		}
+		.calender-popup {
+			display: none;
+			input {
+				padding: 0 5px;
+			}
+		}
+		.sidebar-btn {
+			width: 20px;
+			display: flex;
+			// flex-direction: column;
+			.more-info {
+				height: 19px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.celendar-box,
+			.alert-box {
+				display: none;
+			}
+		}
+		.celendar-box {
+			display: none;
+		}
+		.date-time-box {
+			position: relative;
+			.celendar-btn,
+			.location-edit-btn,
+			.tbl-item-btn {
+				display: block;
+				text-align: center;
+				// width: 100%;
+				border: none;
+				background: transparent;
+				outline: none;
+				position: absolute;
+				right: -20px;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			&.to {
+				span.celendar-btn {
+					top: calc(50% + 12px);
+				}
+			}
+		}
+
+		// Location area
+		.location-area {
+			// display: none;
+			.table-location-items {
+				&.active {
+					display: block;
+					visibility: visible !important;
+					opacity: 99 !important;
+				}
+			}
+		}
+
+		&.edit {
+			.celendar-box {
+				display: block;
+			}
+
+			.alert-box,
+			.more-info {
+				display: 'none';
+			}
+
+			&.no-edit {
+				.alert-box {
+					display: block;
+				}
+			}
+		}
+
+		&.changing {
+			p,
+			span,
+			i,
+			b {
+				color: red !important;
+			}
+		}
+		&.editable {
+			p,
+			// span,
+			i,
+			b {
+				color: #001690 !important;
+				font-weight: bold;
+			}
+		}
+	}
+}
+// For sticky
+table {
+	&.sticky {
+		td.selbox,
+		td.popup,
+		td.ref,
+		tr th:nth-child(1),
+		tr th:nth-child(2),
+		tr th:nth-child(3) {
+			position: sticky !important;
+			left: 0;
+			background: #fff;
+			z-index: 9;
+		}
+		tr th:nth-child(1),
+		tr th:nth-child(2),
+		tr th:nth-child(3) {
+			z-index: 10;
+		}
+		td.selbox,
+		tr th:nth-child(1) {
+			left: -2px;
+		}
+		td.popup,
+		tr th:nth-child(2) {
+			left: 33px;
+		}
+		td.reference.ref,
+		tr th:nth-child(3) {
+			left: 59px;
+		}
+	}
+}
+
+// Popup
+.col-control-popup {
+	display: none;
+	li {
+		cursor: pointer;
+		span {
+			&.active {
+				color: green;
+				font-weight: 500;
+			}
+		}
+	}
+}
+// Calender
+.calender-popup {
+	background: #fff;
+	display: none;
+	position: absolute;
+	z-index: 9;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+
+	&.active {
+		display: block;
+	}
+
+	input {
+		border: 1px solid #ddd;
+		color: #999;
+		border-radius: 5px;
+		padding: 0 10px;
+		font-size: 14px;
+		margin-left: 10px;
+
+		&:first-of-type {
+			margin-left: 0;
+		}
+	}
+
+	button.celendar-close {
+		position: absolute;
+		right: 7px;
+		top: 2px;
+		background: transparent;
+		color: #000;
+		border: none;
+		outline: none;
+	}
+	.fields-list {
+		padding-bottom: 10px;
+		text-align: left;
+		// border-bottom: 1px solid #ddd;
+		margin-top: 10px;
+	}
+
+	.fields-list ul li {
+		display: inline-block;
+		a {
+			font-size: 1.4rem;
+			color: #999;
+			display: block;
+			margin-bottom: 0;
+			margin-right: 10px;
+			// font-weight: 700;
+			&.active {
+				color: green;
+			}
+		}
+	}
+	.button-area {
+		padding-top: 10px;
+		text-align: right;
+		border-top: 1px solid #ddd;
+		margin-top: 10px;
+
+		.btn {
+			margin-left: 5px;
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+// Location
+.table-popup-items {
+	display: none;
+
+	.btn-groups {
+		width: 98%;
+		padding: 5px 0;
+		border-top: 1px solid #ddd;
+		display: flex;
+		justify-content: flex-start;
+		button {
+			&:not(:first-child) {
+				margin-left: 5px;
+			}
+			&:not(:last-child) {
+				margin-right: 5px;
+			}
+		}
+	}
+	&.table-location-items {
+		z-index: 1;
+		&.active {
+			display: block !important;
+			opacity: 1 !important;
+			visibility: visible !important;
+		}
+	}
+}
+
+// Only Date
+.onlydate {
+	&.active {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+	}
+	input {
+		width: 100%;
+		margin-top: 10px;
+	}
+}
+.party-popup {
+	display: none;
+	&.active {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+	}
+}
+.person-popup {
+	display: none;
+	&.active {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+	}
+	li {
+		margin-bottom: 7px;
+		span,
+		i {
+			display: block;
+			line-height: 1.5;
+			font-size: 14px;
+		}
+		i {
+			opacity: 0.6;
+			font-size: 12px;
+			line-height: 1.5;
+		}
+	}
+}
+
+// Assign Button
+.btn-assign {
+	background: green;
+	color: #fff;
+	font-size: 13px;
+	text-transform: uppercase;
+	border-radius: 14px;
+	padding: 5px 14px;
+	line-height: 1;
+
+	&.btn-disabled {
+		background: #333;
+		cursor: no-drop;
+		color: #fff;
+	}
+}
+
+// .table {
+//     border: 1px solid #ccc;
+//     border-collapse: collapse;
+// }
+// .table th, .table td {
+//     border: 1px solid #ccc;
+// }
+// .table th, .table td {
+//     padding: 0.5rem;
+// }
+// .draggable {
+//     cursor: move;
+//     user-select: none;
+// }
+// .placeholder {
+//     background-color: #edf2f7;
+//     border: 2px dashed #cbd5e0;
+// }
+// .clone-list {
+//     border-left: 1px solid #ccc;
+//     border-top: 1px solid #ccc;
+//     // display: flex;
+//     top: 0 !important;
+// }
+// .clone-table {
+//     border-collapse: collapse;
+//     border: none;
+// }
+// .clone-table th, .clone-table td {
+//     border: 1px solid #ccc;
+//     border-left: none;
+//     border-top: none;
+//     padding: 0.5rem;
+// }
+// .dragging {
+//     background: #fff;
+//     border-left: 1px solid #ccc;
+//     border-top: 1px solid #ccc;
+//     z-index: 999;
+// }
+
+/* 
+	Table coumn size
+*/
+.table {
+	border-collapse: collapse;
+}
+.table,
+.table th,
+.table td {
+	// border: 1px solid #ccc;
+}
+.table th,
+.table td {
+	padding: 0.5rem;
+}
+.table th {
+	position: relative;
+}
+.resizer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 5px;
+	cursor: col-resize;
+	user-select: none;
+}
+.resizer:hover,
+.resizing {
+	border-right: 2px solid #001690;
+}
+
+.resizable {
+	// border: 1px solid gray;
+	height: 100px;
+	width: 100px;
+	position: relative;
+}

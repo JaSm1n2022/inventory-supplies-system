@@ -331,35 +331,50 @@ export const countries =
     'Medline'
   ]
   export const SUPPLY_STATUS = [
+    
     'Order',
+    'Fulfill',
+    
     'Delivered',
-    'Return'
+    'Return',
   ]
   export const SUPPLY_CATEGORY = [
     'Office',
+    'Diabetic Shake',
     'Underpads',
     'Brief',
     'Immnue System', 
     'Thermometer',
     'Bandages', 
-    'Immnue System', 
     'Gloves',
     'Shampoo',
     'Pertoleum Jelly',
     'Food Thickener',
     'Ointment',
     'Pill Crusher and Grinder',
-    'Alcohol Wipes',
-    'Ointment',
+    'Wipes',
+    'ToothPaste',
+    'Basin',
+    'Towel',
     'Swabs Sponge', 
+    'Shave Cream',
     'Urinal',
+    'Razor',
+    'Clipper',
+    'Cream',
+    'Combs',
+    'Kit',
+    'Nutrition Shake',
     'Carbonless Paper',
     'Blood Oxygen Monitor',
     'Saline Solution for Inhalation',
     'Perineal Cleanser', 
     'Sterile Lancets', 
     'Glycerin Swabsticks',
-    'Other'
+    'Underwear/Pull-ups',
+    'Other',
+    'Lotion',
+    'Cleanser'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [
@@ -391,6 +406,21 @@ export const countries =
     {name: 'John Doe',dob:'06/14/1971',gender:'M',evaluator:'Dr.Smith',admittedDt:'10/01/2022',status:'Active'},
     {name: 'John Doe 2',dob:'06/11/1971',gender:'M',evaluator:'Dr.Smith2',admittedDt:'10/01/2022',status:'Active'}
     
+  ]
+  
+  export const CARE_TYPE = [
+    'Assisted Living',
+    'Home',
+    'Group Home'
+  ]
+  export const EMPLOYMENT_STATUS = [
+    'Full-Time',
+    'Part-Time',
+    'Per Diem',
+    'End of Contract',
+    'Termination',
+    'Volunteer'
+
   ]
   export const SAMPLE_WORKER_DATA = [
     {name: 'John Doe',position:'CNA',status: 'Full-Time',hired : '09/02/2022',email:'test@2131',phone:'33'},

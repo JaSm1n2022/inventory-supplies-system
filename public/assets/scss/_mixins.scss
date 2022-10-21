@@ -1,0 +1,61 @@
+
+@mixin pseudo($t:0, $l:0, $r:0, $b:0) {
+    content: '';
+    position: absolute;
+    top: $t;
+    left: $l;
+    right: $r;
+    bottom: $b;
+}
+
+@mixin bg-props($s:cover, $p:center top, $r:no-repeat) {
+    background-size: $s;
+    background-position: $p;
+    background-repeat: $r;
+}
+
+@mixin flexbox($a: inherit, $jc:space-between) {
+    align-items: $a;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: $jc;
+}
+
+@mixin respond($device) {
+    @if $device == medium {
+        @media screen and (max-width: 1199px) {
+            @content;
+        }
+    } 
+    @else if $device == tab-land {
+        @media screen and (max-width: 991px) {
+            @content;
+        }
+    } 
+    @else if $device == tab-port {
+        @media screen and (max-width: 767px) {
+            @content;
+        }
+    } 
+    @else if $device == phone {
+        @media screen and (max-width: 575px) {
+            @content;
+        }
+    }
+    @else if $device == phone-sm {
+        @media screen and (max-width: 479px) {
+            @content;
+        }
+    }
+    @else if $device == only-tab {
+        @media (min-width: 768px) and (max-width: 991px) {
+            @content;
+        }
+    }
+    @else if $device == only-desktop {
+        @media (min-width: 768px) {
+            @content;
+        }
+    }
+
+}

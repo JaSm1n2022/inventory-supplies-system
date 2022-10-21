@@ -62,6 +62,67 @@ export type ProductState = {
 
 };
 
+
+export type EmployeeState = {
+  employeeList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  employeeUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  employeeDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  employeeCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
+
+export type PatientState = {
+  patientList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  patientUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  patientDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  patientCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
+
 export type StockState = {
   stockList: {
     data: ?Object,
@@ -90,6 +151,68 @@ export type StockState = {
   }
 
 };
+
+
+export type TransactionState = {
+  transactionList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  transactionUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  transactionDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  transactionCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
+
+export type DistributionState = {
+  distributionList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  distributionUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  distributionDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  distributionCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
+
 
 export type MediaUploadState = {
   error: ?string,

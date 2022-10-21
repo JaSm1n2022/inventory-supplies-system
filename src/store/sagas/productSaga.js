@@ -9,7 +9,7 @@ function* listProduct(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('products')
+        .from('products').select()
         
       if (error && status !== 406) {
         console.log(error.toString());

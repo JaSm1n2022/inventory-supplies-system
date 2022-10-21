@@ -3,12 +3,20 @@ import authSaga from './authSaga';
 import invoiceSaga from './invoiceSaga';
 import productSaga from './productSaga';
 import stockSaga from './stockSaga';
+import transactionSaga from './transactionSaga';
+import distributionSaga from './distributionSaga';
+import employeeSaga from './employeeSaga';
+import patientSaga from './patientSaga';
 export function* rootSaga() {
   yield all([
   authSaga(),
  
   invoiceSaga(),
   productSaga(),
-  stockSaga()
+  stockSaga(),
+  transactionSaga(),
+  distributionSaga(),
+  employeeSaga(),
+  patientSaga()
 ]);
 }

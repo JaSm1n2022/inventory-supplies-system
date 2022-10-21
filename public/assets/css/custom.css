@@ -1,0 +1,27 @@
+table {
+	border-collapse: collapse;
+}
+
+.hover {
+	background: lightblue;
+}
+
+.selecionado {
+	background: lightgreen;
+}
+
+td.notthis,
+td.notthis:hover {
+	background: #fff !important;
+	border: none !important;
+}
+
+.rowt {
+	display: none;
+}
+
+#tbody01 td {
+	display: none;
+}
+
+/* #tbody01 tr td: */

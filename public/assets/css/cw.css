@@ -1,0 +1,141 @@
+.slider-inner2 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    position: relative;
+    right: 0%;
+    transition: right .5s;
+    padding: 10px 0px;
+  }
+  
+  .slider-item2 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .slider-item2 {
+      flex-basis: 50%;
+    }
+  }
+  
+  @media (max-width: 567px) {
+    .slider-item2 {
+      flex-basis: 100%;
+    }
+  }
+  
+  .slider-02 .slider-item2 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  @media screen and (max-width: 991px) {
+    .slider-02 .slider-item2 {
+      flex-basis: 100%;
+    }
+  }
+
+  .slider-inner3 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    position: relative;
+    right: 0%;
+    transition: right .5s;
+    padding: 10px 0px;
+  }
+  
+  .slider-item3 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .slider-item3 {
+      flex-basis: 50%;
+    }
+  }
+  
+  @media (max-width: 567px) {
+    .slider-item3 {
+      flex-basis: 100%;
+    }
+  }
+  
+  .slider-02 .slider-item3 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  @media screen and (max-width: 991px) {
+    .slider-02 .slider-item3 {
+      flex-basis: 100%;
+    }
+  }
+
+  .slider-inner4 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    position: relative;
+    right: 0%;
+    transition: right .5s;
+    padding: 10px 0px;
+  }
+  
+  .slider-item4 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+ 
+  
+  .custom-checkbox-root .MuiSvgIcon-root{
+    width: 28px;
+    height: 28px;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .slider-item4 {
+      flex-basis: 50%;
+    }
+  }
+  
+  @media (max-width: 567px) {
+    .slider-item4 {
+      flex-basis: 100%;
+    }
+  }
+  
+  .slider-02 .slider-item4 {
+    flex-basis: 33.33%;
+    flex-shrink: 0;
+    display: block;
+  }
+ 
+  .checkboxgroup{
+    width: 20em;
+    overflow: auto;
+}
+.checkboxgroup p{
+    width: 7em;
+    text-align: right;
+}
+.checkboxgroup label{
+    width: 12em;
+    float: right;
+}
+  @media screen and (max-width: 991px) {
+    .slider-02 .slider-item4 {
+      flex-basis: 100%;
+    }
+  }
+ 
