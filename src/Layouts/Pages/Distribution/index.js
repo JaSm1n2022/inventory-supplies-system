@@ -1,12 +1,12 @@
 
-import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
+import { Button, CircularProgress, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import DataHandler from "./DataHandler";
 import FilterTable from "./FilterTable";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { ACTION_STATUSES} from "../../../utils/constants";
+import { ACTION_STATUSES } from "../../../utils/constants";
 import { useState } from "react";
 import * as FileSaver from 'file-saver';
 import { v4 as uuidv4 } from 'uuid';
@@ -32,6 +32,15 @@ let productList = [];
 let stockList = [];
 let patientList = [];
 let employeeList = [];
+
+
+let isProductListDone = false;
+let isStockListDone = false;
+let isDistributionListDone = false;
+let isPatientListDone = false;
+let isEmployeeListDone = false;
+let isAllFetchDone = false;
+
 
 let originalSource = undefined;
 
@@ -101,7 +110,7 @@ const Distribution = (props) => {
     }
   }, [isDistributionsCollection, isCreateDistributionCollection, isUpdateDistributionCollection, isDeleteDistributionCollection]);
 
-  if(props.patients && props.patients.status === ACTION_STATUSES.SUCCEED) {
+  if (props.patients && props.patients.status === ACTION_STATUSES.SUCCEED) {
     patientList = [...props.patients.data];
     patientList.forEach(item => {
       item.name = item.name.toUpperCase();
@@ -109,11 +118,13 @@ const Distribution = (props) => {
       item.label = item.name.toUpperCase();
       item.categoryType = 'patient'
     });
-
+    isPatientListDone = true;
     props.resetListPatients();
   }
 
-  if(props.employees && props.employees.status === ACTION_STATUSES.SUCCEED) {
+  console.log('[props.employees]', props.employees);
+
+  if (props.employees && props.employees.status === ACTION_STATUSES.SUCCEED) {
     employeeList = [...props.employees.data];
     employeeList.forEach(item => {
       item.name = item.name.toUpperCase();
@@ -121,7 +132,7 @@ const Distribution = (props) => {
       item.label = item.name.toUpperCase();
       item.categoryType = 'employee'
     });
-
+    isEmployeeListDone = true;
     props.resetListEmployees();
   }
   if (props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
@@ -132,7 +143,7 @@ const Distribution = (props) => {
       item.label = item.description.toUpperCase();
       item.categoryType = 'description'
     });
-
+    isProductListDone = true;
     props.resetListProducts();
   }
   console.log('[props.Stocks]', props.stocks);
@@ -144,6 +155,7 @@ const Distribution = (props) => {
       item.label = item.description.toUpperCase();
       item.categoryType = 'stock'
     });
+    isStockListDone = true;
     props.resetListStocks();
   }
   console.log('[props.distributions]', props.distribution);
@@ -159,7 +171,7 @@ const Distribution = (props) => {
         return {
           ...col,
           editable: () => false,
-          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status.toLowerCase() !== 'order'} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
+          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status && cellProps.data.order_status.toLowerCase() !== 'order' ? true : false} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
         }
 
       } else {
@@ -172,6 +184,7 @@ const Distribution = (props) => {
     setColumns(cols);
     originalSource = [...source];
     setDataSource(source);
+    isDistributionListDone = true;
     setIsDistributionsCollection(false);
   }
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
@@ -205,13 +218,13 @@ const Distribution = (props) => {
     const finalPayload = [];
     const groupId = uuidv4();
     for (const payload of details) {
-      
+
       const params = {
         created_at: new Date(),
         description: payload.description,
         productId: payload.productId,
         price_per_pcs: payload.price_per_pcs,
-        category : payload.category,
+        category: payload.category,
         estimated_total_amt: parseFloat(parseFloat(payload.price_per_pcs) * parseInt(payload.orderQty, 10)).toFixed(2),
         order_status: general.statusName,
         order_qty: payload.orderQty,
@@ -229,7 +242,7 @@ const Distribution = (props) => {
       finalPayload.push(params);
     }
     if (mode === 'create') {
-      console.log('[final payload]',finalPayload);
+      console.log('[final payload]', finalPayload);
       props.createDistribution(finalPayload);
 
     } else if (mode === 'edit') {
@@ -246,8 +259,16 @@ const Distribution = (props) => {
 
 
 
-  const filterRecordHandler = (payload) => {
-    props.listDistributions(payload);
+  const filterRecordHandler = (keyword) => {
+    console.log('[Keyword]',keyword);
+    if(!keyword) {
+      setDataSource([...originalSource]);
+    } else {
+    const temp = [...originalSource];
+    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1);
+   
+   setDataSource(found);
+    }
   };
 
   const onCheckboxSelectionHandler = (data, isAll, itemIsChecked) => {
@@ -309,109 +330,121 @@ const Distribution = (props) => {
   const closeChangeStatusMenuHandler = () => {
     setAnchorEl(null);
   }
-
+  if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
+    isAllFetchDone = true;
+  }
   return (
     <React.Fragment>
-      <Grid container spacing={24} justify="space-between" style={{ paddingLeft: 10, paddingRight: 10 }}>
-        <Grid container spacing={24} justify="space-between">
-          <div>
-            <Typography variant="h4">Distribution</Typography>
-          </div>
-          <div>
-            <FilterTable filterRecordHandler={filterRecordHandler} />
-          </div>
-        </Grid>
+      {!isAllFetchDone ?
+        <div align="center" style={{ paddingTop: '100px' }}>
+          <br />
+          <CircularProgress />&nbsp;<span>Loading</span>...
+        </div>
+        :
+        <React.Fragment>
+          <Grid container>
+            <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
+              <div>
+                <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
+              </div>
+              <div>
+                <FilterTable filterRecordHandler={filterRecordHandler} />
+              </div>
+            </Grid>
 
-        <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
-          <div style={{ display: 'inline-flex', gap: 10 }}>
-            <Button
-              onClick={() => createFormHandler()}
-              variant="contained"
-              style={{
-                border: 'solid 1px #2196f3',
-                color: 'white',
-                background: '#2196f3',
-                fontFamily: "Roboto",
-                fontSize: "12px",
-                fontWeight: 500,
-                fontStretch: "normal",
-                fontStyle: "normal",
-                lineHeight: 1.71,
-                letterSpacing: "0.4px",
-                textAlign: "left",
-                cursor: 'pointer'
-              }}
-              component="span"
-              startIcon={<AddIcon />}
-            >
-              ADD ORDER
-            </Button>
-            {isAddGroupButtons &&
-            <div style={{ display: 'inline-flex', gap: 10 }}>
-              <Button
-                onClick={() => exportToExcelHandler()}
-                variant="contained"
-                style={{
-                  border: 'solid 1px blue',
-                  color: 'white',
-                  background: 'blue',
-                  fontFamily: "Roboto",
-                  fontSize: "12px",
-                  fontWeight: 500,
-                  fontStretch: "normal",
-                  fontStyle: "normal",
-                  lineHeight: 1.71,
-                  letterSpacing: "0.4px",
-                  textAlign: "left",
-                  cursor: 'pointer'
-                }}
-                component="span"
-                startIcon={<AddIcon />}
-              > Export Excel </Button>
-              <Button
-              onClick={changeStatusHandler}
-              variant="contained"
-              color="primary"
-              aria-controls="simple-menu" aria-haspopup="true" 
-              component="span"
-              endIcon={<ArrowDownwardIcon />}
-            >
-             
-  Change Status
-</Button>
-<Menu
-  id="simple-menu"
-  anchorEl={anchorEl}
-  keepMounted
-  open={Boolean(anchorEl)}
-  onClose={closeChangeStatusMenuHandler}
->
-  <MenuItem>Fullfill</MenuItem>
-  <MenuItem>Delivered</MenuItem>
-  <MenuItem>Returned</MenuItem>
-  
-  
-</Menu>
-</div>
-            }
-          </div>
-        </Grid>
-        <Grid item xs={12}>
+            <Grid container>
+              <div style={{ display: 'inline-flex', gap: 10 }}>
+                <Button
+                  onClick={() => createFormHandler()}
+                  variant="contained"
+                  style={{
+                    border: 'solid 1px #2196f3',
+                    color: 'white',
+                    background: '#2196f3',
+                    fontFamily: "Roboto",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    fontStretch: "normal",
+                    fontStyle: "normal",
+                    lineHeight: 1.71,
+                    letterSpacing: "0.4px",
+                    textAlign: "left",
+                    cursor: 'pointer'
+                  }}
+                  component="span"
+                  startIcon={<AddIcon />}
+                >
+                  ADD ORDER
+                </Button>
+                {isAddGroupButtons &&
+                  <div style={{ display: 'inline-flex', gap: 10 }}>
+                    <Button
+                      onClick={() => exportToExcelHandler()}
+                      variant="contained"
+                      style={{
+                        border: 'solid 1px blue',
+                        color: 'white',
+                        background: 'blue',
+                        fontFamily: "Roboto",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        fontStretch: "normal",
+                        fontStyle: "normal",
+                        lineHeight: 1.71,
+                        letterSpacing: "0.4px",
+                        textAlign: "left",
+                        cursor: 'pointer'
+                      }}
+                      component="span"
+                      startIcon={<AddIcon />}
+                    > Export Excel </Button>
+                    <Button
+                      onClick={changeStatusHandler}
+                      variant="contained"
+                      color="primary"
+                      aria-controls="simple-menu" aria-haspopup="true"
+                      component="span"
+                      endIcon={<ArrowDownwardIcon />}
+                    >
 
-          <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
-        </Grid>
-      </Grid>
-      {isFormModal &&
-        <Form employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+                      Change Status
+                    </Button>
+                    <Menu
+                      id="simple-menu"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={closeChangeStatusMenuHandler}
+                    >
+                      <MenuItem>Fullfill</MenuItem>
+                      <MenuItem>Delivered</MenuItem>
+                      <MenuItem>Returned</MenuItem>
+
+
+                    </Menu>
+                  </div>
+                }
+              </div>
+            </Grid>
+            <Grid item xs={12} style={{ paddingTop: 10 }}>
+
+              <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
+            </Grid>
+          </Grid>
+        </React.Fragment>
       }
+      {isFormModal &&
+        <Form filterRecordHandler={filterRecordHandler} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+      }
+
     </React.Fragment>
   )
 }
 const mapStateToProps = store => ({
   products: productListStateSelector(store),
   stocks: stockListStateSelector(store),
-  patients : patientListStateSelector(store),
-  employees : employeeListStateSelector(store),
+  patients: patientListStateSelector(store),
+  employees: employeeListStateSelector(store),
   distributions: distributionListStateSelector(store),
   createDistributionState: distributionCreateStateSelector(store),
   updateDistributionState: distributionUpdateStateSelector(store),

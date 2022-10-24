@@ -3,11 +3,11 @@ import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeade
 import ModalFooter from "../../../Common/components/Modal/ModalFooter/ModalFooter";
 import styles from "./stock.module.css";
 import ReactModal from "react-modal";
-import {  Grid,  Typography} from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import {QUANTITY_UOM, SUPPLY_CATEGORY } from "../../../utils/constants";
+import { DEFAULT_ITEM, QUANTITY_UOM, SUPPLY_CATEGORY } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import TOAST from "../../../modules/toastManager";
 
@@ -35,9 +35,9 @@ SUPPLY_CATEGORY.forEach((item, index) => {
 });
 function StockForm(props) {
     const [generalForm, setGeneralForm] = useState({});
-    const [searchItem,setSearchItem] = useState('');
-    const [isSubmitDisabled,setIsSubmitDisabled] = useState(true    );
-    const [isExistingItem,setIsExistingItem] = useState(false);
+    const [searchItem, setSearchItem] = useState(DEFAULT_ITEM);
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+    const [isExistingItem, setIsExistingItem] = useState(false);
     const { isOpen,
         onClose,
 
@@ -53,8 +53,8 @@ function StockForm(props) {
             //disabled: props.mode && props.mode === 'view' ? true : false,
             disabled: true,
             cols: 3
-            
-            
+
+
         },
         {
             id: 'item',
@@ -65,8 +65,8 @@ function StockForm(props) {
             //disabled: props.mode && props.mode === 'view' ? true : false,
             disabled: true,
             cols: 3
-            
-            
+
+
         },
         {
             id: 'description',
@@ -75,7 +75,7 @@ function StockForm(props) {
             label: 'Description',
             name: 'description',
             disabled: true,
-            cols : 6
+            cols: 6
         },
         {
             id: 'size',
@@ -83,10 +83,10 @@ function StockForm(props) {
             placeholder: 'Size',
             label: 'Size',
             name: 'size',
-          
+
             disabled: true,
 
-            
+
         },
         {
             id: 'dimension',
@@ -94,10 +94,10 @@ function StockForm(props) {
             placeholder: 'Dimension',
             label: 'Dimension',
             name: 'dimension',
-          
+
             disabled: true,
 
-            
+
         },
         {
             id: 'info',
@@ -105,10 +105,10 @@ function StockForm(props) {
             placeholder: 'Additional Info',
             label: 'Additional Info',
             name: 'info',
-          
+
             disabled: true,
 
-            
+
         },
 
         {
@@ -119,9 +119,9 @@ function StockForm(props) {
             name: 'qtyOnHand',
             type: 'number',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
-     
+
         {
             id: 'incomingQty',
             component: 'textfield',
@@ -129,7 +129,7 @@ function StockForm(props) {
             label: 'Incoming Qty',
             name: 'incomingQty',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'projectedQty',
@@ -138,7 +138,7 @@ function StockForm(props) {
             label: 'Projected Qty',
             name: 'projectedQty',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'projectedDate',
@@ -147,7 +147,7 @@ function StockForm(props) {
             label: 'Projected Date',
             name: 'projectedDate',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'vendor',
@@ -156,7 +156,7 @@ function StockForm(props) {
             label: 'Vendor',
             name: 'vendor',
             disabled: true
-            
+
         },
         {
             id: 'comments',
@@ -166,31 +166,31 @@ function StockForm(props) {
             name: 'comments',
             disabled: props.mode && props.mode === 'view' ? true : false,
             cols: 9
-            
+
         },
-     
+
     ]
 
-    
+
     useEffect(() => {
         console.log('[effects 1]');
         const fm = {};
         fm.created_at = new Date();
         fm.item = '-';
-        fm.description='-';
-        fm.size='-';
-        fm.category='-';
-        fm.dimension='-';
-        fm.info='-';
-        fm.vendor='-';
+        fm.description = '-';
+        fm.size = '-';
+        fm.category = '-';
+        fm.dimension = '-';
+        fm.info = '-';
+        fm.vendor = '-';
         setGeneralForm(fm);
-      },[]);
+    }, []);
     useEffect(() => {
-        if(props.item) {
+        if (props.item) {
             console.log('[effects 2]');
-            console.log('[items]',props.item);
-            
-            const generalFm = {...props.item};
+            console.log('[items]', props.item);
+
+            const generalFm = { ...props.item };
             generalFm.info = generalFm.additional_info;
             generalFm.incomingQty = generalFm.incoming_qty;
             generalFm.projectedQty = generalFm.projected_qty;
@@ -198,13 +198,13 @@ function StockForm(props) {
             generalFm.projectedDate = generalFm.incoming_order_at;
             setIsSubmitDisabled(false);
             setGeneralForm(generalFm);
-            
-            
-            
+
+
+
         }
     }, [props.item]);
     const validateFormHandler = () => {
-        props.createStockHandler(generalForm,props.mode);
+        props.createStockHandler(generalForm, props.mode);
     }
     const footerActions = [
         {
@@ -226,12 +226,12 @@ function StockForm(props) {
     ];
     const inputSearchHandler = (e) => {
         if (!e.target.value) {
-            setSearchItem({name:'',value:''});
+            setSearchItem(DEFAULT_ITEM);
         };
     }
     const autoCompleteInputSearchHandler = (item) => {
-        console.log('[Item]',item,props.dataSource,props.dataSource.find(data => data.productId === item.id));
-        if(props.dataSource.find(data => data.productId === item.id)) {
+        console.log('[Item]', item, props.dataSource, props.dataSource.find(data => data.productId === item.id));
+        if (props.dataSource.find(data => data.productId === item.id)) {
             TOAST.error('Item already in existing record. Please use Edit function to update stock product information');
             setIsSubmitDisabled(true);
             setIsExistingItem(true);
@@ -241,40 +241,40 @@ function StockForm(props) {
 
         setIsSubmitDisabled(false);
         setSearchItem(item);
-        const fm = {...item};
+        const fm = { ...item };
         fm.item = fm.item;
-        fm.description=fm.description;
+        fm.description = fm.description;
         fm.size = fm.size;
         fm.dimension = fm.dimension;
         fm.productId = fm.id;
         fm.category = fm.category;
-        fm.productId = fm.id;   
+        fm.productId = fm.id;
         fm.vendor = fm.vendor;
         fm.info = `${fm.qty} ${fm.qty_uom} is ${fm.count} each`
-          
+
         setGeneralForm(fm);
         setIsSubmitDisabled(false);
     }
     const inputGeneralHandler = ({ target }) => {
-        console.log('[Target]',target,generalForm);
-        const source = { ...generalForm};
+        console.log('[Target]', target, generalForm);
+        const source = { ...generalForm };
         source[target.name] = target.value;
         setGeneralForm(source);
 
     };
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
-        console.log('[src]',src,item);
-        if(item.category === 'category') {
-         src['category'] = item;
-         src['categoryName'] = item.name;
+        console.log('[src]', src, item);
+        if (item.category === 'category') {
+            src['category'] = item;
+            src['categoryName'] = item.name;
         }
-        if(item.category === 'uom') {
+        if (item.category === 'uom') {
             src['qtyUom'] = item;
             src['uom'] = item.name;
-           }
+        }
         setGeneralForm(src);
-        
+
     }
     const onChangeGeneralInputHandler = (e) => {
         const src = { ...generalForm };
@@ -283,23 +283,23 @@ function StockForm(props) {
             setGeneralForm(src);
         }
     }
-    
-    
-    const dateInputHandler = (value, name) => {
+
+
+    const dateInputHandler = (name, value) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);
-      }
-      const titleHandler = () => {
-          if(props.mode === 'view') {
-                return 'View Stock'
-          } else if (props.mode === 'edit') {
-              return 'Edit Stock';
-          } else {
-              return 'Create Stock';
-          }
-      }
-      console.log('[general form]',generalForm);
+    }
+    const titleHandler = () => {
+        if (props.mode === 'view') {
+            return 'View Stock'
+        } else if (props.mode === 'edit') {
+            return 'Edit Stock';
+        } else {
+            return 'Create Stock';
+        }
+    }
+    console.log('[general form]', generalForm);
     return (
         <ReactModal
             style={{
@@ -337,23 +337,23 @@ function StockForm(props) {
                 <ModalHeader title={titleHandler()} onClose={onClose} />
                 <div className={styles.content}>
                     <Grid container spacing={1} direction="row">
-                    <Grid item xs={9}>
-                        <SingleWithClearAutoComplete
-                                                     placeholder={'Search Item'}
-                                                     label={'Search Item'}
-                                                     name={'searchItem'}
-                                                     options={props.productList||[]}
-                                                     disabled={props.mode && props.mode === 'view' ? true : false}
-                                                        value={searchItem}
-                                                        onSelectHandler={autoCompleteInputSearchHandler}
-                                                        onChangeHandler={inputSearchHandler}
-                                                        
-                                                        />
-                                                        {isExistingItem &&
-                                                        <Typography variant="body1" style={{color:'red'}}> ** Item already in existing record. Please use Edit function to update stock product information</Typography>
-                                                        }
-                </Grid>
-                <Grid item xs={12}></Grid>
+                        <Grid item xs={9}>
+                            <SingleWithClearAutoComplete
+                                placeholder={'Search Item'}
+                                label={'Search Item'}
+                                name={'searchItem'}
+                                options={props.productList || []}
+                                disabled={props.mode && props.mode === 'view' ? true : false}
+                                value={searchItem || DEFAULT_ITEM}
+                                onSelectHandler={autoCompleteInputSearchHandler}
+                                onChangeHandler={inputSearchHandler}
+
+                            />
+                            {isExistingItem &&
+                                <Typography variant="body1" style={{ color: 'red' }}> ** Item already in existing record. Please use Edit function to update stock product information</Typography>
+                            }
+                        </Grid>
+                        <Grid item xs={12}></Grid>
 
                         {general.map(item => {
                             return (
@@ -364,7 +364,7 @@ function StockForm(props) {
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
                                             <React.Fragment>
-                                                 <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
+                                                <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
                                             </React.Fragment>
                                             : item.component === 'singlecomplete' ?
                                                 <React.Fragment>
@@ -373,11 +373,11 @@ function StockForm(props) {
                                                         value={generalForm[item.name]}
                                                         onSelectHandler={autoCompleteGeneralInputHander}
                                                         onChangeHandler={onChangeGeneralInputHandler}
-                                                        />
+                                                    />
                                                 </React.Fragment>
                                                 : item.component === 'select' ?
                                                     <React.Fragment>
-                                                        <RegularSelect 	{...item} 
+                                                        <RegularSelect 	{...item}
 
                                                             onChange={inputGeneralHandler}
                                                             value={generalForm[item.value]}
@@ -389,14 +389,14 @@ function StockForm(props) {
                             )
                         })}
                     </Grid>
-                    
+
 
                 </div>
                 <br />
                 {props.mode && props.mode === 'view' ?
-                null : 
-                <ModalFooter actions={footerActions} isSubmitDisabled={isSubmitDisabled}/>
-}   
+                    null :
+                    <ModalFooter actions={footerActions} isSubmitDisabled={isSubmitDisabled} />
+                }
             </div>
         </ReactModal >
 

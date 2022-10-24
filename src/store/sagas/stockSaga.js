@@ -9,7 +9,7 @@ function* listStock(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('stocks')
+        .from('stocks').select()
         
       if (error && status !== 406) {
         console.log(`error${error.toString()}`);

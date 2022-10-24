@@ -1,94 +1,112 @@
 import { Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchLookupTextField from "../../../Common/components/TextField/SearchLookupTextField";
-import RegularSelect from "../../../Common/components/Select/RegularSelect";
-import { SEARCH_KEYWORDS, SUPPLY_STATUS } from "../../../utils/constants";
+import { DATE_TYPE_SELECTION, DEFAULT_ITEM } from "../../../utils/constants";
 
+import Helper from "../../../utils/helper";
+const INVOICE_KEYWORDS = [
+'Invoice Number',
+'Payment Method'
+];
 let searchKeywordTypes = [];
-SEARCH_KEYWORDS.forEach((item,i) => {
+let invoiceDateOptions = [];
+let lastInvoiceDtType = '';
+DATE_TYPE_SELECTION.forEach(c => { invoiceDateOptions.push({ ...c, category: 'invoiceDate' }) });
+INVOICE_KEYWORDS.forEach((item, i) => {
     searchKeywordTypes.push({
-        id : i,
-        name : item,
-        value : item,
-        label : item,
-        category : 'keyword'
-    })
-})
-let statuses = [];
-SUPPLY_STATUS.forEach((item, index) => {
-    statuses.push({
-        id: index,
+        id: i,
         name: item,
         value: item,
         label: item,
-        category: 'status'
-
+        category: 'keyword'
     })
-});
+})
+
 const FilterTable = (props) => {
-    const [keywordType,setKeywordType] = useState('ALL');
+    const [keywordType, setKeywordType] = useState('ALL');
     const [keywordValue, setKeywordValue] = useState('');
-    const [status,setStatus] = useState({name:'',value:'',label:''})
+    const [invoiceDateSelected,setInvoiceDateSelected] = useState({name:''})
+    const [invoiceFrom,setInvoiceFrom] = useState('');
+    const [invoiceTo, setInvoiceTo] = useState('');
+    const [isInvoiceDtCustom,setIsInvoiceDtCustom] = useState(false);
+    
+    useEffect(() => {
+        const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
+        setInvoiceFrom(dates.from);
+        setInvoiceTo(dates.to);
+      }, []);
+
     const inputHandler = ({ target }) => {
 
         switch (target.name) {
             case "keywordType":
                 setKeywordType(target.value);
-                
+
                 return;
             case "keywordValue":
-               setKeywordValue(target.value);
+                setKeywordValue(target.value);
                 return;
             default:
                 return;
         }
 
     };
-    const autoCompleteInputHander = (item, source) => {
-        if (item.category === 'status') {
-            setStatus(item);
-            
-        }
+    const autoCompleteInputHander = (item) => {
+		if (item.category === 'invoiceDate') {
+			let data = {
+				from: '',
+				to: ''
+			};
+			if (item.value !== 'custom') {
+				data = Helper.formatDateRangeByCriteriaV2(item.value);
+				console.log('[item data]', data);
+			}
+            setInvoiceFrom(data.from);
+            setInvoiceTo(data.to);
+			setIsInvoiceDtCustom(item.value === 'custom' || item.dateRange ? true : false);
+			setInvoiceDateSelected(item);
+			
     }
-    const onChangeInputHandler = (e) => {
-        if (!e.target.value && e.target.name === 'status') {
-           setStatus({name:'',value:'',label:''});
-        }
-    }
-    const onPressEnterKeyHandler = () => {
 
-	
 	}
+    
+    const onPressEnterKeyHandler = () => {
+        props.filterRecordHandler(keywordValue);
+
+    }
+
+   
+    const clearFilterHandler = () => {
+        setKeywordValue('');
+        setKeywordType(DEFAULT_ITEM);
+        props.filterRecordHandler('');
+    }
+    const applyFilterHandler = () => {
+    
+        props.filterRecordHandler(keywordValue);
+    }
     return (
         <React.Fragment>
-            <Grid container direction="row" spacing={1}>
-                    <Grid item xs={3}>
-                    <RegularSelect
-							options={searchKeywordTypes}
-							name={'keywordType'}
-							onChange={inputHandler}
-							value={keywordType}
-							label={'Search Type'}
-							placeholder={'Search Type'}
-						/>
-                    </Grid>
-                    <Grid item xs={3}>
-                	<SearchLookupTextField
-					background={"white"}
-					onChange={inputHandler}
-					placeholder={"Search"}
-					label={"Search"}
-					name={"keywordValue"}
-					onPressEnterKeyHandler={onPressEnterKeyHandler}
-					isAllowEnterKey={true}
-					value={keywordValue} />    </Grid>
-                         
-                    <Grid item xs={3}>
-                       <div style={{display:'flex',gap:10}}>
-                           <Button variant="contained" color="primary" style={{fontSize:14}}>Apply</Button>
-                           <Button variant="contained" color="secondary" style={{fontSize:14}}>Clear</Button>
-                       </div>
-                    </Grid>
+            <Grid container direction="row" spacing={1} xs={12}>
+            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{width:300}}>
+                    <SearchLookupTextField
+                        background={"white"}
+                        onChange={inputHandler}
+                        placeholder={"Search Item"}
+                        label={"Search Item"}
+                        name={"keywordValue"}
+                        onPressEnterKeyHandler={onPressEnterKeyHandler}
+                        isAllowEnterKey={true}
+                        value={keywordValue} />    
+               </div>
+
+                
+                    <div style={{ display: 'flex', gap: 10 }}>
+                        <Button variant="contained" color="primary" style={{ fontSize: 14 }} onClick={() => applyFilterHandler()}>Apply</Button>
+                        <Button variant="contained" color="secondary" style={{ fontSize: 14 }} onClick={() => clearFilterHandler()}>Clear</Button>
+                    </div>
+                </div>
             </Grid>
 
         </React.Fragment>

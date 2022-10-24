@@ -192,7 +192,7 @@ function InvoiceForm(props) {
     }
     
     
-    const dateInputHandler = (value, name) => {
+    const dateInputHandler = (name,value) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);

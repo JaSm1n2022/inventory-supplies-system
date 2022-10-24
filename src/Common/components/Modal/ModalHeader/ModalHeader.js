@@ -11,7 +11,7 @@ const ModalHeader = ({ title, onClose, isBack,onBack, ...props}) => {
   
   return (
     <div {...props} className={styles.modalHeader}>
-      <div style={{display:'inline-flex'}}><Typography className={isBack ? styles.onBack : styles.title} variant="h4" onClick={() => isBack ? onBack() : null}>{isBack ? <ArrowBackIcon style={{fontSize:'16pt'}}/> : null} {title}</Typography></div>
+      <div style={{display:'inline-flex'}}><Typography className={isBack ? styles.onBack : styles.title} variant="h5" onClick={() => isBack ? onBack() : null}>{isBack ? <ArrowBackIcon style={{fontSize:'16pt'}}/> : null} {title}</Typography></div>
       <Button onClick={onClose} className={styles.closeButton}>
         <CloseIcon />
       </Button>

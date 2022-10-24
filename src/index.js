@@ -17,6 +17,7 @@ import transactionReducer from './store/reducers/transaction';
 import distributionReducer from './store/reducers/distribution';
 import employeeReducer from './store/reducers/employee';
 import patientReducer from './store/reducers/patient';
+import vendorReducer from './store/reducers/vendor';
 const composeEnhancers = (process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -27,7 +28,8 @@ const rootReducer = combineReducers({
     transaction: transactionReducer,
     distribution: distributionReducer,
     employee: employeeReducer,
-    patient : patientReducer
+    patient : patientReducer,
+    vendor: vendorReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();

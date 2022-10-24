@@ -47,14 +47,14 @@ function Header({
     redirectLink('location');
 
   }
-  const clientSettingHandler = () => {
+  const patientSettingHandler = () => {
     setAnchorEl(null);
-    redirectLink('client');
+    redirectLink('patient');
 
   }
-  const workerSettingHandler = () => {
+  const employeeSettingHandler = () => {
     setAnchorEl(null);
-    redirectLink('worker');
+    redirectLink('employee');
 
   }
   const productSettingHandler = () => {
@@ -64,22 +64,23 @@ function Header({
   }
   return (
     <React.Fragment>
-      <Grid container>
+      <Grid container justifyContent="space-between">
      
-          <Grid>
-            <div style={{ display: 'inline-flex',align:'left', gap: 10}}>
-              <img src={Hospice} alt="" style={{ height: '50px', width: '200px',display:'none' }}/>
-              <Typography variant="h5"><strong>DIVINE COMPASSION INVENTORY SYSTEM</strong></Typography>
-            </div>
+          <Grid container justifyContent="space-between">
+              <img src={Hospice} alt="" style={{ height: '50px', width: '400px' }}/>
+              <div style={{paddingRight:'25px'}}>
+              <Typography variant="h5"><strong>SUPPLIES INVENTORY SYSTEM</strong></Typography>
+              </div>
           </Grid>
           <Grid>
             <div style={{
               display: 'flex',
               align: 'right',
               gap: '10px',
-              paddingBottom: 10
+              paddingBottom: 10,
+              paddingTop:4
             }}>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('supplyorder')}>Supply Order Transaction</Button>
+              <Button variant="contained" color="primary" onClick={() => redirectLink('transaction')}>Supply Order Transaction</Button>
               <Button variant="contained" color="primary" onClick={() => redirectLink('stockroom')}>Stock Room Inventory</Button>
               <Button variant="contained" color="primary" onClick={() => redirectLink('distribution')}>Supplies Delivery Record</Button>
               <Button variant="contained" color="primary" onClick={() => redirectLink('invoice')}>Invoice Statement</Button>
@@ -104,9 +105,9 @@ function Header({
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={clientSettingHandler}>Clients</MenuItem>
+                <MenuItem onClick={patientSettingHandler}>Patients</MenuItem>
                 <MenuItem onClick={facilitySettingHandler}>Location</MenuItem>
-                <MenuItem onClick={workerSettingHandler}>Workers</MenuItem>
+                <MenuItem onClick={employeeSettingHandler}>Employees</MenuItem>
                 <MenuItem onClick={vendorSettingHandler}>Vendors</MenuItem>
                 <MenuItem onClick={productSettingHandler}>Products</MenuItem>
 

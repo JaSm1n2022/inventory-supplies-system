@@ -41,8 +41,8 @@ const FilterTable = (props) => {
                     <SearchLookupTextField
                         background={"white"}
                         onChange={inputHandler}
-                        placeholder={"Search Item"}
-                        label={"Search Item"}
+                        placeholder={"Search Patient"}
+                        label={"Search Patient"}
                         name={"keywordValue"}
                         onPressEnterKeyHandler={onPressEnterKeyHandler}
                         isAllowEnterKey={true}

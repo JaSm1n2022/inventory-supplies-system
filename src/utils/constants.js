@@ -1256,4 +1256,10 @@ export const countries =
   }
 ]
 
-
+export const PATIENT_DASHBOARD_CATEGORY = [
+    'Underpads',
+    'Brief',
+    'Underwear/Pull-ups',
+    'Lotion/Cleanser/Ointment',
+    'Other'
+]

@@ -5,7 +5,7 @@ class DataHandler {
     console.log('[Columns called]');
     return [
       { width: 220, name: 'actions', header: 'Actions' },
-      { defaultFlex: 1, minWidth: 120, name: 'created_at', header: 'Created' },
+      
       { defaultFlex: 1, minWidth: 200, name: 'name', header: 'Patient Name' },
       
       { defaultFlex: 1, minWidth: 120, name: 'mr_nbr', header: 'MR#' },

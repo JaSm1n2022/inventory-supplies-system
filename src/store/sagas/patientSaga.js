@@ -9,7 +9,7 @@ function* listPatient(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('patients')
+        .from('patients').select()
         
       if (error && status !== 406) {
         console.log(error.toString());

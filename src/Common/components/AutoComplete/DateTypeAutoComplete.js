@@ -8,7 +8,7 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles( theme => ({
   inputRoot: {
       margin:"0",
-      height:props => props.height || '40px',
+      height: '40px',
       width:"100%",
       background:"white",
       "&&& input": {
@@ -73,7 +73,6 @@ export default function DateTypeAutoComplete(props) {
             error={isError||false}
             helperText={isError ? errorMsg : ''}
             variant="outlined"
-            margin="dense"
             fullWidth
             placeholder={placeholder || 'Select'}
             label={placeholder ? placeholder : undefined}

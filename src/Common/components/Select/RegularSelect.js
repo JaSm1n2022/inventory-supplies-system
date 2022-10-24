@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 0,
     },
     root: {
-        height: '40px',
+        
         width: '100%',
         fontSize: '10pt',
         borderBottom: '0px solid white',
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     rootRule: {
-        height: '34px',
+        
         width: '100%',
         fontSize: '10pt',
         borderBottom: '0px solid white',
@@ -56,14 +56,12 @@ export default function RegularSelect({ tooltiptext, tooltipPlacement, disabled,
     const classes = useStyles();
     const body = (
         <Select
-            inputProps={{ style: { fontSize: '10pt' } }} // font size of input text
-            InputLabelProps={{ style: { fontSize: '10pt' } }} // font size of input label
             labelId="simple-select-filled-label"
             id={name}
             placeholder={placeholder}
             label={label}
             name={name}
-            margin="dense"
+            
             disabled={disabled || false}
             className={root && root === 'minmax' ? classes.rootRule : classes.root}
             value={value || 'Select'}

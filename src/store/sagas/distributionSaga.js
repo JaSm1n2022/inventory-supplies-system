@@ -9,7 +9,7 @@ function* listDistribution(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('distributions')
+        .from('distributions').select()
         
       if (error && status !== 406) {
         console.log(`error${error.toString()}`);

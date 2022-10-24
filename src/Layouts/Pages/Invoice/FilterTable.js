@@ -9,8 +9,8 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import Helper from "../../../utils/helper";
 const INVOICE_KEYWORDS = [
-'Invoice Number',
-'Payment Method'
+    'Invoice Number',
+    'Payment Method'
 ];
 let searchKeywordTypes = [];
 let invoiceDateOptions = [];
@@ -29,16 +29,16 @@ INVOICE_KEYWORDS.forEach((item, i) => {
 const FilterTable = (props) => {
     const [keywordType, setKeywordType] = useState('ALL');
     const [keywordValue, setKeywordValue] = useState('');
-    const [invoiceDateSelected,setInvoiceDateSelected] = useState({name:''})
-    const [invoiceFrom,setInvoiceFrom] = useState('');
+    const [invoiceDateSelected, setInvoiceDateSelected] = useState(DEFAULT_ITEM)
+    const [invoiceFrom, setInvoiceFrom] = useState('');
     const [invoiceTo, setInvoiceTo] = useState('');
-    const [isInvoiceDtCustom,setIsInvoiceDtCustom] = useState(false);
-    
+    const [isInvoiceDtCustom, setIsInvoiceDtCustom] = useState(false);
+
     useEffect(() => {
         const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
         setInvoiceFrom(dates.from);
         setInvoiceTo(dates.to);
-      }, []);
+    }, []);
 
     const inputHandler = ({ target }) => {
 
@@ -56,24 +56,24 @@ const FilterTable = (props) => {
 
     };
     const autoCompleteInputHander = (item) => {
-		if (item.category === 'invoiceDate') {
-			let data = {
-				from: '',
-				to: ''
-			};
-			if (item.value !== 'custom') {
-				data = Helper.formatDateRangeByCriteriaV2(item.value);
-				console.log('[item data]', data);
-			}
+        if (item.category === 'invoiceDate') {
+            let data = {
+                from: '',
+                to: ''
+            };
+            if (item.value !== 'custom') {
+                data = Helper.formatDateRangeByCriteriaV2(item.value);
+                console.log('[item data]', data);
+            }
             setInvoiceFrom(data.from);
             setInvoiceTo(data.to);
-			setIsInvoiceDtCustom(item.value === 'custom' || item.dateRange ? true : false);
-			setInvoiceDateSelected(item);
-			
+            setIsInvoiceDtCustom(item.value === 'custom' || item.dateRange ? true : false);
+            setInvoiceDateSelected(item);
+
+        }
+
     }
 
-	}
-    
     const onPressEnterKeyHandler = () => {
 
 
@@ -81,110 +81,93 @@ const FilterTable = (props) => {
 
     const onClearHandler = (name) => {
 
-		if (name === 'invoiceDtType') {
-			lastInvoiceDtType = '';
-			setInvoiceDateSelected(DEFAULT_ITEM);
+        if (name === 'invoiceDtType') {
+            lastInvoiceDtType = '';
+            setInvoiceDateSelected(DEFAULT_ITEM);
             setInvoiceFrom('');
             setInvoiceTo('');
 
-		} 
+        }
 
-	}
+    }
 
-	const closeInvoiceDateModalHandler = () => {
+    const closeInvoiceDateModalHandler = () => {
 
-		setIsInvoiceDtCustom(false);
-		setInvoiceDateSelected(invoiceDateOptions.find(e => e.value === lastInvoiceDtType));
-	
-	}
-	const addInvoiceDateHandler = (from, to) => {
+        setIsInvoiceDtCustom(false);
+        setInvoiceDateSelected(invoiceDateOptions.find(e => e.value === lastInvoiceDtType));
 
-		const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
+    }
+    const addInvoiceDateHandler = (from, to) => {
 
-		const options = invoiceDateOptions.filter(f => !f.dateRange);
-		const etaValue = {
+        const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
 
-			name: dt,
-			value: dt,
-			dateRange: dt,
-			from,
-			to,
-			id: uuidv4(),
-			label: dt,
-			category: 'etdDateType',
-			disabled: true
-		};
-		options.push(etaValue);
-		invoiceDateOptions = options;
-		setIsInvoiceDtCustom(false);
-		setInvoiceDateSelected(etaValue);
-		setInvoiceFrom(from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD'));
+        const options = invoiceDateOptions.filter(f => !f.dateRange);
+        const etaValue = {
+
+            name: dt,
+            value: dt,
+            dateRange: dt,
+            from,
+            to,
+            id: uuidv4(),
+            label: dt,
+            category: 'etdDateType',
+            disabled: true
+        };
+        options.push(etaValue);
+        invoiceDateOptions = options;
+        setIsInvoiceDtCustom(false);
+        setInvoiceDateSelected(etaValue);
+        setInvoiceFrom(from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD'));
         setInvoiceTo(to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD'));
 
-	}
+    }
     const clearFilterHandler = () => {
         setKeywordValue('');
         setKeywordType(DEFAULT_ITEM);
         setInvoiceDateSelected(DEFAULT_ITEM);
     }
     const applyFilterHandler = () => {
-        console.log('Data Selected',invoiceDateSelected);
-        console.log('Date Range',invoiceFrom,invoiceTo);
-        console.log('Keyword',keywordValue);
-        console.log('Keyword Type',keywordType);
+        console.log('Data Selected', invoiceDateSelected);
+        console.log('Date Range', invoiceFrom, invoiceTo);
+        console.log('Keyword', keywordValue);
+        console.log('Keyword Type', keywordType);
         props.filterRecordHandler({
-            from : `${invoiceFrom} 00:00:00`,
-            to : `${invoiceTo} 23:59:59`,
+            from: `${invoiceFrom} 00:00:00`,
+            to: `${invoiceTo} 23:59:59`,
             keywordValue,
             keywordType
         });
     }
     return (
         <React.Fragment>
-            <Grid container direction="row" spacing={1}>
-                <Grid item xs={3}>
-                    <RegularSelect
-                        options={searchKeywordTypes}
-                        name={'keywordType'}
-                        onChange={inputHandler}
-                        value={keywordType}
-                        label={'Search Type'}
-                        placeholder={'Search Type'}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <SearchLookupTextField
-                        background={"white"}
-                        onChange={inputHandler}
-                        placeholder={"Search"}
-                        label={"Search"}
-                        name={"keywordValue"}
-                        onPressEnterKeyHandler={onPressEnterKeyHandler}
-                        isAllowEnterKey={true}
-                        value={keywordValue} />    
-                </Grid>
+            <Grid container style={{ paddingTop: 8 }}>
+                <div style={{ display: 'flex', gap: 10 }}>
 
-<Grid item xs={3}>
-				<DateTypeAutoComplete
-					value={invoiceDateSelected || {name:'',value:''}}
-					name="invoiceDtType"
-					placeholder={invoiceDateSelected.name ? `Invoice : ${invoiceFrom} to ${invoiceTo}`: 'Invoice Date'}
-				
-					onClearHandler={onClearHandler}
-					onSelectHandler={autoCompleteInputHander}
-					options={invoiceDateOptions}>
+                    <div style={{ width: 300 }}>
+                        <DateTypeAutoComplete
+                            value={invoiceDateSelected || DEFAULT_ITEM}
+                            name="invoiceDtType"
+                            placeholder={invoiceDateSelected.name ? `Invoice : ${invoiceFrom} to ${invoiceTo}` : 'Invoice Date'}
 
-				</DateTypeAutoComplete>
-				{isInvoiceDtCustom &&
-					<DateRangeModal description={`Invoice Date`} dateFrom={invoiceFrom} dateTo={invoiceTo} isOpen={isInvoiceDtCustom} noHandler={closeInvoiceDateModalHandler} yesHandler={addInvoiceDateHandler} />
-				}
-			</Grid>
-                <Grid item xs={3}>
+                            onClearHandler={onClearHandler}
+                            onSelectHandler={autoCompleteInputHander}
+                            options={invoiceDateOptions}>
+
+                        </DateTypeAutoComplete>
+                        {isInvoiceDtCustom &&
+                            <DateRangeModal description={`Invoice Date`} dateFrom={invoiceFrom} dateTo={invoiceTo} isOpen={isInvoiceDtCustom} noHandler={closeInvoiceDateModalHandler} yesHandler={addInvoiceDateHandler} />
+                        }
+
+                    </div>
+
+
                     <div style={{ display: 'flex', gap: 10 }}>
                         <Button variant="contained" color="primary" style={{ fontSize: 14 }} onClick={() => applyFilterHandler()}>Apply</Button>
                         <Button variant="contained" color="secondary" style={{ fontSize: 14 }} onClick={() => clearFilterHandler()}>Clear</Button>
                     </div>
-                </Grid>
+
+                </div>
             </Grid>
 
         </React.Fragment>

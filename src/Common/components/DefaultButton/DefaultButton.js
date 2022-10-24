@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.primary,
+    backgroundColor: 'blue',
     color: "white",
     fontSize: "13px",
     boxShadow: "none",
@@ -13,11 +13,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   text: {
-    color: theme.palette.primary,
+    color: 'blue',
     fontSize: "13px",
   },
   secondary: {
-    backgroundColor: theme.palette.secondary,
+    backgroundColor: 'gray',
     color: "darkGray",
     fontSize: "13px",
     boxShadow: "none",

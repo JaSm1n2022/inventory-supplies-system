@@ -7,7 +7,7 @@ import { Grid,Tooltip,Typography,TextField,Autocomplete } from "@mui/material";
 const useStyles = makeStyles(theme => ({
   inputRoot: {
     margin: "0",
-    height: props => props.height || "40px",
+    height: "40px",
     width: "100%",
     background: props => props.disabled ? "#e9ecef" : "white",
     "&&& input": {
@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
 export default function SingleWithClearAutoComplete(props) {
   const { tooltiptext, tooltipPlacement, value, options, name, onSelectHandler, onChangeHandler, isError, errorMsg, source, disabled, placeholder, optionFn } = props;
   const classes = useStyles(props);
+  console.log('[Single With Clear Auto]',options);
   const body = (
     <Autocomplete
       classes={classes}
@@ -43,7 +44,7 @@ export default function SingleWithClearAutoComplete(props) {
       value={value}
       disabled={disabled || false}
       onChange={(e, item) => {
-        if (item && item.value) {
+        if (item && item.value && item.value !== undefined) {
           onSelectHandler(item, source);
         }
       }}
@@ -54,24 +55,7 @@ export default function SingleWithClearAutoComplete(props) {
       }}
 
       getOptionLabel={option => option.label}
-      renderOption={(option, state) => {
-        return (
-          <React.Fragment>
-            <Grid container wrap="wrap" spacing={2} style={{ borderTop: "1px solid grey" }}>
-              <Grid item xs zeroMinWidth >
-                {optionFn && <Typography wrap>{optionFn(option)}</Typography>}
-                {!optionFn && <Typography wrap>{`${option.value} ${option.value2 ? option.value2 : ''}`}</Typography>}
-              </Grid>
-              <Grid item >
-                {/*
-              <AddCircleOutlined style={{ fontSize: '16pt' }} />
-          */}
-              </Grid>
-
-            </Grid>
-          </React.Fragment>
-        );
-      }}
+     
 
       renderInput={params => (
         <TextField
@@ -80,7 +64,7 @@ export default function SingleWithClearAutoComplete(props) {
           helperText={isError ? <label hmtlfor="" style={{ fontSize: '10pt' }}>{errorMsg}</label> : ''}
           name={name}
           variant="outlined"
-          margin="dense"
+          
           fullWidth
           type="text"
           placeholder={placeholder || 'Select'}

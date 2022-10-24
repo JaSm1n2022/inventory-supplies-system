@@ -210,56 +210,67 @@ const Invoice = (props) => {
 
 
 
+
   return (
     <React.Fragment>
-      <Grid container>
-        <Grid item xs={12}>
-
-          <Typography variant="h6">Invoice Statement</Typography>
-         
-        </Grid>
-        <Grid item xs={12}>
-          <FilterTable filterRecordHandler={filterRecordHandler} />
-      
-        </Grid>
-
-      
-
-        <Grid container style={{ paddingBottom: 10 }}>
-          <div style={{ display: 'inline-flex', gap: 10 }}>
-            <Button
-             fontSize='small'
-              onClick={() => createFormHandler()}
-              variant="contained"
-              
-              startIcon={<AddIcon />}
-            >
-              ADD INVOICE STATEMENT
-            </Button>
-            {isAddGroupButtons &&
-              <Button
-                onClick={() => exportToExcelHandler()}
-                variant="contained"
-                style={{
-                  border: 'solid 1px blue',
-                  color: 'white',
-                  background: 'blue',
-                  fontFamily: "Roboto",
-                  fontSize: "12px",
-                  fontWeight: 500,
-                  fontStretch: "normal",
-                  fontStyle: "normal",
-                  lineHeight: 1.71,
-                  letterSpacing: "0.4px",
-                  textAlign: "left",
-                  cursor: 'pointer'
-                }}
-                component="span"
-                startIcon={<AddIcon />}
-              > Export Excel </Button>
-            }
+      <Grid container  style={{ paddingLeft: 10, paddingTop:10,paddingRight: 10,paddingBottom:10 }}>
+        <Grid container  justifyContent="space-between">
+          <div>
+          <Typography variant="h6">INVOICE MANAGEMENT</Typography>
           </div>
-          <Typography variant="h3">{`Total : $${parseFloat(grandTotal).toFixed(2)}`}</Typography>
+          <div>
+          <FilterTable filterRecordHandler={filterRecordHandler}/>
+          </div>
+        </Grid>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 10,paddingTop:10 }}>
+          <div style={{display:'inline-flex',gap:10}}>
+          <Button
+            onClick={() => createFormHandler()}
+            variant="contained"
+            style={{
+              border: 'solid 1px #2196f3',
+              color: 'white',
+              background: '#2196f3',
+              fontFamily: "Roboto",
+              fontSize: "12px",
+              fontWeight: 500,
+              fontStretch: "normal",
+              fontStyle: "normal",
+              lineHeight: 1.71,
+              letterSpacing: "0.4px",
+              textAlign: "left",
+              cursor: 'pointer'
+            }}
+            component="span"
+            startIcon={<AddIcon />}
+          >
+            ADD TRANSACTION
+          </Button>
+          {isAddGroupButtons &&
+          <Button
+          onClick={() => exportToExcelHandler()}
+          variant="contained"
+          style={{
+            border: 'solid 1px blue',
+            color: 'white',
+            background: 'blue',
+            fontFamily: "Roboto",
+            fontSize: "12px",
+            fontWeight: 500,
+            fontStretch: "normal",
+            fontStyle: "normal",
+            lineHeight: 1.71,
+            letterSpacing: "0.4px",
+            textAlign: "left",
+            cursor: 'pointer'
+          }}
+          component="span"
+          startIcon={<AddIcon />}
+        > Export Excel </Button>
+}
+          </div>
+          <Typography variant="h6">{`Total : $${parseFloat(grandTotal).toFixed(2)}`}</Typography>
+        
         </Grid>
         <Grid item xs={12}>
 
@@ -271,6 +282,7 @@ const Invoice = (props) => {
       }
     </React.Fragment>
   )
+  
 }
 const mapStateToProps = store => ({
   invoices: invoiceListStateSelector(store),

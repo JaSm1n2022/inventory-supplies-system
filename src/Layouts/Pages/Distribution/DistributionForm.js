@@ -81,7 +81,7 @@ function DistributionForm(props) {
     const { isOpen,
         onClose,
 
-        isEdit } = props;
+       } = props;
 
     const general = [
         {
@@ -184,6 +184,7 @@ function DistributionForm(props) {
      
     ]
     useEffect(() => {
+        console.log('[props distribution form]',props);
         const fm = {};
         fm.orderDt = new Date();
         fm.position = '-';
@@ -194,8 +195,8 @@ function DistributionForm(props) {
         if (props.item) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
-            generalFm.orderDt = moment(new Date(generalFm.order_at)).utc().format('YYYY-MM-DD');
-            const detailFm = generalFm.details;
+            generalFm.orderDt = new Date(generalFm.order_at);
+            const detailFm = generalFm.details ? generalFm.details : [generalFm] ;
 
             setGeneralForm(generalFm);
             setDetailForm(detailFm);
@@ -273,6 +274,7 @@ function DistributionForm(props) {
         } else if (item.categoryType === 'patient') {
             src['patient'] = item;  
             src['patientName'] = item.name;
+            src['patientId'] = item.id;
             src['facility'] = item.place_of_service;
             
         } else if (item.category === 'status') {
@@ -331,9 +333,9 @@ function DistributionForm(props) {
        
         setDetailForm(fm);
     }
-    const dateInputHandler = (value, name) => {
+    const dateInputHandler = (name, value) => {
         const src = { ...generalForm };
-        src[name] = value;
+        src[name] = moment(new Date(value)).format('YYYY-MM-DD HH:mm');
         setGeneralForm(src);
     }
     const titleHandler = () => {
@@ -382,7 +384,7 @@ function DistributionForm(props) {
             <div className={styles.form}>
                 <ModalHeader title={titleHandler()} onClose={onClose} />
                 <div className={styles.content}>
-                    <Typography variant="h4">General Information</Typography>
+                    <Typography variant="h6">General Information</Typography>
                     <Grid container spacing={1} direction="row">
                         {general.map(item => {
                             return (
@@ -392,14 +394,14 @@ function DistributionForm(props) {
                                             <RegularTextField {...item} value={generalForm[item.name]} onChange={inputGeneralHandler} />
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
-                                            <React.Fragment>
+                                         
                                                 <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
-                                            </React.Fragment>
                                             : item.component === 'singlecomplete' ?
                                                 <React.Fragment>
                                                     <SingleWithClearAutoComplete
                                                         {...item}
                                                         value={generalForm[item.name]}
+
                                                         onSelectHandler={autoCompleteGeneralInputHander}
                                                         onChangeHandler={onChangeGeneralInputHandler}
                                                     />
@@ -419,10 +421,11 @@ function DistributionForm(props) {
                         })}
                     </Grid>
                     <br />
-                    <Typography variant="h4">Supplies</Typography>
-                    <Grid container spacing={24}>
-            <Grid item xs={12}>
+                    <Typography variant="h6">Supplies</Typography>
+                    <Grid container>
+            <Grid item xs={12} style={{paddingBottom:10}}>
               <Divider variant="fullWidth" style={{
+                
                 height: '.02em',
                 border: 'solid 1px rgba(0, 0, 0, 0.12)'
               }} orientation="horizontal" flexItem />
@@ -467,9 +470,9 @@ function DistributionForm(props) {
                                 </Grid>
                                 {item.stockStatus &&
                                 <Grid item xs={2} >
-                                <div id="in-stock" style={{ borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8,paddingBottom:2 }}>
+                                <div id="in-stock" style={{borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8,paddingBottom:2 }}>
 					
-                                    <Typography variant="h4" style={{color:item.stockStatus === 'In Stock' ? 'blue':'red'}}>{item.stockStatus}</Typography>
+                                    <Typography variant="h6" style={{color:item.stockStatus === 'In Stock' ? 'blue':'red'}}>{item.stockStatus}</Typography>
                                     </div>
                                 </Grid>
                     }

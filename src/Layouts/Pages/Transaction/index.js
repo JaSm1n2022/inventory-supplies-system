@@ -249,16 +249,16 @@ const exportToExcelHandler = () => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={24} style={{ paddingLeft: 10, paddingRight: 10 }}>
-        <Grid container spacing={24} justify="space-between">
+      <Grid container  style={{ paddingLeft: 10, paddingRight: 10 }}>
+        <Grid container  justifyContent="space-between">
           <div>
-          <Typography variant="h4">Supply Order Transaction</Typography>
+          <Typography variant="h6">Supply Order Transaction</Typography>
           </div>
           <div>
           <FilterTable filterRecordHandler={filterRecordHandler}/>
           </div>
         </Grid>
-        <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
           <div style={{display:'inline-flex',gap:10}}>
           <Button
             onClick={() => createFormHandler()}

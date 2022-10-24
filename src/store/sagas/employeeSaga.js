@@ -7,9 +7,9 @@ import { supabaseClient } from "../../config/SupabaseClient";
 
 function* listEmployee(filter) {
     try {
-      console.log('[Filter]',filter.payload);
+      console.log('[Filter employee]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('employees')
+        .from('employees').select()
         
       if (error && status !== 406) {
         console.log(error.toString());

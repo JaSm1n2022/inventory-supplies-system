@@ -50,13 +50,13 @@ export default function ActionsFunction(props) {
             EDIT
           </Button>
           <Button
-                disabled={props.disabled}
+              
             onClick={() => deleteRecordHandler()}
             variant="contained"
             style={{
-              border: props.disabled ? 'solid 1px #e9ecef' : 'solid 1px red',
+              border: 'solid 1px red',
               color: 'white',
-              background: props.disabled ? '#e9ecef' : 'red',
+              background: 'red',
               fontFamily: "Roboto",
               fontSize: "10px",
               fontWeight: 500,

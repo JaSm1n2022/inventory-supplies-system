@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import { makeStyles} from '@mui/styles';
-import { Button } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import {
   Modal,
   } from '@mui/material';
@@ -19,16 +19,7 @@ function getModalStyle() {
   };
 }
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    minWidth: 300,
-
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    
-    overflowX: 'auto'
-  },
+ 
   
 }));
 
@@ -57,19 +48,17 @@ export default function YesNoModal(props) {
     setOpen(false);
   };
   const body = (
-    <div style={modalStyle} className={classes.paper}>
-        <div className="form-field">
-                                    <label htmlFor="">{description}</label>
+    <Paper elevation={2} style={{width:'25%',height:'150px'}}> 
+      <div style={{paddingRight:20,paddingLeft:20,paddingTop:20}}>
+                                    <Typography variant="body1">{description}?</Typography>
                                     <br />
-                                    <div className="form-field">
+                                    <div style={{display:'inline-flex',gap:10}}>
                                       <Button variant="contained" color="secondary" onClick={() => noHandler()}> No</Button>
-                                      <span>&nbsp;&nbsp;</span>
                                       <Button variant="contained" color="primary" onClick={() => yesHandler()}>Yes</Button>
                                     </div>
-                                    <br />
-                                  </div>
-
-    </div>
+                                    </div>
+       </Paper>
+                                
   );
 
   return (
@@ -77,7 +66,7 @@ export default function YesNoModal(props) {
       <Modal
         fullWidth={true}
         maxWidth={'300px'}
-        maxHeight={'200px'}
+        maxHeight={'300px'}
         open={isOpen ? true : false}
         onClose={handleClose}
         aria-labelledby="yn-modal"

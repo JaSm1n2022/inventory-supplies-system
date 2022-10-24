@@ -3,29 +3,35 @@ import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeade
 import ModalFooter from "../../../Common/components/Modal/ModalFooter/ModalFooter";
 import styles from "./vendor.module.css";
 import ReactModal from "react-modal";
-import { Grid } from "@mui/material";
+import {  Grid } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
+import {  EMPLOYMENT_STATUS } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
+import moment from "moment";
 
-function Form(props) {
+
+
+
+
+function VendorForm(props) {
     const [generalForm, setGeneralForm] = useState({});
-    const [isRefresh, setIsRefresh] = useState(false);
     const { isOpen,
         onClose,
 
         isEdit } = props;
-
+       
     const general = [
-    
+      
         {
             id: 'name',
             component: 'textfield',
-            placeholder: 'Name',
-            label: 'Name',
+            placeholder: 'Vendor Name',
+            label: 'Vendor Name',
             name: 'name',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
         {
@@ -34,65 +40,76 @@ function Form(props) {
             placeholder: 'Website',
             label: 'Website',
             name: 'website',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
-        }, 
+        },
         {
             id: 'location',
             component: 'textfield',
             placeholder: 'Location',
             label: 'Location',
             name: 'location',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
+      
         {
-            id: 'contactPerson',
+            id: 'contact_person',
             component: 'textfield',
             placeholder: 'Contact Person',
             label: 'Contact Person',
-            name: 'contactPerson',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            name: 'contact_person',
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
         {
             id: 'phone',
             component: 'textfield',
-            placeholder: 'Phone',
-            label: 'Phone',
+            placeholder: 'Contact Phone',
+            label: 'Contact Phone',
             name: 'phone',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
         {
             id: 'fax',
             component: 'textfield',
-            placeholder: 'Fax',
-            label: 'Fax',
+            placeholder: 'Fax Number',
+            label: 'Fax Number',
             name: 'fax',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
         {
-            id: 'accountNumber',
+            id: 'account_number',
             component: 'textfield',
             placeholder: 'Account Number',
             label: 'Account Number',
-            name: 'accountNumber',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            name: 'account_number',
+            disabled: props.mode && props.mode === 'view' ? true : false,
+            cols: 4 
             
         },
+        
     ]
 
     
     useEffect(() => {
+        console.log('[effects 1]');
         const fm = {};
-        fm.position = 'N/A';
+        fm.created_at = new Date();
         setGeneralForm(fm);
       },[]);
     useEffect(() => {
         if(props.item) {
+            console.log('[effects 2]');
             console.log('[items]',props.item);
+            
             const generalFm = {...props.item};
             setGeneralForm(generalFm);
             
@@ -101,7 +118,7 @@ function Form(props) {
         }
     }, [props.item]);
     const validateFormHandler = () => {
-    
+        props.saveHandler(generalForm,props.mode);
     }
     const footerActions = [
         {
@@ -125,21 +142,20 @@ function Form(props) {
         console.log('[Target]',target,generalForm);
         const source = { ...generalForm};
         source[target.name] = target.value;
+        if(target.name === 'count' || target.name === 'unitPrice') {
+            source.pricePerPcs = parseFloat(parseFloat(source.unitPrice) / parseInt(source.count || 1,10)).toFixed(2);
+        }
         setGeneralForm(source);
 
     };
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
         console.log('[src]',src,item);
-        if(item.category === 'employee') {
-         src['requestor'] = item;
-         src['position'] = item.position;
-        } else if (item.category === 'facility') {
-            src['requestor'] = item;
-        } else if (item.category === 'patient') {
-            src['patient'] = item;
+        if(item.category === 'employeeStatus') {
+         src['status'] = item;
+         src['statusName'] = item.name;
         }
- 
+       
         setGeneralForm(src);
         
     }
@@ -152,18 +168,18 @@ function Form(props) {
     }
     
     
-    const dateInputHandler = (value, name) => {
+    const dateInputHandler = (name,value) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);
       }
       const titleHandler = () => {
           if(props.mode === 'view') {
-                return 'View Invoice Statement'
+                return 'View Employee'
           } else if (props.mode === 'edit') {
-              return 'Edit Invoice Statement';
+              return 'Edit Employee';
           } else {
-              return 'Create Invoice Statement';
+              return 'Create Employee';
           }
       }
       console.log('[general form]',generalForm);
@@ -206,7 +222,7 @@ function Form(props) {
                     <Grid container spacing={1} direction="row">
                         {general.map(item => {
                             return (
-                                <Grid item xs={4}>
+                                <Grid item xs={item.cols ? item.cols : 3}>
                                     {item.component === 'textfield' ?
                                         <React.Fragment>
                                             <RegularTextField {...item} value={generalForm[item.name]} onChange={inputGeneralHandler} />
@@ -255,4 +271,4 @@ function Form(props) {
 
 
 
-export default Form;
+export default VendorForm;

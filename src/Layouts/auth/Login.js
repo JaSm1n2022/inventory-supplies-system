@@ -113,7 +113,7 @@ const inputHandler = ({target}) => {
                                 <div align="center" style={{paddingBottom:100}}>
                                 <img src={Hospice} alt="" style={{ height: '120px', paddingRight: "25px" }} />
                                 </div>
-                                <Typography variant="h4">Sign in to Divine Compassion Hospice Inventory System</Typography>
+                                <Typography variant="h4">Sign in to Hospice Inventory System</Typography>
                                 <Typography variant="body">via Magic Link email</Typography>
                             </Grid>
                             <Grid item xs={12} style={{align:'center',paddingTop:8,paddingBottom:8,paddingLeft:4,paddingRight:4}}>

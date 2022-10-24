@@ -138,19 +138,9 @@ const FilterTable = (props) => {
     }
     return (
         <React.Fragment>
-            <Grid container  spacing={24}>
+            <Grid container style={{paddingTop:10}}>
             <div style={{ display: 'flex', gap: 10 }}>
-                    <div style={{width:300}}>
-                    <SearchLookupTextField
-                        background={"white"}
-                        onChange={inputHandler}
-                        placeholder={"Search Item"}
-                        label={"Search Item"}
-                        name={"keywordValue"}
-                        onPressEnterKeyHandler={onPressEnterKeyHandler}
-                        isAllowEnterKey={true}
-                        value={keywordValue} />    
-           </div>  <div style={{width:300}}>
+                      <div style={{width:300}}>
                     <SearchLookupTextField
                         background={"white"}
                         onChange={inputHandler}

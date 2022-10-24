@@ -52,7 +52,7 @@ const Vendor = (props) => {
     }, [props.data]);
     return (
       <React.Fragment>
-        <Grid container spacing={24} justify="space-between" style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10 }}>
+        <Grid container  justifyContent="space-between" style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10 }}>
           <Grid item xs={12}>
 
             <Typography variant="h3">Location</Typography>
@@ -63,7 +63,7 @@ const Vendor = (props) => {
             <br />
           </Grid>
 
-          <Grid container spacing={24}>
+          <Grid container>
             <Grid item xs={12}>
               <Divider variant="fullWidth" style={{
                 height: '.02em',
@@ -73,7 +73,7 @@ const Vendor = (props) => {
             <br />
           </Grid>
 
-          <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
+          <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
             <Button
               onClick={() => createFormHandler()}
               variant="contained"

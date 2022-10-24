@@ -11,6 +11,7 @@ const InventoryTable = props => {
         const [loading, setLoading] = useState(true);
         const [selected, setSelected] = useState({});
         useEffect(() => { 
+          console.log('[Props]',props);
           setColumns(props.columns);
           setDataSource(props.dataSource);
           isWithCheckItem = props.dataSource.find(d => d.isChecked);

@@ -73,7 +73,7 @@ const FilterTable = (props) => {
     
     const onPressEnterKeyHandler = () => {
 
-
+        props.filterRecordHandler(keywordValue);
     }
 
     const onClearHandler = (name) => {
@@ -125,12 +125,12 @@ const FilterTable = (props) => {
         setInvoiceDateSelected(DEFAULT_ITEM);
     }
     const applyFilterHandler = () => {
-        props.applyFilterHandler(keywordValue);
+        props.filterRecordHandler(keywordValue);
     
     }
     return (
         <React.Fragment>
-            <Grid container  spacing={24} >
+            <Grid container>
             <div style={{ display: 'flex', gap: 10 }}>
           
             <div style={{width:300}}>

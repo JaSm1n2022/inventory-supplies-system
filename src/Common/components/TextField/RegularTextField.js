@@ -9,18 +9,18 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       margin: 0,
       width: '100%',
-      height: props => props.height ? props.height : '40px'
+      height:  '38px'
     },
   },
   inputRoot: {
     width: '100%',
-    height: '40px'
+    height: '38px'
 
   },
   noBorder: {
     border: "none",
     width: '100%',
-    height: '40px'
+    height: '38px'
 
   }
 }));
@@ -68,14 +68,14 @@ export default function RegularTextField(props) {
       onChange={(e) => onChange(e, source)}
       name={name}
       value={value}
-      margin="dense"
+      
       placeholder={placeholder}
       variant={variant || 'outlined'} InputProps={{
         style: {
-          fontSize: size || 14,
-          height: height || 40,
+          fontSize: size || 12,
           marginLeft: '0',
           marginRight: '0',
+          height:'38px',
 
           background: colorBkg
 

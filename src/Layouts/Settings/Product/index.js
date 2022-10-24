@@ -240,10 +240,10 @@ const Product = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={24} justify="space-between" style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10 }}>
-        <Grid container spacing={24} justify="space-between">
+      <Grid container style={{paddingTop:12}}>
+        <Grid container justifyContent="space-between">
           <div>
-            <Typography variant="h4">Product Management</Typography>
+            <Typography variant="h6">PRODUCT MANAGEMENT</Typography>
           </div>
           <div>
             <FilterTable filterRecordHandler={filterRecordHandler} />
@@ -252,7 +252,7 @@ const Product = (props) => {
 
      
 
-        <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
           <div style={{ display: 'inline-flex', gap: 10 }}>
             <Button
               onClick={() => createFormHandler()}

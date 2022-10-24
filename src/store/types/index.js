@@ -92,6 +92,35 @@ export type EmployeeState = {
 
 };
 
+export type VendorState = {
+  vendorList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  vendorUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  vendorDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  vendorCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
 
 export type PatientState = {
   patientList: {

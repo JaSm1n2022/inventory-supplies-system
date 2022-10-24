@@ -21,7 +21,7 @@ class DataHandler {
     items.forEach(item => {
       item.created_at = moment(item.created_at).format('YYYY-MM-DD');
       item.hired_at = moment(item.hired_at).format('YYYY-MM-DD');
-      item.dob_at = moment(item.dob).format('YYYY-MM-DD');
+      item.dob = moment(item.dob).format('YYYY-MM-DD');
     
     });
 

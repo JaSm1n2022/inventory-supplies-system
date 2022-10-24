@@ -162,9 +162,7 @@ const Patient = (props) => {
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
-    console.log('[Keyword 1]',temp);
     const found = temp.filter( data => data.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1);
-    console.log('[Keyword 2]',found);
    
    setDataSource(found);
     }
@@ -227,8 +225,8 @@ const Patient = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={24} justify="space-between" style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10 }}>
-        <Grid container spacing={24} justify="space-between">
+      <Grid container style={{paddingTop:12}}>
+        <Grid container justifyContent="space-between">
           <div>
             <Typography variant="h4">Patient Management</Typography>
           </div>
@@ -239,7 +237,7 @@ const Patient = (props) => {
 
      
 
-        <Grid container spacing={24} justify="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
           <div style={{ display: 'inline-flex', gap: 10 }}>
             <Button
               onClick={() => createFormHandler()}
