@@ -188,7 +188,7 @@ const Dashboard = (props) => {
           <TabPanel value={value} index="one">
             <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
               <Grid container style={{ paddingBottom: 20 }}>
-                <Typography variant="h5">Client's Expenses Report (10/01 - present)</Typography>
+                <Typography variant="h5">Client's Expenses Report</Typography>
 
               </Grid>
               <Grid container direction="row">
