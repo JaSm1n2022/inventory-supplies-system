@@ -265,7 +265,9 @@ const Distribution = (props) => {
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
-    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1);
+    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    || data.patient_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    );
    
    setDataSource(found);
     }

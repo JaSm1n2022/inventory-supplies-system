@@ -117,7 +117,7 @@ const Invoice = (props) => {
     const params = {
       invoiced_at: moment(new Date(payload.invoiceDt)).format('YYYY-MM-DD HH:mm'),
       invoice_number: payload.invNumber,
-      grand_total: parseFloat(grandTotal || 0.00).toFixed(2),
+      grand_total: parseFloat(payload.grandTotal || 0.00).toFixed(2),
       payment_method: payload.method,
       payment_info: payload.paymentInfo,
       payment_at: moment(new Date(payload.paymentDt)).format('YYYY-MM-DD HH:mm'),

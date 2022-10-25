@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress } from '@mui/material';
+import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider } from '@mui/material';
 import ClientPieChart from './components/ClientPieChart';
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
@@ -10,7 +10,8 @@ import { attemptToFetchDistribution, resetFetchDistributionState } from '../../s
 import { connect } from 'react-redux';
 import { LocalDining } from '@mui/icons-material';
 import { useEffect } from 'react';
-import { ACTION_STATUSES } from '../../utils/constants';
+import { ACTION_STATUSES, DEFAULT_ITEM } from '../../utils/constants';
+import SingleWithClearAutoComplete from '../../Common/components/AutoComplete/SingleWithClearAutoComplete';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 let isDistributionListDone = false;
 let isPatientListDone = false;
 let patientList = [];
+let patientOptions = [];
 let distributionList = [];
 let patientDashboard = [
   {
@@ -64,12 +66,14 @@ let patientDashboard = [
   }
 ];
 
+
 const Dashboard = (props) => {
   const {listPatients,listDistributions,resetListPatients,resetListDistribution,patients,distributions} = props;
   const classes = useStyles();
   const [value, setValue] = React.useState('one');
   const [isPatientCollection, setIsPatientCollection] = useState(true);
   const [isDistributionCollection, setIsDistributionCollection] = useState(true);
+  const [patient,setPatient] = useState(DEFAULT_ITEM);
   
   useEffect(() => {
     listPatients();
@@ -106,6 +110,10 @@ const Dashboard = (props) => {
     patientDashboard = [];
     patientList.forEach(patient => {
       let estimatedAmt = 0.0;
+      patient.label = patient.name;
+      patient.value = patient.name;
+      patient.category = 'patient';
+
       const supplies = distributionList.filter(dist => dist.patient_id === patient.id);
       console.log('[Supplies]',supplies);
       supplies.forEach(supply => {
@@ -151,17 +159,40 @@ const Dashboard = (props) => {
       }
       patientDashboard.push({
         name : patient.name,
+        label : patient.name,
+        value : patient.name,
+        cateogry: 'patient',
         estimatedAmt,
         series : [parseFloat(seriesList.underpad),parseFloat(seriesList.brief),parseFloat(seriesList.underwear),parseFloat(seriesList.lotion), parseFloat(seriesList.other)]
 
       })
+      
     })
     //make data
-    
+    patientOptions = [...patientDashboard];
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const inputGeneralHandler = ({ target }) => {
+    if(target.name === 'patient' && !target.value) {
+      patientDashboard = [...patientOptions];
+      setPatient(DEFAULT_ITEM);
+    }
+    
+
+};
+const autoCompleteGeneralInputHander = (item) => {
+    if(item.category === 'patient') {
+   
+      const temp = [...patientOptions];
+      const found = temp.filter(t => t.name === item.name);
+      console.log('[temp]',temp,found,item);
+      patientDashboard = found;
+      setPatient(item); 
+    }
+    
+}
   console.log('[series]',patientDashboard);
   return (
     <div className={classes.root}>
@@ -191,6 +222,26 @@ const Dashboard = (props) => {
                 <Typography variant="h5">Client's Expenses Report</Typography>
 
               </Grid>
+              <Grid item xs={4} style={{paddingBottom:4}}>
+              <SingleWithClearAutoComplete
+                           id = 'patient'
+                           placeholder = 'Select Patient'
+                           label =  'Select Patient'
+                           name = 'patient'
+                           options={patientList}
+                           value={patient}
+                            onSelectHandler={autoCompleteGeneralInputHander}
+                          onChangeHandler={inputGeneralHandler}
+                                                        />
+              </Grid>
+
+              <Grid item xs={12} style={{paddingBottom:10}}>
+              <Divider variant="fullWidth" style={{
+                
+                height: '.02em',
+                border: 'solid 1px rgba(0, 0, 0, 0.12)'
+              }} orientation="horizontal" flexItem />
+            </Grid>
               <Grid container direction="row">
                 {patientDashboard.length && patientDashboard.map(map => {
                   return (

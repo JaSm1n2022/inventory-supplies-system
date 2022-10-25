@@ -66,6 +66,7 @@ export default function SearchLookupTextField(props) {
         if (ev.key === 'Enter') {
           // Do code here
           ev.preventDefault();
+          props.onPressEnterKeyHandler(value);
         }
       }}
       onChange={(e) => onChange(e, source)}

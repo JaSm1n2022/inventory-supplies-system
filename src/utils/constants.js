@@ -374,7 +374,11 @@ export const countries =
     'Underwear/Pull-ups',
     'Other',
     'Lotion',
-    'Cleanser'
+    'Cleanser',
+    'Toothbrush',
+    'ToothPaste',
+    'Pill Crusher',
+    'Sanitizer'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

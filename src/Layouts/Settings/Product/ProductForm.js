@@ -186,9 +186,10 @@ function ProductForm(props) {
     useEffect(() => {
         if(props.item) {
             console.log('[effects 2]');
-            console.log('[items]',props.item);
             
             const generalFm = {...props.item};
+            console.log('[items]',generalFm.qty_uom,props.item,uoms,uoms.find(cat => cat.name === generalFm.qty_uom));
+           
             generalFm.created_at = moment(new Date(generalFm.created_at)).utc().format('YYYY-MM-DD');
             generalFm.category = categoryList.find(cat => cat.name === generalFm.category);
             generalFm.qtyUom = uoms.find(cat => cat.name === generalFm.qty_uom);

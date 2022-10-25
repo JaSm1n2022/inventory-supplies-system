@@ -3,6 +3,7 @@ import React from "react";
 
 import { makeStyles } from "@mui/styles";
 import { Grid,Tooltip,Typography,TextField,Autocomplete } from "@mui/material";
+import { DEFAULT_ITEM } from "../../../utils/constants";
 
 const useStyles = makeStyles(theme => ({
   inputRoot: {
@@ -32,16 +33,17 @@ const useStyles = makeStyles(theme => ({
  * chipProps is always hidden to true
 */
 export default function SingleWithClearAutoComplete(props) {
-  const { tooltiptext, tooltipPlacement, value, options, name, onSelectHandler, onChangeHandler, isError, errorMsg, source, disabled, placeholder, optionFn } = props;
+  const { tooltiptext, tooltipPlacement, value, options, name, onSelectHandler, onChangeHandler, isError, errorMsg, source, disabled, placeholder } = props;
   const classes = useStyles(props);
-  console.log('[Single With Clear Auto]',options);
+  console.log('[Single With Clear Auto]',options,value);
   const body = (
     <Autocomplete
       classes={classes}
       ChipProps={{ hidden: true }}
       id="checkboxes-tags-demo"
       options={options || []}
-      value={value}
+      value={value ? value : DEFAULT_ITEM}
+      
       disabled={disabled || false}
       onChange={(e, item) => {
         if (item && item.value && item.value !== undefined) {
