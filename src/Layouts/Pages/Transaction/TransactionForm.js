@@ -262,6 +262,11 @@ function TransportationForm(props) {
         fm.created_at = new Date();
         fm.orderedDt = new Date();
         fm.paymentDt = new Date();
+        fm.category = DEFAULT_ITEM;
+        fm.description = '-';
+        fm.size = '-';
+        fm.dimension='-';
+        fm.item = '-';
         fm.expectedDeliveryDt = new Date();
         fm.pricePerPcs = 0.00;
         fm.unitPrice = 0.00;
@@ -289,7 +294,7 @@ function TransportationForm(props) {
             fm.unitPiece =fm.unit_piece || 0;
             fm.unitPrice = fm.unit_price || 0.00;
             fm.vendor = fm.vendor ? vendors.find(v => v.name === fm.vendor) : DEFAULT_ITEM; 
-            
+            fm.category = categoryList.find(cat => cat.name === fm.category);
             setGeneralForm(fm);
 
 
@@ -376,6 +381,23 @@ function TransportationForm(props) {
             return 'Create Transaction';
         }
     }
+    const inputSearchHandler = (e) => {
+        if (!e.target.value) {
+            setSearchItem(DEFAULT_ITEM);
+        };
+    }
+    const autoCompleteInputSearchHandler = (item) => {
+        console.log('[Item]',item);
+       
+       const gen = {...generalForm};
+        gen.category = categoryList.find(cat => cat.name === item.category);
+        gen.description = item.description;
+        gen.size = item.size;
+        gen.dimension = item.dimension;
+        gen.item = item.item;
+        setGeneralForm(gen);
+        
+    }
     console.log('[general form]', generalForm);
     return (
         <ReactModal
@@ -415,7 +437,20 @@ function TransportationForm(props) {
                 <div className={styles.content}>
                     <Grid container spacing={1} direction="row">
 
-                        <Grid item xs={12}></Grid>
+                        <Grid item xs={12} style={{paddingBottom:12}}>
+                        <SingleWithClearAutoComplete
+                                placeholder={'Search Item'}
+                                label={'Search Item'}
+                                name={'searchItem'}
+                                options={props.productList || []}
+                                disabled={props.mode && props.mode === 'view' ? true : false}
+                                value={searchItem || DEFAULT_ITEM}
+                                onSelectHandler={autoCompleteInputSearchHandler}
+                                onChangeHandler={inputSearchHandler}
+
+                            />
+
+                        </Grid>
 
                         {general.map(item => {
                             return (

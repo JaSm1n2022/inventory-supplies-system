@@ -72,7 +72,7 @@ const FilterTable = (props) => {
 	}
     
     const onPressEnterKeyHandler = () => {
-
+    props.filterRecordHandler(keywordValue);        
 
     }
 
@@ -125,16 +125,9 @@ const FilterTable = (props) => {
         setInvoiceDateSelected(DEFAULT_ITEM);
     }
     const applyFilterHandler = () => {
-        console.log('Data Selected',invoiceDateSelected);
-        console.log('Date Range',invoiceFrom,invoiceTo);
-        console.log('Keyword',keywordValue);
-        console.log('Keyword Type',keywordType);
-        props.filterRecordHandler({
-            from : `${invoiceFrom} 00:00:00`,
-            to : `${invoiceTo} 23:59:59`,
-            keywordValue,
-            keywordType
-        });
+       
+        props.filterRecordHandler(keywordValue);
+        
     }
     return (
         <React.Fragment>

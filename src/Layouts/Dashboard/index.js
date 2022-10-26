@@ -12,6 +12,9 @@ import { LocalDining } from '@mui/icons-material';
 import { useEffect } from 'react';
 import { ACTION_STATUSES, DEFAULT_ITEM } from '../../utils/constants';
 import SingleWithClearAutoComplete from '../../Common/components/AutoComplete/SingleWithClearAutoComplete';
+import { transactionListStateSelector } from '../../store/selectors/transactionSelector';
+import { attemptToFetchTransaction, resetFetchTransactionState } from '../../store/actions/transactionAction';
+import TransactionChart from './components/TransactionChart';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,9 +58,17 @@ const useStyles = makeStyles((theme) => ({
 
 let isDistributionListDone = false;
 let isPatientListDone = false;
+let isTransactionDone = false;
 let patientList = [];
 let patientOptions = [];
 let distributionList = [];
+let transactionDashboard =
+  {
+    name : 'Invoice',
+    expenses : 0,
+    series : [0,0]
+  }
+
 let patientDashboard = [
   {
     name: '',
@@ -68,11 +79,12 @@ let patientDashboard = [
 
 
 const Dashboard = (props) => {
-  const {listPatients,listDistributions,resetListPatients,resetListDistribution,patients,distributions} = props;
+  const {listTransactions,resetlistTransactions,transactions,listPatients,listDistributions,resetListPatients,resetListDistribution,patients,distributions} = props;
   const classes = useStyles();
   const [value, setValue] = React.useState('one');
   const [isPatientCollection, setIsPatientCollection] = useState(true);
   const [isDistributionCollection, setIsDistributionCollection] = useState(true);
+  const [isTransactionCollection, setIsTransactionCollection] = useState(true);
   const [patient,setPatient] = useState(DEFAULT_ITEM);
   
   useEffect(() => {
@@ -88,7 +100,11 @@ const Dashboard = (props) => {
       resetListDistribution();
       setIsDistributionCollection(true);
      }
-  },[isPatientCollection,isDistributionCollection]);
+     if(!isTransactionCollection && transactions.status === ACTION_STATUSES.SUCCEED) {
+      resetlistTransactions();
+      setIsTransactionCollection(true);
+     }
+  },[isPatientCollection,isDistributionCollection,isTransactionCollection]);
   
 
   console.log('[Dashboard Patient List]',patients);
@@ -102,6 +118,7 @@ const Dashboard = (props) => {
   }
   if(isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
     isDistributionListDone = true;
+    isTransactionDone = false;
     setIsDistributionCollection(false);
     distributionList = distributions.data || [];
     console.log('[Patient Data]',patientList);
@@ -170,6 +187,26 @@ const Dashboard = (props) => {
     })
     //make data
     patientOptions = [...patientDashboard];
+    listTransactions();
+  }
+  if(isTransactionCollection && transactions.status === ACTION_STATUSES.SUCCEED) {
+    console.log('[Transactions]',transactions);
+    const transactionData = transactions.data;
+    let grandTotal = 0.0;
+    let officeAmount = 0.0;
+    transactionData.forEach(transact => {
+      grandTotal += parseFloat(transact.grand_total);
+      if (transact.category === 'Office') {
+        officeAmount += parseFloat(transact.grand_total);
+      } 
+    })
+    grandTotal = parseFloat(grandTotal).toFixed(2);
+    officeAmount = parseFloat(officeAmount).toFixed(2);
+    const clientAmount = parseFloat(grandTotal - officeAmount).toFixed(2);
+    transactionDashboard.expenses = grandTotal;
+    transactionDashboard.series = [parseFloat(officeAmount),parseFloat(clientAmount)];
+    isTransactionDone = true;
+    setIsTransactionCollection(false);
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -196,7 +233,7 @@ const autoCompleteGeneralInputHander = (item) => {
   console.log('[series]',patientDashboard);
   return (
     <div className={classes.root}>
-      {!isDistributionListDone || !isPatientListDone ?
+      {!isDistributionListDone || !isPatientListDone || !isTransactionDone ?
         <div align="center" style={{ paddingTop: '100px' }}>
           <br />
           <CircularProgress />&nbsp;<span>Loading</span>...
@@ -305,7 +342,14 @@ const autoCompleteGeneralInputHander = (item) => {
             </Grid>
           </TabPanel>
           <TabPanel value={value} index="two">
-          <Typography variant="h1">UNDER CONSTRUCTION!!!</Typography>
+          <Grid item xs={4}>
+                  <div>
+                    <Typography variant="h6">{`Total Expenses - $${parseFloat(transactionDashboard.expenses).toFixed(2)}`}</Typography>
+                  </div>
+                  <div>
+                  <TransactionChart series={transactionDashboard.series} />
+                  </div>
+                </Grid>
           </TabPanel>
           <TabPanel value={value} index="three">
             <Typography variant="h1">UNDER CONSTRUCTION!!!</Typography>
@@ -317,8 +361,8 @@ const autoCompleteGeneralInputHander = (item) => {
 }
 const mapStateToProps = store => ({
   patients: patientListStateSelector(store),
-  distributions: distributionListStateSelector(store)
-
+  distributions: distributionListStateSelector(store),
+  transactions: transactionListStateSelector(store)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -326,7 +370,9 @@ const mapDispatchToProps = dispatch => ({
   resetListPatients: () => dispatch(resetFetchPatientState()),
   listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
   resetListDistribution: () => dispatch(resetFetchDistributionState()),
-
+  listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
+  resetlistTransactions: () => dispatch(resetFetchTransactionState()),
+ 
 
 });
 

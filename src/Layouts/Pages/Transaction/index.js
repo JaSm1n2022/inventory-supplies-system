@@ -24,7 +24,7 @@ import { attemptToFetchProduct, resetFetchProductState } from "../../../store/ac
 
 
 let productList = [];
-
+let originalSource = [];
 let grandTotal = 0.0;
 const Transaction = (props) => {
   const [dataSource, setDataSource] = useState([]);
@@ -124,6 +124,7 @@ const Transaction = (props) => {
     });
     setColumns(cols);
     setDataSource(source);
+    originalSource = [...source];
     setIsTransactionsCollection(false);
   }
   const deleteRecordItemHandler = (id) => {
@@ -138,7 +139,7 @@ const Transaction = (props) => {
       ordered_at : payload.orderedDt,
       order_number : payload.orderNumber,
       description : payload.description,
-      category: payload.categoryName,
+      category: payload.category.name,
       item : payload.item,
       size : payload.size,
       dimension : payload.dimension,
@@ -189,10 +190,32 @@ const Transaction = (props) => {
   
   }
   
-  const filterRecordHandler = (payload) => {
-    props.listTransactions(payload);
+  const filterRecordHandler = (keyword) => {
+    console.log('[Keyword]',keyword);
+    if(!keyword) {
+      setDataSource([...originalSource]);
+      grandTotal = 0.0;
+      const grands = [...originalSource].map(map => map.grand_total);
+      grands.forEach(g => {
+        grandTotal += parseFloat(g) || 0.00;
+      });
+    } else {
+    const temp = [...originalSource];
+    console.log('[Keyword 1]',temp);
+    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    || data.order_number.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    );
+    console.log('[Keyword 2]',found);
+    grandTotal = 0.0;
+    const grands = found.map(map => map.grand_total);
+    grands.forEach(g => {
+      grandTotal += parseFloat(g) || 0.00;
+    });
+   setDataSource(found);
+   
+  
+  }
   };
-
   const onCheckboxSelectionHandler = (data, isAll, itemIsChecked) => {
     console.log('[data ALl]', data, isAll, itemIsChecked);
   const dtSource = [...dataSource];
@@ -258,7 +281,7 @@ const exportToExcelHandler = () => {
           <FilterTable filterRecordHandler={filterRecordHandler}/>
           </div>
         </Grid>
-        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 12,paddingTop:12 }}>
           <div style={{display:'inline-flex',gap:10}}>
           <Button
             onClick={() => createFormHandler()}
@@ -305,6 +328,8 @@ const exportToExcelHandler = () => {
         > Export Excel </Button>
 }
           </div>
+          <Typography variant="h5">{`GRAND TOTAL: $${parseFloat(grandTotal|| 0.00).toFixed(2)}`} </Typography>
+     
         </Grid>
         <Grid item xs={12}>
 
