@@ -2,8 +2,8 @@ import Chart from 'react-apexcharts';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { PATIENT_DASHBOARD_CATEGORY } from '../../../utils/constants';
-const optionLabels = ['OFFICE SUPPLIES','CLIENT SUPPLIES'];
-const TransactionChart = (props) => {
+const optionLabels = ['AMAZON','MEDLINE','OTHERS'];
+const ProviderChart = (props) => {
   const [options] = useState({
     labels:  [...optionLabels]
   });
@@ -18,4 +18,4 @@ useEffect(() => {
         )
  }
     
-  export default TransactionChart;
+  export default ProviderChart;

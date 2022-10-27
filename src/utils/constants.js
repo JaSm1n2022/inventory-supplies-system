@@ -378,7 +378,20 @@ export const countries =
     'Toothbrush',
     'ToothPaste',
     'Pill Crusher',
-    'Sanitizer'
+    'Sanitizer',
+    'Lancet',
+    'Facial Tissue',
+    'Abdominal Pad',
+    'Adhesive Pad',
+    'Cotton',
+    'Gauze',
+    'Saline',
+    'Lip Balm',
+    'Dressing Pad',
+    'Foam Dressing',
+    'Syringe Sterile',
+    'Steri-strip',
+    'Surgical Tape'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

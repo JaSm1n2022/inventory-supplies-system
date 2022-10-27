@@ -172,10 +172,10 @@ const Product = (props) => {
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
-    console.log('[Keyword 1]',temp);
-    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1 
-    || data.item.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
-    || data.category.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    console.log('[Keyword 1]',temp,keyword);
+    const found = temp.filter( data => (data.description && data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
+    || (data.item && data.item.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
+    || (data.category && data.category.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     );
     console.log('[Keyword 2]',found);
    

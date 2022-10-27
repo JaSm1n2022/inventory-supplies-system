@@ -6,6 +6,7 @@ class DataHandler {
       { width: 220, name: 'actions', header: 'Actions' },
       { defaultFlex: 1, minWidth: 120, name: 'ordered_at', header: 'Date Order  ' },
       { defaultFlex: 1, minWidth: 200, name: 'order_number', header: 'Order Number' },
+      { defaultFlex: 1, minWidth: 200, name: 'grand_total', header: 'Grand Total (tax/shipping)' },
       { defaultFlex: 1, minWidth: 200, name: 'description', header: 'Description' },
       { defaultFlex: 1, minWidth: 200, name: 'category', header: 'Category' },
       { defaultFlex: 1, minWidth: 200, name: 'item', header: 'Item' },
@@ -24,7 +25,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 200, name: 'payment_method', header: 'Payment Method' },
       { defaultFlex: 1, minWidth: 200, name: 'payment_info', header: 'Payment Info' },
       { defaultFlex: 1, minWidth: 200, name: 'payment_transaction_at', header: 'Paid On' },
-      { defaultFlex: 1, minWidth: 200, name: 'grand_total', header: 'Grand Total (tax/shipping)' },
+      
 
       
      
