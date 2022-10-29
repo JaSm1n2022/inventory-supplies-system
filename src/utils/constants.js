@@ -391,7 +391,9 @@ export const countries =
     'Foam Dressing',
     'Syringe Sterile',
     'Steri-strip',
-    'Surgical Tape'
+    'Surgical Tape',
+    'Nasogastric Tube',
+    'Silicone-Elastomer Latex'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

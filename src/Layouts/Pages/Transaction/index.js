@@ -21,6 +21,7 @@ import InventoryTable from "../../../Common/components/inventorySystem/Inventory
 import ActionsFunction from "../../../Common/components/inventorySystem/ActionsFunction";
 import { productListStateSelector } from "../../../store/selectors/productSelector";
 import { attemptToFetchProduct, resetFetchProductState } from "../../../store/actions/productAction";
+import moment from "moment";
 
 
 let productList = [];
@@ -85,6 +86,7 @@ const Transaction = (props) => {
   }, []);
 
   if(props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
+    productList = [];
     productList = [...props.products.data];
     props.products.data.forEach(item => {
       item.name = item.description;
@@ -132,11 +134,15 @@ const Transaction = (props) => {
     props.DeleteTransaction(id);
   }
   const createTransactionHandler = (payload,mode) => {
-    console.log('[Create Transaction Handler]',payload,mode);
+    console.log('[Order Date Create Transaction Handler]',payload,mode);
+    console.log('[Order Date]',moment(payload.orderedDt));
+    console.log('[Order Date2]',moment(payload.orderedDt).format('YYYY-MM-DD'));
+    console.log('[Order Date3]',moment(payload.orderedDt).utc().format('YYYY-MM-DD'));
+    console.log('[Order Date4]',moment(new Date(payload.orderedDt)).utc().format('YYYY-MM-DD'));
     const params = {
       created_at : new Date(),
       
-      ordered_at : payload.orderedDt,
+      ordered_at : moment(payload.orderedDt).format('YYYY-MM-DD 00:00:00'),
       order_number : payload.orderNumber,
       description : payload.description,
       category: payload.category.name,

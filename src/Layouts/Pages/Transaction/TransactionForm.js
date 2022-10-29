@@ -271,21 +271,23 @@ function TransportationForm(props) {
         fm.pricePerPcs = 0.00;
         fm.unitPrice = 0.00;
         fm.totalPrice = 0.0;
-        fm.totalPcs = 0;
+        fm.totalPcs = 1;
+        fm.unitPiece = 1;
+        fm.qty = 1;
         setGeneralForm(fm);
     }, []);
     useEffect(() => {
         if (props.item) {
-            console.log('[effects 2]');
+            
             console.log('[items]', props.item);
-            const fm = { ...props.item };
-            fm.expectedDeliveryDt = moment(new Date(fm.expected_delivery_at)).format('YYYY-MM-DD');
+            const fm = { ...props.item };   
+            fm.expectedDeliveryDt = `${fm.expected_delivery_at}T00:00:00.000Z`;
             fm.grandTotal = parseFloat(fm.grand_total||0.00).toFixed(2);
             fm.orderNumber = fm.order_number;
-            fm.orderedDt  = moment(new Date(fm.ordered_at)).format('YYYY-MM-DD');
+            fm.orderedDt  = `${fm.ordered_at}T00:00:00.000Z`;
             fm.paymentInfo = fm.payment_info;
             fm.paymentMethod = fm.payment_method ? paymentMethods.find(pm => pm.name === fm.payment_method) : DEFAULT_ITEM;
-            fm.paymentDt = moment(new Date(fm.payment_transaction_at)).format('YYYY-MM-DD');
+            fm.paymentDt = `${fm.payment_transaction_at}T00:00:00.000Z`;
             fm.pricePerPcs = parseFloat(fm.price_per_pcs || 0.00).toFixed(2);
             fm.qtyUom = fm.qty_uom ? uoms.find(u => u.name === fm.qty_uom) : DEFAULT_ITEM;
             fm.status = fm.status ? statuses.find(s => s.name === fm.status) : DEFAULT_ITEM;
@@ -395,6 +397,12 @@ function TransportationForm(props) {
         gen.size = item.size;
         gen.dimension = item.dimension;
         gen.item = item.item;
+        gen.qtyUom = uoms.find(u => u.name === item.qty_uom);
+        gen.pricePerPcs = item.price_per_pcs;      
+        gen.totalPrice = (item.price_per_pcs || 1) * (item.qty || 1);
+        gen.qty = item.qty;
+        gen.totalPcs = (item.count || 1) * (item.qty || 1);
+        gen.unitPiece = item.count;
         setGeneralForm(gen);
         
     }
