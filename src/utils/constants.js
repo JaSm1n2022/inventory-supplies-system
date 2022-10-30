@@ -328,7 +328,12 @@ export const countries =
   ]
   export const SUPPLY_VENDOR = [
     'Amazon',
-    'Medline'
+    'Medline',
+    'Dollar Tree',
+    'Costco',
+    'Sams',
+    'Walmart',
+    'Mckesson'
   ]
   export const SUPPLY_STATUS = [
     

@@ -16,6 +16,7 @@ import { transactionListStateSelector } from '../../store/selectors/transactionS
 import { attemptToFetchTransaction, resetFetchTransactionState } from '../../store/actions/transactionAction';
 import TransactionChart from './components/TransactionChart';
 import ProviderChart from './components/ProviderChart';
+import GeneralChart from './components/GeneralChart';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -86,7 +87,7 @@ let providerDashboard = [
     series: [0, 0, 0],
     amazon: 0,
     medline: 0,
-    others: 0
+   
   }
 ]
 
@@ -235,8 +236,8 @@ const Dashboard = (props) => {
     providerDashboard.expenses = grandTotal;
     providerDashboard.amazon = amazonAmount;
     providerDashboard.medline = medlineAmount;
-    providerDashboard.others = otherAmount;
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(otherAmount)];
+    
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount)];
     isTransactionDone = true;
     setIsTransactionCollection(false);
   }
@@ -390,7 +391,7 @@ const Dashboard = (props) => {
           <TabPanel value={value} index="two">
             <Grid container direction="row">
               <Grid item xs={12}>
-                <Typography variant="h4">{`Total Expenses - $${parseFloat(providerDashboard.expenses).toFixed(2)}`}</Typography>
+                <Typography variant="h4">{`Total Expenses : $${parseFloat(providerDashboard.expenses).toFixed(2)}`}</Typography>
 
               </Grid>
               <Grid item xs={6} style={{ paddingTop: 20 }}>
@@ -402,7 +403,7 @@ const Dashboard = (props) => {
 
                 </div>
                 <div>
-                  <TransactionChart series={transactionDashboard.series} />
+                  <GeneralChart labels={['OFFICE','PATIENTS']}  series={transactionDashboard.series} />
                 </div>
               </Grid>
               <Grid item xs={6} style={{ paddingTop: 20 }}>
@@ -411,10 +412,9 @@ const Dashboard = (props) => {
 
                   <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
                   <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
-                  <Typography variant="h6">{`Other Expenses - $${parseFloat(providerDashboard.others).toFixed(2)}`}</Typography>
                 </div>
                 <div>
-                  <ProviderChart series={providerDashboard.series} />
+                  <GeneralChart labels={['AMAZON','MEDLINE']} series={providerDashboard.series} />
                 </div>
               </Grid>
             </Grid>

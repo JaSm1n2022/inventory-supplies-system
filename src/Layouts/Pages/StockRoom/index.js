@@ -25,6 +25,7 @@ import { attemptToFetchProduct, resetFetchProductState } from "../../../store/ac
 
 let productList = [];
 let grandTotal = 0;
+
 let originalSource = undefined;
 const Stock = (props) => {
   const [dataSource, setDataSource] = useState([]);
@@ -33,6 +34,7 @@ const Stock = (props) => {
   const [isCreateStockCollection, setIsCreateStockCollection] = useState(true);
   const [isUpdateStockCollection, setIsUpdateStockCollection] = useState(true);
   const [isDeleteStockCollection, setIsDeleteStockCollection] = useState(true);
+  const [isProductCollection, setIsProductCollection] = useState(true);
   const [isFormModal, setIsFormModal] = useState(false);
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
@@ -77,14 +79,20 @@ const Stock = (props) => {
       setIsDeleteStockCollection(true);
 
     }
-  }, [isStocksCollection, isCreateStockCollection, isUpdateStockCollection, isDeleteStockCollection]);
+    if (!isProductCollection && props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
+      console.log('[change me to true]');
+      props.resetListProducts();
+      setIsProductCollection(true);
+
+    }
+  }, [isProductCollection,isStocksCollection, isCreateStockCollection, isUpdateStockCollection, isDeleteStockCollection]);
   useEffect(() => {
     console.log('list stocks');
     props.listProducts();
-    props.listStocks();
+  
   }, []);
 
-  if (props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
+  if (isProductCollection && props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
     productList = [...props.products.data];
     productList.forEach(item => {
       item.name = item.description;
@@ -92,16 +100,17 @@ const Stock = (props) => {
       item.label = item.description;
       item.categoryType = 'description'
     });
-
-    props.resetListProducts();
+    setIsProductCollection(false);
+    props.listStocks();
+   
   }
   console.log('[props.Stocks]', props.stocks);
   if (isStocksCollection && props.stocks && props.stocks.status === ACTION_STATUSES.SUCCEED) {
     grandTotal = 0.0;
     let source = props.stocks.data;
     if (source && source.length) {
-      source = DataHandler.mapData(source);
-      const grands = source.map(map => map.grand_total);
+      source = DataHandler.mapData(source,productList);
+      const grands = source.map(map => map.worth);
       grands.forEach(g => {
         grandTotal += parseFloat(g) || 0.00;
       });
@@ -184,11 +193,20 @@ const Stock = (props) => {
   const filterRecordHandler = (keyword) => {
     console.log('[Keyword]',keyword);
     if(!keyword) {
+      grandTotal = 0.0;
+      const grands = [...originalSource].map(map => map.worth);
+      grands.forEach(g => {
+        grandTotal += parseFloat(g) || 0.00;
+      });
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
     const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1);
-   
+    grandTotal = 0.0;
+      const grands = found.map(map => map.worth);
+      grands.forEach(g => {
+        grandTotal += parseFloat(g) || 0.00;
+      });
    setDataSource(found);
     }
   };
@@ -260,7 +278,7 @@ const Stock = (props) => {
           </div>
         </Grid>
 
-        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
+        <Grid container justifyContent="space-between" style={{ paddingBottom: 10,paddingTop:12}}>
           <div style={{ display: 'inline-flex', gap: 10 }}>
             <Button
               onClick={() => createFormHandler()}
@@ -307,6 +325,8 @@ const Stock = (props) => {
               > Export Excel </Button>
             }
           </div>
+          <Typography variant="h6">{`Total Worth: $${parseFloat(grandTotal||0).toFixed(2)}`}</Typography>
+          
         </Grid>
         <Grid item xs={12}>
 
