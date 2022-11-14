@@ -17,6 +17,7 @@ import { attemptToFetchTransaction, resetFetchTransactionState } from '../../sto
 import TransactionChart from './components/TransactionChart';
 import ProviderChart from './components/ProviderChart';
 import GeneralChart from './components/GeneralChart';
+import Helper from '../../utils/helper';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -100,7 +101,8 @@ const Dashboard = (props) => {
   const [isDistributionCollection, setIsDistributionCollection] = useState(true);
   const [isTransactionCollection, setIsTransactionCollection] = useState(true);
   const [patient, setPatient] = useState(DEFAULT_ITEM);
-
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   useEffect(() => {
     listPatients();
   }, []);
@@ -203,7 +205,12 @@ const Dashboard = (props) => {
     })
     //make data
     patientOptions = [...patientDashboard];
-    listTransactions();
+    const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
+    setDateFrom(dates.from);
+    setDateTo(dates.to);
+    console.log('[dates]',dates);
+     listTransactions({from : dates.from,to:dates.to});
+    //listTransactions();
   }
   if (isTransactionCollection && transactions.status === ACTION_STATUSES.SUCCEED) {
     console.log('[Transactions]', transactions);
