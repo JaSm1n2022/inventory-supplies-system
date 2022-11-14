@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles, withStyles } from '@mui/styles';
-import { Button, Grid, Typography } from '@mui/material';
+import { Button, Grid, Paper, Typography } from '@mui/material';
 import {
   Modal,
 } from '@mui/material';
@@ -25,9 +25,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     minWidth: 600,
 
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'white',
     border: '2px solid #000',
-    boxShadow: theme.shadows[5],
+    
     overflowX: 'auto'
   },
 
@@ -61,7 +61,7 @@ export default function DateRangeModal(props) {
   const [modalStyle] = useState(getModalStyle);
   const [to, setTo] = useState(dateTo ? new Date(`${dateTo} 00:00`) : new Date());
   const [from, setFrom] = useState(dateFrom ? new Date(`${dateFrom} 00:00`) : new Date());
-  const dateInputHandler = (value, name) => {
+  const dateInputHandler = (name,value) => {
     switch (name) {
       case "to":
         setTo(value);
@@ -78,10 +78,11 @@ export default function DateRangeModal(props) {
   };
   const body = (
     <div style={modalStyle} className={classes.paper}>
+       <Paper elevation={2} style={{paddingLeft:10,paddingRight:10,paddingTop:10}}> 
         <Typography>{shipmentNbr || ''}</Typography>
         <label htmlFor="">{category || ''} {description}</label>
         <br />
-        <Grid spacing={1} container xs={12} direction="row">
+        <Grid spacing={1} container xs={12} direction="row" style={{paddingTop:10}}>
           <Grid xs={5} item style={{alignItems:'center'}}>
             <RegularDatePicker name={'from'} value={from || dateFrom} onChange={dateInputHandler} label={'Start'}/>
           </Grid>
@@ -99,7 +100,7 @@ export default function DateRangeModal(props) {
           <Button variant="contained" color="primary" onClick={() => yesHandler(from,to)}>Apply</Button>
         </div>
         <br />
-      
+      </Paper>
     </div>
   );
 console.log('[Date]',dateTo,dateFrom);

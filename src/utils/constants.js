@@ -33,7 +33,6 @@ export const DATE_TYPE_SELECTION = [
   { name: "This Week", value: "thisWeek", label:"This Week", id: "5" },
   { name: "Last Month", value: "lastMonth", label:"Last Month", id: "6" },
   { name: "This Month", value: "thisMonth", label:"This Month", id: "7" },
-  { name: "Next Month", value: "nextMonth", label:"Next Month", id: "8" },
   { name: "Last 30 Days", value: "last30Days", label:"Last 30 Days", id: "9" },
   { name: "Last 90 Days", value: "last90Days", label:"Last 90 Days", id: "10" },
   { name: "YTD", value: "ytd", label:"YTD", id: "11" },
@@ -398,7 +397,16 @@ export const countries =
     'Steri-strip',
     'Surgical Tape',
     'Nasogastric Tube',
-    'Silicone-Elastomer Latex'
+    'Silicone-Elastomer Latex',
+    'Stamp',
+    'Body Wash',
+    'Band-Aid',
+    'Powder Antifungal',
+    'Masks',
+    'Belt',
+    'Pillow',
+    'Gel',
+    'Disposable Bag'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

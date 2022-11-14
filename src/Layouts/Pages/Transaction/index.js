@@ -37,6 +37,8 @@ const Transaction = (props) => {
   const [isFormModal, setIsFormModal] = useState(false);
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo,setDateTo] = useState('');
   const [isAddGroupButtons,setIsAddGroupButtons] = useState(false);
 
   const createFormHandler = (data, mode) => {
@@ -80,9 +82,12 @@ const Transaction = (props) => {
     }
   }, [isTransactionsCollection,isCreateTransactionCollection,isUpdateTransactionCollection,isDeleteTransactionCollection]);
   useEffect(() => {
-   
+   const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
+   setDateFrom(dates.from);
+   setDateTo(dates.to);
+   console.log('[dates]',dates);
     props.listProducts();
-    props.listTransactions();
+    props.listTransactions({from : dates.from,to:dates.to});
   }, []);
 
   if(props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
@@ -96,6 +101,12 @@ const Transaction = (props) => {
     });
 
     props.resetListProducts();
+  }
+
+  const filterByDateHandler = (dates) => {
+    setDateTo(dates.to);
+    setDateFrom(dates.from);
+    props.listTransactions({from : dates.from,to:dates.to});
   }
   console.log('[props.transactions]', props.transactions);
   if (isTransactionsCollection && props.transactions && props.transactions.status === ACTION_STATUSES.SUCCEED) {
@@ -181,18 +192,18 @@ const Transaction = (props) => {
   console.log('[Is Create Transaction Collection]',props.CreateTransactionState);
   if (isCreateTransactionCollection && props.CreateTransactionState && props.CreateTransactionState.status === ACTION_STATUSES.SUCCEED) {
     setIsCreateTransactionCollection(false);
-    props.listTransactions();
+    props.listTransactions({from : dateFrom,to:dateTo});
  
   }
   if (isUpdateTransactionCollection && props.UpdateTransactionState && props.UpdateTransactionState.status === ACTION_STATUSES.SUCCEED) {
     setIsUpdateTransactionCollection(false);
-    props.listTransactions();
+    props.listTransactions({from : dateFrom,to:dateTo});
   
   }
   console.log('[isDeleteTransaction]',isDeleteTransactionCollection,props.DeleteTransactionState);
   if (isDeleteTransactionCollection && props.DeleteTransactionState && props.DeleteTransactionState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteTransactionCollection(false);
-    props.listTransactions();
+    props.listTransactions({from : dateFrom,to:dateTo});
   
   }
   
@@ -284,7 +295,7 @@ const exportToExcelHandler = () => {
           <Typography variant="h6">Supply Order Transaction</Typography>
           </div>
           <div>
-          <FilterTable filterRecordHandler={filterRecordHandler}/>
+          <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler}/>
           </div>
         </Grid>
         <Grid container justifyContent="space-between" style={{ paddingBottom: 12,paddingTop:12 }}>

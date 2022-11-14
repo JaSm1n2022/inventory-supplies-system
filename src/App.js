@@ -8,7 +8,7 @@ import * as actions from './store/actions';
 import StockRoom from './Layouts/Pages/StockRoom';
 import Transaction from './Layouts/Pages/Transaction';
 import Distribution from './Layouts/Pages/Distribution';
-import Invoice from './Layouts/Pages/Invoice';
+import Invoice from './Layouts/Pages/InvoiceV2';
 import Vendor from './Layouts/Settings/Vendor';
 import Product from './Layouts/Settings/Product';
 import Location from './Layouts/Settings/Location';
