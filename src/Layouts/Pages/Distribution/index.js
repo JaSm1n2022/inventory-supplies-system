@@ -41,7 +41,7 @@ let isPatientListDone = false;
 let isEmployeeListDone = false;
 let isAllFetchDone = false;
 
-
+let grandTotal = 0.0;
 let originalSource = undefined;
 
 const Distribution = (props) => {
@@ -52,7 +52,8 @@ const Distribution = (props) => {
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
   const [isAddGroupButtons, setIsAddGroupButtons] = useState(false);
-
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo,setDateTo] = useState('');
   const [isDistributionsCollection, setIsDistributionsCollection] = useState(true);
   const [isCreateDistributionCollection, setIsCreateDistributionCollection] = useState(true);
   const [isUpdateDistributionCollection, setIsUpdateDistributionCollection] = useState(true);
@@ -73,10 +74,13 @@ const Distribution = (props) => {
 
   useEffect(() => {
     console.log('list Distributions');
+    const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
+    setDateFrom(dates.from);
+    setDateTo(dates.to);
     props.listProducts();
     props.listStocks();
     props.listPatients();
-    props.listDistributions();
+    props.listDistributions({from : dates.from,to:dates.to});
     props.listEmployees();
   }, []);
 
@@ -109,6 +113,13 @@ const Distribution = (props) => {
 
     }
   }, [isDistributionsCollection, isCreateDistributionCollection, isUpdateDistributionCollection, isDeleteDistributionCollection]);
+
+  const grandTotalHandler = (data) => {
+    grandTotal = 0.0;
+    data.forEach(e => {
+      grandTotal = parseFloat(parseFloat(grandTotal) + parseFloat(e.estimated_total_amt)).toFixed(2);
+    })
+  }
 
   if (props.patients && props.patients.status === ACTION_STATUSES.SUCCEED) {
     patientList = [...props.patients.data];
@@ -183,6 +194,7 @@ const Distribution = (props) => {
     });
     setColumns(cols);
     originalSource = [...source];
+    grandTotalHandler(source);
     setDataSource(source);
     isDistributionListDone = true;
     setIsDistributionsCollection(false);
@@ -190,7 +202,8 @@ const Distribution = (props) => {
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
   if (isCreateDistributionCollection && props.createDistributionState && props.createDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsCreateDistributionCollection(false);
-    props.listDistributions();
+    
+    props.listDistributions({from : dateFrom,to:dateTo});
 
   }
   if (isUpdateDistributionCollection && props.updateDistributionState && props.updateDistributionState.status === ACTION_STATUSES.SUCCEED) {
@@ -205,6 +218,11 @@ const Distribution = (props) => {
 
   }
 
+  const filterByDateHandler = (dates) => {
+    setDateTo(dates.to);
+    setDateFrom(dates.from);
+    props.listDistributions({from : dates.from,to:dates.to});
+  }
 
   const deleteRecordItemHandler = (id) => {
     console.log('[delete Distribution id]', id);
@@ -257,18 +275,18 @@ const Distribution = (props) => {
   }
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
 
-
-
+  
   const filterRecordHandler = (keyword) => {
     console.log('[Keyword]',keyword);
     if(!keyword) {
+      grandTotalHandler([...originalSource]);  
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
     const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
     || data.patient_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
     );
-   
+    grandTotalHandler(found);
    setDataSource(found);
     }
   };
@@ -294,6 +312,7 @@ const Distribution = (props) => {
     }
     setIsAddGroupButtons(dtSource.find(f => f.isChecked));
     originalSource = [...dtSource];
+    grandTotalHandler(dtSource);
     setDataSource(dtSource);
 
   }
@@ -350,7 +369,7 @@ const Distribution = (props) => {
                 <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
               </div>
               <div>
-                <FilterTable filterRecordHandler={filterRecordHandler} />
+                <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler}/>
               </div>
             </Grid>
 
@@ -427,6 +446,9 @@ const Distribution = (props) => {
                   </div>
                 }
               </div>
+            </Grid>
+            <Grid item xs={12} align="right">
+              <Typography variant="h5">{`Grand Total : ${grandTotal}`}</Typography>
             </Grid>
             <Grid item xs={12} style={{ paddingTop: 10 }}>
 

@@ -469,6 +469,22 @@ class SortUtil {
       }
       return data;
     }
+
+    static sortByPatientStatus = async (items) => {
+      console.log('[items to sort]',items);
+      items.sort((a, b) => {
+        const tempA = !a.status ? 'ACTIVE' : a.status.toUpperCase();
+        const tempB = !b.status ? 'ACTIVE' : b.status.toUpperCase();
+        if (tempA < tempB) {
+          return -1;
+        } if (tempA > tempB) {
+          return 1;
+        }
+        return 0;
+      });
+      console.log('[return me]',items);
+      return items;
+    };
   
     static sortLocalCompare(data) {
       data.sort(function (a, b) {

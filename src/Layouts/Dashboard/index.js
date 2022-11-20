@@ -8,17 +8,17 @@ import { distributionListStateSelector } from '../../store/selectors/distributio
 import { attemptToFetchPatient, resetFetchPatientState } from '../../store/actions/patientAction';
 import { attemptToFetchDistribution, resetFetchDistributionState } from '../../store/actions/distributionAction';
 import { connect } from 'react-redux';
-import { LocalDining } from '@mui/icons-material';
 import { useEffect } from 'react';
-import { ACTION_STATUSES, DEFAULT_ITEM } from '../../utils/constants';
+import { ACTION_STATUSES, DATE_TYPE_SELECTION, DEFAULT_ITEM } from '../../utils/constants';
 import SingleWithClearAutoComplete from '../../Common/components/AutoComplete/SingleWithClearAutoComplete';
 import { transactionListStateSelector } from '../../store/selectors/transactionSelector';
 import { attemptToFetchTransaction, resetFetchTransactionState } from '../../store/actions/transactionAction';
-import TransactionChart from './components/TransactionChart';
-import ProviderChart from './components/ProviderChart';
 import GeneralChart from './components/GeneralChart';
 import Helper from '../../utils/helper';
-
+import DateTypeAutoComplete from '../../Common/components/AutoComplete/DateTypeAutoComplete';
+import DateRangeModal from '../../Common/components/Modal/DateRangeModal';
+import moment from 'moment';
+import { v4 as uuidv4 } from "uuid";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -91,8 +91,11 @@ let providerDashboard = [
    
   }
 ]
-
-
+let dateOptions = [];
+  let lastDateType = '';
+  DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
+  
+  const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
 const Dashboard = (props) => {
   const { listTransactions, resetlistTransactions, transactions, listPatients, listDistributions, resetListPatients, resetListDistribution, patients, distributions } = props;
   const classes = useStyles();
@@ -101,10 +104,16 @@ const Dashboard = (props) => {
   const [isDistributionCollection, setIsDistributionCollection] = useState(true);
   const [isTransactionCollection, setIsTransactionCollection] = useState(true);
   const [patient, setPatient] = useState(DEFAULT_ITEM);
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom, setDateFrom] = useState(dates.from);
+  const [dateTo, setDateTo] = useState(dates.to);
+  const [dateSelected,setDateSelected] = useState(dateOptions.find(d => d.value === 'thisMonth'));
+  const [isDateCustom, setIsDateCustom] = useState(false);
+
+  
+
   useEffect(() => {
     listPatients();
+    
   }, []);
 
   useEffect(() => {
@@ -123,20 +132,108 @@ const Dashboard = (props) => {
   }, [isPatientCollection, isDistributionCollection, isTransactionCollection]);
 
 
+  const autoCompleteInputHander = (item) => {
+    if (item.category === 'date') {
+        let data = {
+            from: '',
+            to: ''
+        };
+        if (item.value !== 'custom') {
+            data = Helper.formatDateRangeByCriteriaV2(item.value);
+            console.log('[item data]', data);
+            setDateFrom(data.from);
+            setDateTo(data.to);
+          }
+     
+        setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
+        setDateSelected(item);
+       console.log('[List me]',data,isDistributionCollection);
+          isDistributionListDone = false;
+        if(data.from) {
+        listDistributions({from : data.from || dateFrom,to:data.to||dateTo});
+        }
+    }
+
+}
+const onClearHandler = (name) => {
+
+  if (name === 'dateType') {
+      lastDateType = '';
+      setDateSelected(DEFAULT_ITEM);
+      setDateFrom('');
+      setDateTo('');
+
+  }
+
+}
+const closeDateModalHandler = () => {
+
+  setIsDateCustom(false);
+  setDateSelected(dateOptions.find(e => e.value === lastDateType));
+
+}
+
+const sortByPatientStatus =  (items) => {
+  console.log('[items to sort]',items);
+  items.sort((a, b) => {
+    const tempA = !a.status ? 'ACTIVE' : a.status.toUpperCase();
+    const tempB = !b.status ? 'ACTIVE' : b.status.toUpperCase();
+    if (tempA < tempB) {
+      return -1;
+    } if (tempA > tempB) {
+      return 1;
+    }
+    return 0;
+  });
+  console.log('[return me]',items);
+  return items;
+};
+const addDateHandler = (from, to) => {
+
+  const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
+
+  const options = dateOptions.filter(f => !f.dateRange);
+  const etaValue = {
+
+      name: dt,
+      value: dt,
+      dateRange: dt,
+      from,
+      to,
+      id: uuidv4(),
+      label: dt,
+      category: 'etdDateType',
+      disabled: true
+  };
+  options.push(etaValue);
+  dateOptions = options;
+  setIsDateCustom(false);
+  setDateSelected(etaValue);
+  const _sfrom = from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+  const _sTo = to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+  setDateFrom(_sfrom);
+  setDateTo(_sTo);
+  listDistributions({from: _sfrom, to: _sTo });
+  
+}
+
   console.log('[Dashboard Patient List]', patients);
-  console.log('[Dashboard Distribution List]', distributions);
+  console.log('[Dashboard Distribution List]', distributions,isDistributionCollection);
   if (isPatientCollection && patients && patients.status === ACTION_STATUSES.SUCCEED) {
     setIsPatientCollection(false);
     isDistributionListDone = false;
     isPatientListDone = true;
     patientList = patients.data || [];
-    listDistributions();
+    patientList = sortByPatientStatus(patientList);
+   // patientList = patientList.filter(f => f.status !== 'Inactive');
+   setIsPatientCollection(false);
+    listDistributions({from : dateFrom,to:dateTo});
   }
   if (isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
     isDistributionListDone = true;
     patientGrandTotal = 0.0;
     isTransactionDone = false;
-    setIsDistributionCollection(false);
+    
     distributionList = distributions.data || [];
     console.log('[Patient Data]', patientList);
     console.log('[Patient Data2]', distributionList);
@@ -193,6 +290,7 @@ const Dashboard = (props) => {
       }
       patientGrandTotal += estimatedAmt;
       patientDashboard.push({
+        status :patient.status,
         name: patient.name,
         label: patient.name,
         value: patient.name,
@@ -205,11 +303,10 @@ const Dashboard = (props) => {
     })
     //make data
     patientOptions = [...patientDashboard];
-    const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
-    setDateFrom(dates.from);
-    setDateTo(dates.to);
-    console.log('[dates]',dates);
-     listTransactions({from : dates.from,to:dates.to});
+    
+    setIsDistributionCollection(false);
+    listTransactions({from : dateFrom,to:dateTo});
+    
     //listTransactions();
   }
   if (isTransactionCollection && transactions.status === ACTION_STATUSES.SUCCEED) {
@@ -219,7 +316,8 @@ const Dashboard = (props) => {
     let officeAmount = 0.0;
     let amazonAmount = 0.0;
     let medlineAmount = 0.0;
-    let otherAmount = 0.0;
+    let mckessonAmount = 0.0;
+    
     transactionData.forEach(transact => {
       grandTotal += parseFloat(transact.grand_total);
       if (transact.category === 'Office') {
@@ -229,9 +327,10 @@ const Dashboard = (props) => {
         amazonAmount += parseFloat(transact.grand_total);
       } else if (transact.vendor === 'Medline') {
         medlineAmount += parseFloat(transact.grand_total);
-      } else {
-        otherAmount += parseFloat(transact.grand_total);
-      }
+      } else if (transact.vendor === 'Mckesson') {
+        mckessonAmount += parseFloat(transact.grand_total);
+      
+      } 
     })
     grandTotal = parseFloat(grandTotal).toFixed(2);
     officeAmount = parseFloat(officeAmount).toFixed(2);
@@ -243,8 +342,9 @@ const Dashboard = (props) => {
     providerDashboard.expenses = grandTotal;
     providerDashboard.amazon = amazonAmount;
     providerDashboard.medline = medlineAmount;
+    providerDashboard.mckesson = mckessonAmount;
     
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount)];
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount),parseFloat(mckessonAmount)];
     isTransactionDone = true;
     setIsTransactionCollection(false);
   }
@@ -288,6 +388,21 @@ const Dashboard = (props) => {
         :
         <React.Fragment>
           <Typography variant="h6">DASHBOARD</Typography>
+          <div style={{width:500,paddingTop:20}}>
+            <DateTypeAutoComplete
+					value={dateSelected || DEFAULT_ITEM}
+					name="dateType"
+
+					placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+					onSelectHandler={autoCompleteInputHander}
+					onClearHandler={onClearHandler}
+					options={dateOptions || [DEFAULT_ITEM]}>
+
+				</DateTypeAutoComplete>
+                {isDateCustom &&
+					<DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
+				}
+           </div>
           <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
             <Tab
 
@@ -311,7 +426,11 @@ const Dashboard = (props) => {
 
               </Grid>
               <Grid container justifyContent="space-between" style={{paddingBottom:20}}>
+              <div style={{ display: 'flex', gap: 10 }}>
+          
+
                 <div style={{width:300}}>
+                  
                     <SingleWithClearAutoComplete
                       id='patient'
                       placeholder='Select Patient'
@@ -322,6 +441,7 @@ const Dashboard = (props) => {
                       onSelectHandler={autoCompleteGeneralInputHander}
                       onChangeHandler={inputGeneralHandler}
                     />
+                    </div>
                     </div>
                   <Typography variant="h5" style={{border:'1px solid blue'}}>{`Total : $${parseFloat(patientGrandTotal||0.0).toFixed(2)} `}</Typography>
               </Grid>
@@ -338,6 +458,7 @@ const Dashboard = (props) => {
                     <Grid item xs={4}>
                       <div align="center">
                         <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
+                        <Typography variant="body1">{!map.status ? '(ACTIVE)' : `(${map.status.toUpperCase()})`}</Typography>
                       </div>
                       <div>
                         <ClientPieChart series={map.series} />
@@ -345,53 +466,7 @@ const Dashboard = (props) => {
                     </Grid>
                   )
                 })}
-                {/*
-                <Grid item xs={4}>
-                  <div align="center">
-                    <Typography variant="h6">JOHN DOE 2 - $500.00</Typography>
-                  </div>
-                  <div>
-                    <ClientPieChart />
-                  </div>
-                </Grid>
-
-                <Grid item xs={4}>
-                  <div align="center">
-                    <Typography variant="h6">JOHN DOE 3 - $600.00</Typography>
-                  </div>
-                  <div>
-                    <ClientPieChart />
-                  </div>
-
-                </Grid>
-                <Grid item xs={4}>
-                  <div align="center">
-                    <Typography variant="h6">JOHN DOE 4 - $600.00</Typography>
-                  </div>
-                  <div>
-                    <ClientPieChart />
-                  </div>
-
-                </Grid>
-                <Grid item xs={4}>
-                  <div align="center">
-                    <Typography variant="h6">JOHN DOE 5 - $600.00</Typography>
-                  </div>
-                  <div>
-                    <ClientPieChart />
-                  </div>
-
-                </Grid>
-                <Grid item xs={4}>
-                  <div align="center">
-                    <Typography variant="h6">JOHN DOE 6 - $600.00</Typography>
-                  </div>
-                  <div>
-                    <ClientPieChart />
-                  </div>
-
-                </Grid>
-              */}
+               
               </Grid>
             </Grid>
           </TabPanel>
@@ -419,9 +494,10 @@ const Dashboard = (props) => {
 
                   <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
                   <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
+                  <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
                 </div>
                 <div>
-                  <GeneralChart labels={['AMAZON','MEDLINE']} series={providerDashboard.series} />
+                  <GeneralChart labels={['AMAZON','MEDLINE','MCKESSON']} series={providerDashboard.series} />
                 </div>
               </Grid>
             </Grid>

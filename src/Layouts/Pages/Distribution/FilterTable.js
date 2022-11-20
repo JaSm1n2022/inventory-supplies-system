@@ -1,49 +1,35 @@
 import { Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SearchLookupTextField from "../../../Common/components/TextField/SearchLookupTextField";
+import DateTypeAutoComplete from "../../../Common/components/AutoComplete/DateTypeAutoComplete";
+import DateRangeModal from "../../../Common/components/Modal/DateRangeModal";
 import { DATE_TYPE_SELECTION, DEFAULT_ITEM } from "../../../utils/constants";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import Helper from "../../../utils/helper";
-const INVOICE_KEYWORDS = [
-'Invoice Number',
-'Payment Method'
-];
-let searchKeywordTypes = [];
-let invoiceDateOptions = [];
-let lastInvoiceDtType = '';
-DATE_TYPE_SELECTION.forEach(c => { invoiceDateOptions.push({ ...c, category: 'invoiceDate' }) });
-INVOICE_KEYWORDS.forEach((item, i) => {
-    searchKeywordTypes.push({
-        id: i,
-        name: item,
-        value: item,
-        label: item,
-        category: 'keyword'
-    })
-})
+
+
+let dateOptions = [];
+let lastDateType = '';
+DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
+
 
 const FilterTable = (props) => {
-    const [keywordType, setKeywordType] = useState('ALL');
     const [keywordValue, setKeywordValue] = useState('');
-    const [invoiceDateSelected,setInvoiceDateSelected] = useState({name:''})
-    const [invoiceFrom,setInvoiceFrom] = useState('');
-    const [invoiceTo, setInvoiceTo] = useState('');
-    const [isInvoiceDtCustom,setIsInvoiceDtCustom] = useState(false);
+    const [dateSelected,setDateSelected] = useState(dateOptions.find(d => d.value === 'thisMonth'));
+    const [dateFrom,setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
+    const [isDateCustom,setIsDateCustom] = useState(false);
     
     useEffect(() => {
         const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
-        setInvoiceFrom(dates.from);
-        setInvoiceTo(dates.to);
+        setDateFrom(dates.from);
+        setDateTo(dates.to);
       }, []);
 
     const inputHandler = ({ target }) => {
 
         switch (target.name) {
-            case "keywordType":
-                setKeywordType(target.value);
-
-                return;
             case "keywordValue":
                 setKeywordValue(target.value);
                 return;
@@ -53,7 +39,7 @@ const FilterTable = (props) => {
 
     };
     const autoCompleteInputHander = (item) => {
-		if (item.category === 'invoiceDate') {
+		if (item.category === 'date') {
 			let data = {
 				from: '',
 				to: ''
@@ -62,43 +48,44 @@ const FilterTable = (props) => {
 				data = Helper.formatDateRangeByCriteriaV2(item.value);
 				console.log('[item data]', data);
 			}
-            setInvoiceFrom(data.from);
-            setInvoiceTo(data.to);
-			setIsInvoiceDtCustom(item.value === 'custom' || item.dateRange ? true : false);
-			setInvoiceDateSelected(item);
+            setDateFrom(data.from);
+            setDateTo(data.to);
+			setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
+			setDateSelected(item);
+            props.filterByDateHandler({from : data.from,to:data.to});
 			
     }
 
 	}
     
     const onPressEnterKeyHandler = () => {
+    props.filterRecordHandler(keywordValue);        
 
-        props.filterRecordHandler(keywordValue);
     }
 
     const onClearHandler = (name) => {
 
-		if (name === 'invoiceDtType') {
-			lastInvoiceDtType = '';
-			setInvoiceDateSelected(DEFAULT_ITEM);
-            setInvoiceFrom('');
-            setInvoiceTo('');
+		if (name === 'dateType') {
+			lastDateType = '';
+			setDateSelected(DEFAULT_ITEM);
+            setDateFrom('');
+            setDateTo('');
 
 		} 
 
 	}
 
-	const closeInvoiceDateModalHandler = () => {
+	const closeDateModalHandler = () => {
 
-		setIsInvoiceDtCustom(false);
-		setInvoiceDateSelected(invoiceDateOptions.find(e => e.value === lastInvoiceDtType));
+		setIsDateCustom(false);
+		setDateSelected(dateOptions.find(e => e.value === lastDateType));
 	
 	}
-	const addInvoiceDateHandler = (from, to) => {
+	const addDateHandler = (from, to) => {
 
 		const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
 
-		const options = invoiceDateOptions.filter(f => !f.dateRange);
+		const options = dateOptions.filter(f => !f.dateRange);
 		const etaValue = {
 
 			name: dt,
@@ -112,28 +99,47 @@ const FilterTable = (props) => {
 			disabled: true
 		};
 		options.push(etaValue);
-		invoiceDateOptions = options;
-		setIsInvoiceDtCustom(false);
-		setInvoiceDateSelected(etaValue);
-		setInvoiceFrom(from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD'));
-        setInvoiceTo(to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD'));
-
+		dateOptions = options;
+		setIsDateCustom(false);
+		setDateSelected(etaValue);
+        const _sfrom = from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+        const _sTo = to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+		setDateFrom(_sfrom);
+        setDateTo(_sTo);
+        props.filterByDateHandler({from : _sfrom,to:_sTo});
 	}
     const clearFilterHandler = () => {
         setKeywordValue('');
-        setKeywordType(DEFAULT_ITEM);
-        setInvoiceDateSelected(DEFAULT_ITEM);
+        
+        setDateSelected(DEFAULT_ITEM);
     }
     const applyFilterHandler = () => {
+       
         props.filterRecordHandler(keywordValue);
-    
+        
+
     }
+    console.log('[Dates]',dateOptions);
     return (
         <React.Fragment>
-            <Grid container style={{paddingTop:8}}>
+            <Grid container style={{paddingTop:10}}>
             <div style={{ display: 'flex', gap: 10 }}>
-          
             <div style={{width:300}}>
+            <DateTypeAutoComplete
+					value={dateSelected || DEFAULT_ITEM}
+					name="dateType"
+
+					placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+					onSelectHandler={autoCompleteInputHander}
+					onClearHandler={onClearHandler}
+					options={dateOptions || [DEFAULT_ITEM]}>
+
+				</DateTypeAutoComplete>
+                {isDateCustom &&
+					<DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
+				}
+           </div>
+                      <div style={{width:300}}>
                     <SearchLookupTextField
                         background={"white"}
                         onChange={inputHandler}
@@ -143,16 +149,12 @@ const FilterTable = (props) => {
                         onPressEnterKeyHandler={onPressEnterKeyHandler}
                         isAllowEnterKey={true}
                         value={keywordValue} />    
-                </div>
-
-                
-                    <div style={{ display: 'flex', gap: 10 }}>
+           </div>
                         <Button variant="contained" color="primary" style={{ fontSize: 14 }} onClick={() => applyFilterHandler()}>Apply</Button>
                         <Button variant="contained" color="secondary" style={{ fontSize: 14 }} onClick={() => clearFilterHandler()}>Clear</Button>
                     </div>
-               
-            </div>
-</Grid>
+            </Grid>
+
         </React.Fragment>
     )
 }

@@ -6,7 +6,7 @@ const GeneralChart = (props) => {
   const [options] = useState({
     labels:  [...props.labels]
   });
-  const [series,setSeries] = useState([50,50]);
+  const [series,setSeries] = useState([50,50,50]);
 
 useEffect(() => {
   console.log('[Props series]',props.series);

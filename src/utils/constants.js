@@ -406,7 +406,8 @@ export const countries =
     'Belt',
     'Pillow',
     'Gel',
-    'Disposable Bag'
+    'Disposable Bag',
+    'WashCloth'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [
