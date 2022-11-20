@@ -115,9 +115,6 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     listPatients();
-    listDistributions({from : dates.from,to:dates.to});
-    listTransactions({from : dates.from,to:dates.to});
-    
     
   }, []);
 
@@ -156,8 +153,6 @@ const Dashboard = (props) => {
          
         if(data.from) {
           isDistributionListDone = false;
-          isTransactionDone = false;
-          listTransactions({from : data.from || dateFrom,to:data.to||dateTo});
           listDistributions({from : data.from || dateFrom,to:data.to||dateTo});
         }
     }
@@ -221,11 +216,7 @@ const addDateHandler = (from, to) => {
   const _sTo = to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
   setDateFrom(_sfrom);
   setDateTo(_sTo);
- 
-  isDistributionListDone = false;
-  isTransactionDone = false; 
   listDistributions({from: _sfrom, to: _sTo });
-  listTransactions({from: _sfrom, to: _sTo });
   
 }
 
@@ -233,19 +224,20 @@ const addDateHandler = (from, to) => {
   console.log('[Dashboard Distribution List]', distributions,isDistributionCollection);
   if (isPatientCollection && patients && patients.status === ACTION_STATUSES.SUCCEED) {
     setIsPatientCollection(false);
+    isDistributionListDone = false;
     isPatientListDone = true;
     patientList = patients.data || [];
     patientList = sortByPatientStatus(patientList);
-    numberInactive = patientList.filter(p => p.status && p.status === 'Inactive').length;
-    numberActive = patientList.length - numberInactive;
+    //numberInactive = patientList.filter(p => p.status && p.status === 'Inactive').length;
+    //numberActive = patientList.length - numberInactive;
    // patientList = patientList.filter(f => f.status !== 'Inactive');
-   
-    
+   setIsPatientCollection(false);
+    listDistributions({from : dateFrom,to:dateTo});
   }
   if (isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
     isDistributionListDone = true;
     patientGrandTotal = 0.0;
-    
+    isTransactionDone = false;
     
     distributionList = distributions.data || [];
     console.log('[Patient Data]', patientList);
@@ -318,7 +310,7 @@ const addDateHandler = (from, to) => {
     patientOptions = [...patientDashboard];
     
     setIsDistributionCollection(false);
-    
+    listTransactions({from : dateFrom,to:dateTo});
     
     //listTransactions();
   }
