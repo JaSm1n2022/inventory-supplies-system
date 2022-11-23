@@ -481,6 +481,10 @@ const Dashboard = (props) => {
                 </div>
 
               </Grid>
+              <Grid container style={{paddingBottom:10}}>
+                <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
+              </Grid>
+            
               <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
                 <div style={{ display: 'flex', gap: 10 }}>
 
@@ -500,9 +504,6 @@ const Dashboard = (props) => {
                   </div>
                 </div>
                 <Typography variant="h5" style={{ border: '1px solid blue' }}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
-              </Grid>
-              <Grid container>
-                <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
               </Grid>
               <Grid item xs={12} style={{ paddingBottom: 10 }}>
                 <Divider variant="fullWidth" style={{
