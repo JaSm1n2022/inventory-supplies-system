@@ -485,6 +485,21 @@ class SortUtil {
       console.log('[return me]',items);
       return items;
     };
+    static sortByName = async (items) => {
+      console.log('[items to sort]',items);
+      items.sort((a, b) => {
+        const tempA = a.name.toUpperCase();
+        const tempB = b.name.toUpperCase();
+        if (tempA < tempB) {
+          return -1;
+        } if (tempA > tempB) {
+          return 1;
+        }
+        return 0;
+      });
+      console.log('[return me]',items);
+      return items;
+    };
   
     static sortLocalCompare(data) {
       data.sort(function (a, b) {

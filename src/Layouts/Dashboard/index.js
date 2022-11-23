@@ -67,6 +67,7 @@ let patientOptions = [];
 let distributionList = [];
 let numberActive = 0;
 let numberInactive = 0;
+let patientCnaList = [];
 let transactionDashboard =
 {
   name: 'Invoice',
@@ -180,7 +181,21 @@ const Dashboard = (props) => {
     setDateSelected(dateOptions.find(e => e.value === lastDateType));
 
   }
-
+ const  sortByName = (items) => {
+    console.log('[items to sort]',items);
+    items.sort((a, b) => {
+      const tempA = a.name ? a.name.toUpperCase() : '';
+      const tempB = b.name ? b.name.toUpperCase() : '';
+      if (tempA < tempB) {
+        return -1;
+      } if (tempA > tempB) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log('[return me]',items);
+    return items;
+  };
   const sortByPatientStatus = (items) => {
     console.log('[items to sort]', items);
     items.sort((a, b) => {
@@ -235,6 +250,26 @@ const Dashboard = (props) => {
     setIsPatientCollection(false);
     isPatientListDone = true;
     patientList = patients.data || [];
+    patientCnaList = [];
+    patientList.forEach(p => {
+      if(!patientCnaList.find(c => c.name === p.name)) {
+      patientCnaList.push({
+      label : p.name,
+      value : p.name,
+      name : p.name,
+      category : 'patient'
+      });
+    }
+    if(!patientCnaList.find(c => c.name === p.assigned_cna)) {
+        patientCnaList.push({
+          label : p.assigned_cna,
+          value : p.assigned_cna,
+          name : p.assigned_cna,
+          category : 'patient'
+          });
+      }
+    })
+    patientCnaList = sortByName(patientCnaList);
     patientList = sortByPatientStatus(patientList);
     numberInactive = patientList.filter(p => p.status && p.status === 'Inactive').length;
     numberActive = patientList.length - numberInactive;
@@ -387,7 +422,7 @@ const Dashboard = (props) => {
     if (item.category === 'patient') {
 
       const temp = [...patientOptions];
-      const found = temp.filter(t => t.name === item.name);
+      const found = temp.filter(t => (t.name === item.name || t.cna === item.name));
       console.log('[temp]', temp, found, item);
       patientDashboard = found;
       patientGrandTotal = 0;
@@ -454,10 +489,10 @@ const Dashboard = (props) => {
 
                     <SingleWithClearAutoComplete
                       id='patient'
-                      placeholder='Select Patient'
+                      placeholder='Select Patient/CNA'
                       label='Select Patient'
                       name='patient'
-                      options={patientList}
+                      options={patientCnaList}
                       value={patient}
                       onSelectHandler={autoCompleteGeneralInputHander}
                       onChangeHandler={inputGeneralHandler}
