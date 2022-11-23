@@ -1294,5 +1294,6 @@ export const PATIENT_DASHBOARD_CATEGORY = [
     'Brief',
     'Underwear/Pull-ups',
     'Lotion/Cleanser/Ointment',
+    'Ensure/Glucerna/BOOST',
     'Other'
 ]

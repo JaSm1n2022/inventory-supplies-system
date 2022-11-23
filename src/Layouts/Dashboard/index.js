@@ -90,14 +90,14 @@ let providerDashboard = [
     series: [0, 0, 0],
     amazon: 0,
     medline: 0,
-   
+
   }
 ]
 let dateOptions = [];
-  let lastDateType = '';
-  DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
-  
-  const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
+let lastDateType = '';
+DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
+
+const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
 const Dashboard = (props) => {
   const { listTransactions, resetlistTransactions, transactions, listPatients, listDistributions, resetListPatients, resetListDistribution, patients, distributions } = props;
   const classes = useStyles();
@@ -108,17 +108,17 @@ const Dashboard = (props) => {
   const [patient, setPatient] = useState(DEFAULT_ITEM);
   const [dateFrom, setDateFrom] = useState(dates.from);
   const [dateTo, setDateTo] = useState(dates.to);
-  const [dateSelected,setDateSelected] = useState(dateOptions.find(d => d.value === 'thisMonth'));
+  const [dateSelected, setDateSelected] = useState(dateOptions.find(d => d.value === 'thisMonth'));
   const [isDateCustom, setIsDateCustom] = useState(false);
 
-  
+
 
   useEffect(() => {
     listPatients();
-    listDistributions({from : dates.from,to:dates.to});
-    listTransactions({from : dates.from,to:dates.to});
-    
-    
+    listDistributions({ from: dates.from, to: dates.to });
+    listTransactions({ from: dates.from, to: dates.to });
+
+
   }, []);
 
   useEffect(() => {
@@ -139,69 +139,69 @@ const Dashboard = (props) => {
 
   const autoCompleteInputHander = (item) => {
     if (item.category === 'date') {
-        let data = {
-            from: '',
-            to: ''
-        };
-        if (item.value !== 'custom') {
-            data = Helper.formatDateRangeByCriteriaV2(item.value);
-            console.log('[item data]', data);
-            setDateFrom(data.from);
-            setDateTo(data.to);
-          }
-     
-        setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
-        setDateSelected(item);
-       console.log('[List me]',data,isDistributionCollection);
-         
-        if(data.from) {
-          isDistributionListDone = false;
-          isTransactionDone = false;
-          listTransactions({from : data.from || dateFrom,to:data.to||dateTo});
-          listDistributions({from : data.from || dateFrom,to:data.to||dateTo});
-        }
+      let data = {
+        from: '',
+        to: ''
+      };
+      if (item.value !== 'custom') {
+        data = Helper.formatDateRangeByCriteriaV2(item.value);
+        console.log('[item data]', data);
+        setDateFrom(data.from);
+        setDateTo(data.to);
+      }
+
+      setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
+      setDateSelected(item);
+      console.log('[List me]', data, isDistributionCollection);
+
+      if (data.from) {
+        isDistributionListDone = false;
+        isTransactionDone = false;
+        listTransactions({ from: data.from || dateFrom, to: data.to || dateTo });
+        listDistributions({ from: data.from || dateFrom, to: data.to || dateTo });
+      }
     }
 
-}
-const onClearHandler = (name) => {
+  }
+  const onClearHandler = (name) => {
 
-  if (name === 'dateType') {
+    if (name === 'dateType') {
       lastDateType = '';
       setDateSelected(DEFAULT_ITEM);
       setDateFrom('');
       setDateTo('');
 
+    }
+
+  }
+  const closeDateModalHandler = () => {
+
+    setIsDateCustom(false);
+    setDateSelected(dateOptions.find(e => e.value === lastDateType));
+
   }
 
-}
-const closeDateModalHandler = () => {
+  const sortByPatientStatus = (items) => {
+    console.log('[items to sort]', items);
+    items.sort((a, b) => {
+      const tempA = !a.status ? 'ACTIVE' : a.status.toUpperCase();
+      const tempB = !b.status ? 'ACTIVE' : b.status.toUpperCase();
+      if (tempA < tempB) {
+        return -1;
+      } if (tempA > tempB) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log('[return me]', items);
+    return items;
+  };
+  const addDateHandler = (from, to) => {
 
-  setIsDateCustom(false);
-  setDateSelected(dateOptions.find(e => e.value === lastDateType));
+    const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
 
-}
-
-const sortByPatientStatus =  (items) => {
-  console.log('[items to sort]',items);
-  items.sort((a, b) => {
-    const tempA = !a.status ? 'ACTIVE' : a.status.toUpperCase();
-    const tempB = !b.status ? 'ACTIVE' : b.status.toUpperCase();
-    if (tempA < tempB) {
-      return -1;
-    } if (tempA > tempB) {
-      return 1;
-    }
-    return 0;
-  });
-  console.log('[return me]',items);
-  return items;
-};
-const addDateHandler = (from, to) => {
-
-  const dt = `${moment(from || new Date()).format('YYYY-MM-DD')} - ${moment(to || new Date()).format('YYYY-MM-DD')}`;
-
-  const options = dateOptions.filter(f => !f.dateRange);
-  const etaValue = {
+    const options = dateOptions.filter(f => !f.dateRange);
+    const etaValue = {
 
       name: dt,
       value: dt,
@@ -212,25 +212,25 @@ const addDateHandler = (from, to) => {
       label: dt,
       category: 'etdDateType',
       disabled: true
-  };
-  options.push(etaValue);
-  dateOptions = options;
-  setIsDateCustom(false);
-  setDateSelected(etaValue);
-  const _sfrom = from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
-  const _sTo = to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
-  setDateFrom(_sfrom);
-  setDateTo(_sTo);
- 
-  isDistributionListDone = false;
-  isTransactionDone = false; 
-  listDistributions({from: _sfrom, to: _sTo });
-  listTransactions({from: _sfrom, to: _sTo });
-  
-}
+    };
+    options.push(etaValue);
+    dateOptions = options;
+    setIsDateCustom(false);
+    setDateSelected(etaValue);
+    const _sfrom = from ? moment(new Date(from)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+    const _sTo = to ? moment(new Date(to)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD');
+    setDateFrom(_sfrom);
+    setDateTo(_sTo);
+
+    isDistributionListDone = false;
+    isTransactionDone = false;
+    listDistributions({ from: _sfrom, to: _sTo });
+    listTransactions({ from: _sfrom, to: _sTo });
+
+  }
 
   console.log('[Dashboard Patient List]', patients);
-  console.log('[Dashboard Distribution List]', distributions,isDistributionCollection);
+  console.log('[Dashboard Distribution List]', distributions, isDistributionCollection);
   if (isPatientCollection && patients && patients.status === ACTION_STATUSES.SUCCEED) {
     setIsPatientCollection(false);
     isPatientListDone = true;
@@ -238,15 +238,15 @@ const addDateHandler = (from, to) => {
     patientList = sortByPatientStatus(patientList);
     numberInactive = patientList.filter(p => p.status && p.status === 'Inactive').length;
     numberActive = patientList.length - numberInactive;
-   // patientList = patientList.filter(f => f.status !== 'Inactive');
-   
-    
+    // patientList = patientList.filter(f => f.status !== 'Inactive');
+
+
   }
   if (isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
     isDistributionListDone = true;
     patientGrandTotal = 0.0;
-    
-    
+
+
     distributionList = distributions.data || [];
     console.log('[Patient Data]', patientList);
     console.log('[Patient Data2]', distributionList);
@@ -268,10 +268,12 @@ const addDateHandler = (from, to) => {
         underwear: 0,
         underpad: 0,
         lotion: 0,
+        nutrition: 0,
         other: 0,
 
       };
-      const others = supplies.filter(supply => !['Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
+      const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
+      const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category))
       const briefs = supplies.filter(supply => supply.category === 'Brief');
       const underwears = supplies.filter(supply => supply.category === 'Underwear/Pull-ups');
       const underpads = supplies.filter(supply => supply.category === 'Underpads');
@@ -301,25 +303,31 @@ const addDateHandler = (from, to) => {
           seriesList.lotion = parseFloat(parseFloat(seriesList.lotion) + parseFloat(item.estimated_total_amt)).toFixed(2);
         })
       }
+      if (nutritions && nutritions.length) {
+        nutritions.forEach(item => {
+          seriesList.nutrition = parseFloat(parseFloat(seriesList.nutrition) + parseFloat(item.estimated_total_amt)).toFixed(2);
+        })
+      }
       patientGrandTotal += estimatedAmt;
       patientDashboard.push({
-        status :patient.status,
+        status: patient.status,
+        cna: patient.assigned_cna,
         name: patient.name,
         label: patient.name,
         value: patient.name,
         cateogry: 'patient',
         estimatedAmt,
-        series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.other)]
+        series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.nutrition), parseFloat(seriesList.other)]
 
       })
 
     })
     //make data
     patientOptions = [...patientDashboard];
-    
+
     setIsDistributionCollection(false);
-    
-    
+
+
     //listTransactions();
   }
   if (isTransactionCollection && transactions.status === ACTION_STATUSES.SUCCEED) {
@@ -330,7 +338,7 @@ const addDateHandler = (from, to) => {
     let amazonAmount = 0.0;
     let medlineAmount = 0.0;
     let mckessonAmount = 0.0;
-    
+
     transactionData.forEach(transact => {
       grandTotal += parseFloat(transact.grand_total);
       if (transact.category === 'Office') {
@@ -342,8 +350,8 @@ const addDateHandler = (from, to) => {
         medlineAmount += parseFloat(transact.grand_total);
       } else if (transact.vendor === 'Mckesson') {
         mckessonAmount += parseFloat(transact.grand_total);
-      
-      } 
+
+      }
     })
     grandTotal = parseFloat(grandTotal).toFixed(2);
     officeAmount = parseFloat(officeAmount).toFixed(2);
@@ -356,8 +364,8 @@ const addDateHandler = (from, to) => {
     providerDashboard.amazon = amazonAmount;
     providerDashboard.medline = medlineAmount;
     providerDashboard.mckesson = mckessonAmount;
-    
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount),parseFloat(mckessonAmount)];
+
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount)];
     isTransactionDone = true;
     setIsTransactionCollection(false);
   }
@@ -401,21 +409,21 @@ const addDateHandler = (from, to) => {
         :
         <React.Fragment>
           <Typography variant="h6">DASHBOARD</Typography>
-          <div style={{width:500,paddingTop:20}}>
+          <div style={{ width: 500, paddingTop: 20 }}>
             <DateTypeAutoComplete
-					value={dateSelected || DEFAULT_ITEM}
-					name="dateType"
+              value={dateSelected || DEFAULT_ITEM}
+              name="dateType"
 
-					placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
-					onSelectHandler={autoCompleteInputHander}
-					onClearHandler={onClearHandler}
-					options={dateOptions || [DEFAULT_ITEM]}>
+              placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+              onSelectHandler={autoCompleteInputHander}
+              onClearHandler={onClearHandler}
+              options={dateOptions || [DEFAULT_ITEM]}>
 
-				</DateTypeAutoComplete>
-                {isDateCustom &&
-					<DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
-				}
-           </div>
+            </DateTypeAutoComplete>
+            {isDateCustom &&
+              <DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
+            }
+          </div>
           <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
             <Tab
 
@@ -438,12 +446,12 @@ const addDateHandler = (from, to) => {
                 </div>
 
               </Grid>
-              <Grid container justifyContent="space-between" style={{paddingBottom:20}}>
-              <div style={{ display: 'flex', gap: 10 }}>
-          
+              <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
+                <div style={{ display: 'flex', gap: 10 }}>
 
-                <div style={{width:300}}>
-                  
+
+                  <div style={{ width: 300 }}>
+
                     <SingleWithClearAutoComplete
                       id='patient'
                       placeholder='Select Patient'
@@ -454,12 +462,12 @@ const addDateHandler = (from, to) => {
                       onSelectHandler={autoCompleteGeneralInputHander}
                       onChangeHandler={inputGeneralHandler}
                     />
-                    </div>
-                    </div>
-                  <Typography variant="h5" style={{border:'1px solid blue'}}>{`Total : $${parseFloat(patientGrandTotal||0.0).toFixed(2)} `}</Typography>
+                  </div>
+                </div>
+                <Typography variant="h5" style={{ border: '1px solid blue' }}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
               </Grid>
               <Grid container>
-                  <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
+                <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
               </Grid>
               <Grid item xs={12} style={{ paddingBottom: 10 }}>
                 <Divider variant="fullWidth" style={{
@@ -475,6 +483,9 @@ const addDateHandler = (from, to) => {
                       <div align="center">
                         <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
                         <Typography variant="body1">{!map.status ? '(ACTIVE)' : `(${map.status.toUpperCase()})`}</Typography>
+                        {map.cna &&
+                          <Typography variant="body2">{`CNA : ${map.cna.toUpperCase()}`}</Typography>
+                        }
                       </div>
                       <div>
                         <ClientPieChart series={map.series} />
@@ -482,7 +493,7 @@ const addDateHandler = (from, to) => {
                     </Grid>
                   )
                 })}
-               
+
               </Grid>
             </Grid>
           </TabPanel>
@@ -501,7 +512,7 @@ const addDateHandler = (from, to) => {
 
                 </div>
                 <div>
-                  <GeneralChart labels={['OFFICE','PATIENTS']}  series={transactionDashboard.series} />
+                  <GeneralChart labels={['OFFICE', 'PATIENTS']} series={transactionDashboard.series} />
                 </div>
               </Grid>
               <Grid item xs={6} style={{ paddingTop: 20 }}>
@@ -513,7 +524,7 @@ const addDateHandler = (from, to) => {
                   <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
                 </div>
                 <div>
-                  <GeneralChart labels={['AMAZON','MEDLINE','MCKESSON']} series={providerDashboard.series} />
+                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON']} series={providerDashboard.series} />
                 </div>
               </Grid>
             </Grid>
