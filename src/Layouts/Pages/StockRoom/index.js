@@ -105,6 +105,22 @@ const Stock = (props) => {
    
   }
   console.log('[props.Stocks]', props.stocks);
+  const sortByWorth =  (items) => {
+    items.sort((a, b) => {
+      const tempA = !a.worth ? 0 : parseFloat(a.worth);
+      const tempB = !b.worth ? 0 : parseFloat(b.worth);
+      if (tempA > tempB) {
+        return -1;
+      } if (tempA < tempB) {
+        return 1;
+      }
+      return 0;
+    });
+
+  
+    console.log('[return me]',items);
+    return items;
+  };
   if (isStocksCollection && props.stocks && props.stocks.status === ACTION_STATUSES.SUCCEED) {
     grandTotal = 0.0;
     let source = props.stocks.data;
@@ -133,6 +149,7 @@ const Stock = (props) => {
     });
     setColumns(cols);
     originalSource = [...source];
+    source = sortByWorth(source);
     setDataSource(source);
     setIsStocksCollection(false);
   }
@@ -198,6 +215,7 @@ const Stock = (props) => {
       grands.forEach(g => {
         grandTotal += parseFloat(g) || 0.00;
       });
+      originalSource = sortByWorth(originalSource);
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
@@ -207,13 +225,14 @@ const Stock = (props) => {
       grands.forEach(g => {
         grandTotal += parseFloat(g) || 0.00;
       });
+      found = sortByWorth(found);
    setDataSource(found);
     }
   };
 
   const onCheckboxSelectionHandler = (data, isAll, itemIsChecked) => {
     console.log('[data ALl]', data, isAll, itemIsChecked);
-    const dtSource = [...dataSource];
+    let dtSource = [...dataSource];
     if (isAll) {
       dtSource.forEach(item => {
         item.isChecked = isAll; // reset
@@ -232,6 +251,7 @@ const Stock = (props) => {
     }
     setIsAddGroupButtons(dtSource.find(f => f.isChecked));
     originalSource = [...dtSource];
+    dtSource = sortByWorth(dtSource);
     setDataSource(dtSource);
 
   }

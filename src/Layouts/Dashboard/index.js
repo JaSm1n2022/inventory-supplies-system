@@ -344,6 +344,7 @@ const Dashboard = (props) => {
         })
       }
       patientGrandTotal += estimatedAmt;
+      if(estimatedAmt > 0 && patient.name.indexOf('C/O') === -1) {
       patientDashboard.push({
         status: patient.status,
         cna: patient.assigned_cna,
@@ -355,6 +356,7 @@ const Dashboard = (props) => {
         series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.nutrition), parseFloat(seriesList.other)]
 
       })
+    }
 
     })
     //make data
