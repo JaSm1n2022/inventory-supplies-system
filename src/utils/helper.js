@@ -8,7 +8,13 @@ class Helper {
    * @returns {String} -  Aug 6, 2007
    */
   
-
+   static calculateDaysInStorage(soc,eoc)  {
+    const start = moment(soc);
+    const end = eoc ? moment(eoc) : moment();
+    const diff = moment.duration(end.diff(start));
+  
+    return Math.floor(diff.asDays(), 10);
+  };
    static getCurrentDateInYYYYMMDD() {
     const currentDate = new Date();
     let day = currentDate.getDate();

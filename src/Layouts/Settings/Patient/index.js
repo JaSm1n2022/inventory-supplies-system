@@ -116,6 +116,7 @@ const Patient = (props) => {
       mr_nbr : payload.mrNbr,
       dob_at : payload.dob,
       soc_at : payload.soc,
+      eoc_at : payload.eoc,
       care_type : payload.careType && payload.careType.name ? payload.careType.name : '',
       place_of_service : payload.placeOfService,
       address : payload.address,

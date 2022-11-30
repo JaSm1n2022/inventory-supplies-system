@@ -347,6 +347,8 @@ const Dashboard = (props) => {
       if(estimatedAmt > 0 && patient.name.indexOf('C/O') === -1) {
       patientDashboard.push({
         status: patient.status,
+        soc : moment(patient.soc_at).format('YYYY-MM-DD'),
+        eoc : patient.status === 'Inactive' ? moment(patient.eoc_at).format('YYYY-MM-DD') : '',
         cna: patient.assigned_cna,
         name: patient.name,
         label: patient.name,
@@ -520,9 +522,11 @@ const Dashboard = (props) => {
                     <Grid item xs={4}>
                       <div align="center">
                         <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
-                        <Typography variant="body1">{!map.status ? '(ACTIVE)' : `(${map.status.toUpperCase()})`}</Typography>
-                        {map.cna &&
-                          <Typography variant="body2">{`CNA : ${map.cna.toUpperCase()}`}</Typography>
+                        <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
+                        <Typography variant="body2" style={{color:'blue'}}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc),new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
+                        
+                    {map.cna &&
+                          <Typography variant="body2" style={{color:'green'}}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
                         }
                       </div>
                       <div>

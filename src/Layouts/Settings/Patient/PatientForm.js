@@ -67,6 +67,14 @@ function PatientForm(props) {
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
         {
+            id: 'eoc',
+            component: 'datepicker',
+            placeholder: 'eoc',
+            label: 'EOC',
+            name: 'eoc',
+            disabled: props.mode && props.mode === 'view' ? true : false,
+        },
+        {
             id: 'careType',
             component: 'singlecomplete',
             placeholder: 'Care Type',
@@ -158,6 +166,7 @@ function PatientForm(props) {
             const generalFm = { ...props.item };
             generalFm.created_at = moment(new Date(generalFm.created_at)).utc().format('YYYY-MM-DD');
             generalFm.soc = moment(new Date(generalFm.soc_at)).utc().format('YYYY-MM-DD');
+            generalFm.eoc = generalFm.status && generalFm.status === 'Inactive' ? moment(new Date(generalFm.eoc_at)).utc().format('YYYY-MM-DD') : '';
             generalFm.dob = moment(new Date(generalFm.dob_at)).utc().format('YYYY-MM-DD');
             generalFm.careType = careTypes.find(care => care.name === generalFm.care_type);
             generalFm.mrNbr = generalFm.mr_nbr;
@@ -290,6 +299,7 @@ function PatientForm(props) {
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
                                             <React.Fragment>
+                                               
                                                 <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
                                             </React.Fragment>
                                             : item.component === 'singlecomplete' ?

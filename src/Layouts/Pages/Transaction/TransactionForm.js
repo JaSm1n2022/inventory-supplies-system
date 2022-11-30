@@ -397,6 +397,7 @@ function TransportationForm(props) {
         gen.size = item.size;
         gen.dimension = item.dimension;
         gen.item = item.item;
+        gen.vendor = vendors.find(v => v.name === item.vendor);
         gen.qtyUom = uoms.find(u => u.name === item.qty_uom);
         gen.pricePerPcs = item.price_per_pcs;      
         gen.totalPrice = (item.price_per_pcs || 1) * (item.qty || 1);

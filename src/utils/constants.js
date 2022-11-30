@@ -322,7 +322,8 @@ export const countries =
     'Box',
     'Case',
     'Pack',
-    'Pcs'
+    'Pcs',
+    'Bag'
     
   ]
   export const SUPPLY_VENDOR = [
