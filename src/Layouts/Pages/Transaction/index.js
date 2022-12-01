@@ -221,6 +221,7 @@ const Transaction = (props) => {
     console.log('[Keyword 1]',temp);
     const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
     || data.order_number.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    || data.payment_info.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
     );
     console.log('[Keyword 2]',found);
     grandTotal = 0.0;
