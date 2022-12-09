@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider } from '@mui/material';
+import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody } from '@mui/material';
 import ClientPieChart from './components/ClientPieChart';
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
@@ -68,6 +68,16 @@ let distributionList = [];
 let numberActive = 0;
 let numberInactive = 0;
 let patientCnaList = [];
+let card4434AmountAmazon = 0.0;
+let card4434AmountMckee = 0.0;
+let card4434AmountMedline = 0.0;
+let card1001AmountAmazon = 0.0;
+let card1001AmountMckee = 0.0;
+let card1001AmountMedline = 0.0;
+
+let card1015AmountAmazon = 0.0;
+let card1015AmountMckee = 0.0;
+let card1015AmountMedline = 0.0;
 let transactionDashboard =
 {
   name: 'Invoice',
@@ -77,6 +87,7 @@ let transactionDashboard =
   office: 0
 }
 let patientGrandTotal = 0.0;
+
 let patientDashboard = [
   {
     name: '',
@@ -378,8 +389,50 @@ const Dashboard = (props) => {
     let medlineAmount = 0.0;
     let mckessonAmount = 0.0;
 
+    card4434AmountAmazon = 0.0;
+    card4434AmountMckee = 0.0;
+    card4434AmountMedline = 0.0;
+    card1001AmountAmazon = 0.0;
+    card1001AmountMckee = 0.0;
+    card1001AmountMedline = 0.0;
+ 
+    card1015AmountAmazon = 0.0;
+    card1015AmountMckee = 0.0;
+    card1015AmountMedline = 0.0;
+   
+
     transactionData.forEach(transact => {
       grandTotal += parseFloat(transact.grand_total);
+
+      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Amazon') {
+        card4434AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Mckesson') {
+        card4434AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Medline') {
+        card4434AmountMedline += parseFloat(transact.grand_total);
+      }
+
+      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Amazon') {
+        card1015AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Mckesson') {
+        card1015AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Medline') {
+        card1015AmountMedline += parseFloat(transact.grand_total);
+      }
+
+      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Amazon') {
+        card1001AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Mckesson') {
+        card1001AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Medline') {
+        card1001AmountMedline += parseFloat(transact.grand_total);
+      }
       if (transact.category === 'Office') {
         officeAmount += parseFloat(transact.grand_total);
       }
@@ -472,7 +525,7 @@ const Dashboard = (props) => {
               {...a11yProps('one')}
             />
             <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
-            <Tab value="three" style={{ fontSize: 14 }} label="OTHER" {...a11yProps('three')} />
+            <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
           </Tabs>
 
           <TabPanel value={value} index="one">
@@ -572,7 +625,124 @@ const Dashboard = (props) => {
             </Grid>
           </TabPanel>
           <TabPanel value={value} index="three">
-            <Typography variant="h1">UNDER CONSTRUCTION!!!</Typography>
+          
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>AMOUNT</TableCell>
+            <TableCell align="right">VENDOR</TableCell>
+            <TableCell align="right">PAYMENT METHOD</TableCell>
+            <TableCell align="right">PAYMENT INFO</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card4434AmountAmazon).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">AMAZON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">4434</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card4434AmountMckee).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MCKEESON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">4434</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card4434AmountMedline).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MEDLINE</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">4434</TableCell>
+            </TableRow>
+
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1001AmountAmazon).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">AMAZON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1001</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1001AmountMckee).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MCKEESON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1001</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1001AmountMedline).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MEDLINE</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1001</TableCell>
+            </TableRow>
+
+
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1015AmountAmazon).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">AMAZON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1015</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1015AmountMckee).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MCKEESON</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1015</TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                  {parseFloat(card1015AmountMedline).toFixed(2)}
+              </TableCell>
+              <TableCell align="right">MEDLINE</TableCell>
+              <TableCell align="right">CARD</TableCell>
+              <TableCell align="right">1015</TableCell>
+            </TableRow>
+
+           
+
+
+
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <Typography variant="h5">SUMMARY</Typography>
+    <br/>
+    <Typography variant="h6">{`TOTAL CHARGE FOR 4434 : $${parseFloat(parseFloat(card4434AmountMedline) + parseFloat(card4434AmountAmazon) + parseFloat(card4434AmountMckee)).toFixed(2)}`}</Typography>
+    <Typography variant="h6">{`TOTAL CHARGE FOR 1001 : $${parseFloat(parseFloat(card1001AmountMedline) + parseFloat(card1001AmountAmazon) + parseFloat(card1001AmountMckee)).toFixed(2)}`}</Typography>
+    <Typography variant="h6">{`TOTAL CHARGE FOR 1015 : $${parseFloat(parseFloat(card1015AmountMedline) + parseFloat(card1015AmountAmazon) + parseFloat(card1015AmountMckee)).toFixed(2)}`}</Typography>
           </TabPanel>
         </React.Fragment>
       }
