@@ -182,7 +182,7 @@ const Distribution = (props) => {
         return {
           ...col,
           editable: () => false,
-          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status && cellProps.data.order_status.toLowerCase() !== 'order' ? true : false} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
+          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status && cellProps.data.order_status.toLowerCase() !== 'order' ? false: false} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
         }
 
       } else {
