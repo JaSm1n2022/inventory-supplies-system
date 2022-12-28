@@ -167,7 +167,7 @@ const Transaction = (props) => {
       unit_price : payload.unitPrice,
       total_price : payload.totalPrice,
      price_per_pcs : payload.pricePerPcs,
-     vendor: payload.vendorName,
+     vendor: payload.vendor && payload.vendor.name ? payload.vendor.name : payload.vendorName,
      status : payload.statusName,
     
      expected_delivery_at : payload.expectedDeliveryDt,

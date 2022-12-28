@@ -738,8 +738,9 @@ const Dashboard = (props) => {
         </TableBody>
       </Table>
     </TableContainer>
-    <Typography variant="h5">SUMMARY</Typography>
     <br/>
+    <Typography variant="h5">SUMMARY</Typography>
+    
     <Typography variant="h6">{`TOTAL CHARGE FOR 4434 : $${parseFloat(parseFloat(card4434AmountMedline) + parseFloat(card4434AmountAmazon) + parseFloat(card4434AmountMckee)).toFixed(2)}`}</Typography>
     <Typography variant="h6">{`TOTAL CHARGE FOR 1001 : $${parseFloat(parseFloat(card1001AmountMedline) + parseFloat(card1001AmountAmazon) + parseFloat(card1001AmountMckee)).toFixed(2)}`}</Typography>
     <Typography variant="h6">{`TOTAL CHARGE FOR 1015 : $${parseFloat(parseFloat(card1015AmountMedline) + parseFloat(card1015AmountAmazon) + parseFloat(card1015AmountMckee)).toFixed(2)}`}</Typography>

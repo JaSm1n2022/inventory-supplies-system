@@ -410,7 +410,11 @@ export const countries =
     'Disposable Bag',
     'WashCloth',
     'Socks',
-    'Wound Dressing'
+    'Wound Dressing',
+    'Shoe',
+    'Tongue Depressor',
+    'Plastic',
+    'Straw'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

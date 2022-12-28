@@ -6,10 +6,11 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 200, name: 'ordered_at', header: 'Invoice Date' },
       { defaultFlex: 1, minWidth: 200, name: 'order_number', header: 'Invoice Number' },
       { defaultFlex: 1, minWidth: 200, name: 'grand_total', header: 'Grand Total' },
-      { defaultFlex: 1, minWidth: 200, name: 'payment_method', header: 'Payment Method' },
-      { defaultFlex: 1, minWidth: 200, name: 'payment_info', header: 'Payment Info' },
-      { defaultFlex: 1, minWidth: 200, name: 'payment_transaction_at', header: 'Payment Date' },
       { defaultFlex: 1, minWidth: 200, name: 'vendor', header: 'Vendor' },
+      { defaultFlex: 1, minWidth: 200, name: 'payment_info', header: 'Payment Info' },
+   
+      { defaultFlex: 1, minWidth: 200, name: 'payment_method', header: 'Payment Method' },
+      { defaultFlex: 1, minWidth: 200, name: 'payment_transaction_at', header: 'Payment Date' },
      
     ]
   }
