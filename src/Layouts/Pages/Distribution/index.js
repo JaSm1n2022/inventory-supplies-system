@@ -161,9 +161,9 @@ const Distribution = (props) => {
   if (props.stocks && props.stocks.status === ACTION_STATUSES.SUCCEED) {
     stockList = [...props.stocks.data];
     stockList.forEach(item => {
-      item.name = item.description.toUpperCase();
-      item.value = item.description.toUpperCase();
-      item.label = item.description.toUpperCase();
+      item.name = `${item.description.toUpperCase()} (${item.vendor})`;
+      item.value = item.name;
+      item.label = item.name;
       item.categoryType = 'stock'
     });
     isStockListDone = true;
@@ -214,7 +214,7 @@ const Distribution = (props) => {
   console.log('[isDeleteDistribution]', isDeleteDistributionCollection, props.deleteDistributionState);
   if (isDeleteDistributionCollection && props.deleteDistributionState && props.deleteDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteDistributionCollection(false);
-    props.listDistributions();
+    props.listDistributions({from : dateFrom,to:dateTo});
 
   }
 

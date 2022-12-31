@@ -180,6 +180,16 @@ function DistributionForm(props) {
             name: 'orderQty',
             type: 'number'
         },
+        {
+            id: 'vendor',
+            component: 'textfield',
+            placeholder: 'Vendor',
+            label: 'Vendor',
+            name: 'vendor',
+            type: 'test',
+            value :'-'
+        },
+       
        
      
     ]
@@ -292,6 +302,7 @@ function DistributionForm(props) {
         source.description = `${item.description} / ${item.comments} / ${item.additional_info}`;
         source.productId = item.productId;
         source.category = item.category;
+        source.vendor = item.vendor || '-';
         const productInfo = props.productList.find(product => product.id === item.productId);
         if(productInfo) {
         source.price_per_pcs = productInfo.price_per_pcs;
@@ -467,6 +478,9 @@ function DistributionForm(props) {
                                 </Grid>
                                 <Grid item xs={2}>
                                     <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
                                 </Grid>
                                 {item.stockStatus &&
                                 <Grid item xs={2} >
