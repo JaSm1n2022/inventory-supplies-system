@@ -74,10 +74,21 @@ let card4434AmountMedline = 0.0;
 let card1001AmountAmazon = 0.0;
 let card1001AmountMckee = 0.0;
 let card1001AmountMedline = 0.0;
+let card1937AmountAmazon = 0.0;
+let card1937AmountMckee = 0.0;
+let card1937AmountMedline = 0.0;
+let card0994AmountMedline = 0.0;
+let card0994AmountAmazon = 0.0;
+let card0994AmountMckee = 0.0;
 
 let card1015AmountAmazon = 0.0;
 let card1015AmountMckee = 0.0;
 let card1015AmountMedline = 0.0;
+
+let card9465AmountAmazon = 0.0;
+let card9465AmountMckee = 0.0;
+let card9465AmountMedline = 0.0;
+
 let transactionDashboard =
 {
   name: 'Invoice',
@@ -102,6 +113,8 @@ let providerDashboard = [
     series: [0, 0, 0],
     amazon: 0,
     medline: 0,
+    mckesson: 0,
+    other : 0
 
   }
 ]
@@ -192,8 +205,8 @@ const Dashboard = (props) => {
     setDateSelected(dateOptions.find(e => e.value === lastDateType));
 
   }
- const  sortByName = (items) => {
-    console.log('[items to sort]',items);
+  const sortByName = (items) => {
+    console.log('[items to sort]', items);
     items.sort((a, b) => {
       const tempA = a.name ? a.name.toUpperCase() : '';
       const tempB = b.name ? b.name.toUpperCase() : '';
@@ -204,7 +217,7 @@ const Dashboard = (props) => {
       }
       return 0;
     });
-    console.log('[return me]',items);
+    console.log('[return me]', items);
     return items;
   };
   const sortByPatientStatus = (items) => {
@@ -263,21 +276,21 @@ const Dashboard = (props) => {
     patientList = patients.data || [];
     patientCnaList = [];
     patientList.forEach(p => {
-      if(!patientCnaList.find(c => c.name === p.name)) {
-      patientCnaList.push({
-      label : p.name,
-      value : p.name,
-      name : p.name,
-      category : 'patient'
-      });
-    }
-    if(!patientCnaList.find(c => c.name === p.assigned_cna)) {
+      if (!patientCnaList.find(c => c.name === p.name)) {
         patientCnaList.push({
-          label : p.assigned_cna,
-          value : p.assigned_cna,
-          name : p.assigned_cna,
-          category : 'patient'
-          });
+          label: p.name,
+          value: p.name,
+          name: p.name,
+          category: 'patient'
+        });
+      }
+      if (!patientCnaList.find(c => c.name === p.assigned_cna)) {
+        patientCnaList.push({
+          label: p.assigned_cna,
+          value: p.assigned_cna,
+          name: p.assigned_cna,
+          category: 'patient'
+        });
       }
     })
     patientCnaList = sortByName(patientCnaList);
@@ -355,21 +368,21 @@ const Dashboard = (props) => {
         })
       }
       patientGrandTotal += estimatedAmt;
-      if(estimatedAmt > 0 && patient.name.indexOf('C/O') === -1) {
-      patientDashboard.push({
-        status: patient.status,
-        soc : moment(patient.soc_at).format('YYYY-MM-DD'),
-        eoc : patient.status === 'Inactive' ? moment(patient.eoc_at).format('YYYY-MM-DD') : '',
-        cna: patient.assigned_cna,
-        name: patient.name,
-        label: patient.name,
-        value: patient.name,
-        cateogry: 'patient',
-        estimatedAmt,
-        series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.nutrition), parseFloat(seriesList.other)]
+      if (estimatedAmt > 0 && patient.name.indexOf('C/O') === -1) {
+        patientDashboard.push({
+          status: patient.status,
+          soc: moment(patient.soc_at).format('YYYY-MM-DD'),
+          eoc: patient.status === 'Inactive' ? moment(patient.eoc_at).format('YYYY-MM-DD') : '',
+          cna: patient.assigned_cna,
+          name: patient.name,
+          label: patient.name,
+          value: patient.name,
+          cateogry: 'patient',
+          estimatedAmt,
+          series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.nutrition), parseFloat(seriesList.other)]
 
-      })
-    }
+        })
+      }
 
     })
     //make data
@@ -395,11 +408,24 @@ const Dashboard = (props) => {
     card1001AmountAmazon = 0.0;
     card1001AmountMckee = 0.0;
     card1001AmountMedline = 0.0;
- 
+
     card1015AmountAmazon = 0.0;
     card1015AmountMckee = 0.0;
     card1015AmountMedline = 0.0;
-   
+
+    card1937AmountAmazon = 0.0;
+    card1937AmountMckee = 0.0;
+    card1937AmountMedline = 0.0;
+
+
+    card0994AmountAmazon = 0.0;
+    card0994AmountMckee = 0.0;
+    card0994AmountMedline = 0.0;
+
+
+    card9465AmountAmazon = 0.0;
+    card9465AmountMckee = 0.0;
+    card9465AmountMedline = 0.0;
 
     transactionData.forEach(transact => {
       grandTotal += parseFloat(transact.grand_total);
@@ -433,6 +459,38 @@ const Dashboard = (props) => {
       if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Medline') {
         card1001AmountMedline += parseFloat(transact.grand_total);
       }
+
+      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Amazon') {
+        card1937AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Mckesson') {
+        card1937AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Medline') {
+        card1937AmountMedline += parseFloat(transact.grand_total);
+      }
+
+      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Amazon') {
+        card0994AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Mckesson') {
+        card0994AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Medline') {
+        card0994AmountMedline += parseFloat(transact.grand_total);
+      }
+
+      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Amazon') {
+        card9465AmountAmazon += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Mckesson') {
+        card9465AmountMckee += parseFloat(transact.grand_total);
+      }
+      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Medline') {
+        card9465AmountMedline += parseFloat(transact.grand_total);
+      }
+
+
       if (transact.category === 'Office') {
         officeAmount += parseFloat(transact.grand_total);
       }
@@ -456,8 +514,9 @@ const Dashboard = (props) => {
     providerDashboard.amazon = amazonAmount;
     providerDashboard.medline = medlineAmount;
     providerDashboard.mckesson = mckessonAmount;
+    providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
 
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount)];
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount),parseFloat(providerDashboard.other)];
     isTransactionDone = true;
     setIsTransactionCollection(false);
   }
@@ -538,10 +597,10 @@ const Dashboard = (props) => {
                 </div>
 
               </Grid>
-              <Grid container style={{paddingBottom:10}}>
+              <Grid container style={{ paddingBottom: 10 }}>
                 <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
               </Grid>
-            
+
               <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
                 <div style={{ display: 'flex', gap: 10 }}>
 
@@ -576,10 +635,10 @@ const Dashboard = (props) => {
                       <div align="center">
                         <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
                         <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
-                        <Typography variant="body2" style={{color:'blue'}}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc),new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
-                        
-                    {map.cna &&
-                          <Typography variant="body2" style={{color:'green'}}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
+                        <Typography variant="body2" style={{ color: 'blue' }}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc), new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
+
+                        {map.cna &&
+                          <Typography variant="body2" style={{ color: 'green' }}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
                         }
                       </div>
                       <div>
@@ -617,133 +676,239 @@ const Dashboard = (props) => {
                   <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
                   <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
                   <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
+                  <Typography variant="h6">{`Other Provider Expenses - $${parseFloat(providerDashboard.other).toFixed(2)}`}</Typography>
                 </div>
                 <div>
-                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON']} series={providerDashboard.series} />
+                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON','OTHER']} series={providerDashboard.series} />
                 </div>
               </Grid>
             </Grid>
           </TabPanel>
           <TabPanel value={value} index="three">
-          
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>AMOUNT</TableCell>
-            <TableCell align="right">VENDOR</TableCell>
-            <TableCell align="right">PAYMENT METHOD</TableCell>
-            <TableCell align="right">PAYMENT INFO</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card4434AmountAmazon).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">AMAZON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">4434</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card4434AmountMckee).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MCKEESON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">4434</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card4434AmountMedline).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MEDLINE</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">4434</TableCell>
-            </TableRow>
 
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1001AmountAmazon).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">AMAZON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1001</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1001AmountMckee).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MCKEESON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1001</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1001AmountMedline).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MEDLINE</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1001</TableCell>
-            </TableRow>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>AMOUNT</TableCell>
+                    <TableCell align="right">VENDOR</TableCell>
+                    <TableCell align="right">PAYMENT METHOD</TableCell>
+                    <TableCell align="right">PAYMENT INFO</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card4434AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">4434</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card4434AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">4434</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card4434AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">4434</TableCell>
+                  </TableRow>
 
-
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1015AmountAmazon).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">AMAZON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1015</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1015AmountMckee).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MCKEESON</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1015</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                  {parseFloat(card1015AmountMedline).toFixed(2)}
-              </TableCell>
-              <TableCell align="right">MEDLINE</TableCell>
-              <TableCell align="right">CARD</TableCell>
-              <TableCell align="right">1015</TableCell>
-            </TableRow>
-
-           
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1001AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1001</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1001AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1001</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1001AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1001</TableCell>
+                  </TableRow>
 
 
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1015AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1015</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1015AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1015</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1015AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1015</TableCell>
+                  </TableRow>
 
-        </TableBody>
-      </Table>
-    </TableContainer>
-    <br/>
-    <Typography variant="h5">SUMMARY</Typography>
-    
-    <Typography variant="h6">{`TOTAL CHARGE FOR 4434 : $${parseFloat(parseFloat(card4434AmountMedline) + parseFloat(card4434AmountAmazon) + parseFloat(card4434AmountMckee)).toFixed(2)}`}</Typography>
-    <Typography variant="h6">{`TOTAL CHARGE FOR 1001 : $${parseFloat(parseFloat(card1001AmountMedline) + parseFloat(card1001AmountAmazon) + parseFloat(card1001AmountMckee)).toFixed(2)}`}</Typography>
-    <Typography variant="h6">{`TOTAL CHARGE FOR 1015 : $${parseFloat(parseFloat(card1015AmountMedline) + parseFloat(card1015AmountAmazon) + parseFloat(card1015AmountMckee)).toFixed(2)}`}</Typography>
+
+                  {/* 1937 */}
+
+
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1937AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1937</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1937AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1937</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card1937AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">1937</TableCell>
+                  </TableRow>
+
+
+
+
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card0994AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">0994</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card0994AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">0994</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card0994AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">0994</TableCell>
+                  </TableRow>
+
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card9465AmountAmazon).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">AMAZON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">9465</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card9465AmountMckee).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MCKEESON</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">9465</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {parseFloat(card9465AmountMedline).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">MEDLINE</TableCell>
+                    <TableCell align="right">CARD</TableCell>
+                    <TableCell align="right">9465</TableCell>
+                  </TableRow>
+
+
+
+
+
+
+
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <br />
+            <Typography variant="h5">SUMMARY FOR MAIN PROVIDERS (AMAZON/MCKESSON/MEDLINE)</Typography>
+
+            <Typography variant="h6">{`TOTAL CHARGE FOR 4434 : $${parseFloat(parseFloat(card4434AmountMedline) + parseFloat(card4434AmountAmazon) + parseFloat(card4434AmountMckee)).toFixed(2)}`}</Typography>
+            <Typography variant="h6">{`TOTAL CHARGE FOR 1001 : $${parseFloat(parseFloat(card1001AmountMedline) + parseFloat(card1001AmountAmazon) + parseFloat(card1001AmountMckee)).toFixed(2)}`}</Typography>
+            <Typography variant="h6">{`TOTAL CHARGE FOR 1015 : $${parseFloat(parseFloat(card1015AmountMedline) + parseFloat(card1015AmountAmazon) + parseFloat(card1015AmountMckee)).toFixed(2)}`}</Typography>
+            <Typography variant="h6">{`TOTAL CHARGE FOR 1937 : $${parseFloat(parseFloat(card1937AmountMedline) + parseFloat(card1937AmountAmazon) + parseFloat(card1937AmountMckee)).toFixed(2)}`}</Typography>
+            <Typography variant="h6">{`TOTAL CHARGE FOR 0994 : $${parseFloat(parseFloat(card0994AmountMedline) + parseFloat(card0994AmountAmazon) + parseFloat(card0994AmountMckee)).toFixed(2)}`}</Typography>
+            <Typography variant="h6">{`TOTAL CHARGE FOR 9465 : $${parseFloat(parseFloat(card9465AmountMedline) + parseFloat(card9465AmountAmazon) + parseFloat(card9465AmountMckee)).toFixed(2)}`}</Typography>
           </TabPanel>
         </React.Fragment>
       }
