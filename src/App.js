@@ -15,6 +15,7 @@ import Location from './Layouts/Settings/Location';
 import Patient from './Layouts/Settings/Patient';
 import Employee from './Layouts/Settings/Employee';
 import Dashboard from './Layouts/Dashboard';
+import ComponentToPrint from './Layouts/Document/PrintComponent';
 import { supabaseClient } from "./config/SupabaseClient";
 
 // date-fns
@@ -80,6 +81,7 @@ const App = (props) => {
 						<Route exact path="/patient" component={withRouter(Patient)} />
 						<Route exact path="/employee" component={withRouter(Employee)} />
 						<Route exact path="/product" component={withRouter(Product)} />
+						<Route exact path="/document" component={withRouter(ComponentToPrint)} />
 						<Route exact path="/dashboard" component={withRouter(Dashboard)} />
 						<Route exact path="/login" component={withRouter(Login)} />
 						<Route exact path="/" component={withRouter(Invoice)} />

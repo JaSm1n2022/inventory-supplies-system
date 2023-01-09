@@ -134,7 +134,9 @@ const Product = (props) => {
       unit_price: payload.unitPrice,
       price_per_pcs : payload.pricePerPcs,
       vendor: payload.vendorName,
-      count: payload.count
+      count: payload.count,
+      unit_distribution : payload.unit,
+      short_description : payload.shortDescription
 
     };
     if (mode === 'create') {

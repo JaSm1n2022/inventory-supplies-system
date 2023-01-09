@@ -15,6 +15,7 @@ import { Grid } from "@mui/material";
 
 let categoryList = [];
 let uoms = [];
+let units = [];
 let vendors = [];
 QUANTITY_UOM.forEach((item, index) => {
     uoms.push({
@@ -23,6 +24,16 @@ QUANTITY_UOM.forEach((item, index) => {
         value: item,
         label: item,
         category: 'uom'
+
+    })
+});
+QUANTITY_UOM.forEach((item, index) => {
+    units.push({
+        id: index,
+        name: item,
+        value: item,
+        label: item,
+        category: 'unit'
 
     })
 });
@@ -170,7 +181,26 @@ function ProductForm(props) {
             options: vendors
             
             
-        }
+        },
+        {
+            id: 'shortDescription',
+            component: 'textfield',
+            placeholder: 'Short Description',
+            label: 'Short Description',
+            name: 'shortDescription'
+            
+        },
+        {
+            id: 'unitUom',
+            component: 'singlecomplete',
+            placeholder: 'Unit Distribution',
+            label: 'Unit Distribution',
+            name: 'unitUom',
+            options: [...units],
+            disabled: props.mode && props.mode === 'view' ? true : false
+            
+        },
+        
 
 
     ]
@@ -196,7 +226,9 @@ function ProductForm(props) {
             generalFm.vendor = vendors.find(v => v.name === generalFm.vendor);
             generalFm.pricePerPcs = generalFm.price_per_pcs || 0.00;
             generalFm.unitPrice = generalFm.unit_price || 0.00;
-            
+            generalFm.unitUom = units.find(cat => cat.name === generalFm.unit_distribution);
+            generalFm.shortDescription = generalFm.short_description;
+
             setGeneralForm(generalFm);
             
             
@@ -248,6 +280,10 @@ function ProductForm(props) {
         if(item.category === 'uom') {
             src['qtyUom'] = item;
             src['uom'] = item.name;
+           }
+           if(item.category === 'unit') {
+            src['unitUom'] = item;
+            src['unit'] = item.name;
            }
         setGeneralForm(src);
         

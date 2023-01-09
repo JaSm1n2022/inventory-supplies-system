@@ -13,6 +13,7 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TOAST from "../../../modules/toastManager";
+import PrintForm from "./PrintForm";
 let uoms = [];
 let patients = [];
 let employees = [];
@@ -78,6 +79,7 @@ function DistributionForm(props) {
     const [generalForm, setGeneralForm] = useState({});
     const [detailForm, setDetailForm] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
+    const [isPrintForm,setIsPrintFrom] = useState(false);
     const { isOpen,
         onClose,
 
@@ -214,6 +216,10 @@ function DistributionForm(props) {
 
         }
     }, [props.item]);
+    const printHandler = () => {
+        setIsPrintFrom(true);
+        console.log('[Print Handler]',generalForm,detailForm);
+    }
     const validateFormHandler = () => {
         if(!generalForm.patientName) {
             TOAST.error('Patient Name is required');
@@ -240,10 +246,20 @@ function DistributionForm(props) {
             },
         },
         {
+            title: props.distribution ? "Print Supplies" : "Print Supplies",
+            type: "primary",
+            event: "print",
+            callback: () => {
+                console.log('[Call me]');
+                printHandler();
+            },
+        },
+        {
             title: "Cancel",
             type: "default",
             event: "cancel",
             callback: () => {
+                console.log('[Cancel me]');
                 props.onClose();
             },
         },
@@ -295,6 +311,7 @@ function DistributionForm(props) {
         setGeneralForm(src);
 
     }
+   
     const autoCompleteDetailInputHander = (item, source) => {
         
         source.search = item;
@@ -445,7 +462,7 @@ function DistributionForm(props) {
           </Grid>
                     {detailForm.map((item,index) => {
                         return (
-                            <Grid container spacing={1} direction="row" style={{paddingBottom:12}}>
+                            <Grid container spacing={1} direction="row" style={{paddingBottom:12}} key={`contr-${index}`}>
 
                                 <Grid item xs={12}>
                                     <div style={{ display: 'inline-flex', gap: 10 }}>
@@ -509,6 +526,9 @@ function DistributionForm(props) {
                     <ModalFooter actions={footerActions} />
                 }
             </div>
+            {isPrintForm && 
+            <PrintForm isOpen={isPrintForm} generalForm={generalForm} detailForm={detailForm}/>
+}
         </ReactModal >
 
     );

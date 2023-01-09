@@ -8,6 +8,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 120, name: 'category', header: 'Category' },
       { defaultFlex: 1, minWidth: 200, name: 'item', header: 'Item' },
       { defaultFlex: 1, minWidth: 200, name: 'description', header: 'Description' },
+      { defaultFlex: 1, minWidth: 200, name: 'short_description', header: 'Short Description' },
       { defaultFlex: 1, minWidth: 120, name: 'vendor', header: 'Vendor' },
       { defaultFlex: 1, minWidth: 100, name: 'qty', header: 'Qty' },
       { defaultFlex: 1, minWidth: 100, name: 'qty_uom', header: 'Qty Uom' },
@@ -16,6 +17,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 120, name: 'dimension', header: 'Dimension' },
       { defaultFlex: 1, minWidth: 120, name: 'unit_price', header: 'Unit Price' },
       { defaultFlex: 1, minWidth: 120, name: 'price_per_pcs', header: 'Price Per Pcs' },
+      { defaultFlex: 1, minWidth: 120, name: 'unit_distribution', header: 'Unit Distribution' },
       
      
     ]
