@@ -415,7 +415,8 @@ export const countries =
     'Tongue Depressor',
     'Plastic',
     'Straw',
-    'BP Monitor'
+    'BP Monitor',
+    'Soap'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [
