@@ -28,6 +28,7 @@ import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/
 import { employeeListStateSelector } from "../../../store/selectors/employeeSelector";
 import PrintForm from "./PrintForm";
 import TOAST from "../../../modules/toastManager";
+import { asEffect } from "redux-saga/utils";
 
 
 let productList = [];
@@ -62,7 +63,8 @@ const Distribution = (props) => {
   const [isCreateDistributionCollection, setIsCreateDistributionCollection] = useState(true);
   const [isUpdateDistributionCollection, setIsUpdateDistributionCollection] = useState(true);
   const [isDeleteDistributionCollection, setIsDeleteDistributionCollection] = useState(true);
-
+  const [generalForm,setGeneralForm] = useState(undefined);
+  const [detailForm,setDetailForm] = useState([]);
 
   const createFormHandler = (data, mode) => {
     setItem(data);
@@ -257,6 +259,7 @@ const Distribution = (props) => {
         patient_name: general.patientName,
         delivery_location: general.facility,
         requestor: general.requestorName,
+        requestor_id : general.requestorId,
         patient_caregiver: general.caregiver,
         patient_id: general.patientId || 0,
         stock_status: payload.stockStatus,
@@ -364,6 +367,31 @@ const Distribution = (props) => {
   const createOrderHandler = () => {
     const selectedData = dataSource.filter((r) => r.isChecked);
     console.log('[Selected Data]',selectedData);
+    const generalData = {};
+    const detailsData = [];
+    selectedData.forEach(ea => {
+      generalData.patient = patientList.find(p => p.id === ea.patient_id);
+      if(ea.requestor_id) {
+        generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
+      } else if(ea.requestor) {
+        generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
+      }
+      generalData.requestorName = ea.requestor;
+      const prod = productList.find(p => p.id === ea.productId);
+    
+  
+      detailsData.push({
+        search: {...prod},
+        ...prod,
+        orderQty : ea.order_qty,
+        productId : ea.productId
+      });
+      });
+    setGeneralForm(generalData);
+    setDetailForm(detailsData);
+    setMode('create');
+    setIsFormModal(true); 
+
   }
   if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
@@ -492,7 +520,7 @@ const Distribution = (props) => {
         </React.Fragment>
       }
       {isFormModal &&
-        <Form filterRecordHandler={filterRecordHandler} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+        <Form filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
       {isPrintForm &&
    <PrintForm isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails}/>

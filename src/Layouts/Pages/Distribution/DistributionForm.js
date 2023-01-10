@@ -80,6 +80,7 @@ function DistributionForm(props) {
     const [detailForm, setDetailForm] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
     const [isPrintForm,setIsPrintFrom] = useState(false);
+    
     const { isOpen,
         onClose,
 
@@ -204,6 +205,17 @@ function DistributionForm(props) {
         setGeneralForm(fm);
     }, []);
     useEffect(() => {
+        console.log('[Props Distribution]',props);
+        if(props.generalInfo) {
+            const gen = {...props.generalInfo};
+            gen.patientName = gen.patient?.name;
+            gen.requestorName = gen.requestor.name;
+            gen.facility = gen.patient?.place_of_service;
+            gen.position = gen.requestor?.position;
+            gen.orderDt = new Date();
+            setGeneralForm(gen);
+            setDetailForm(props.detailInfo);
+        } else 
         if (props.item) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
@@ -215,7 +227,7 @@ function DistributionForm(props) {
 
 
         }
-    }, [props.item]);
+    }, [props.item,props.generalInfo]);
     const printHandler = () => {
         setIsPrintFrom(true);
         console.log('[Print Handler]',generalForm,detailForm);
@@ -235,7 +247,7 @@ function DistributionForm(props) {
         }
         
         console.log('[Print Handler]',generalForm,detailForm);
-        props.createDistributionHandler(generalForm,detailForm,props.mode);
+     props.createDistributionHandler(generalForm,detailForm,props.mode);
       
         
     }
@@ -268,7 +280,7 @@ function DistributionForm(props) {
         },
     ];
     const inputGeneralHandler = ({ target }) => {
-        console.log('[Target]', target, generalForm);
+        console.log('[Target General]', target, generalForm);
         const source = { ...generalForm };
         source[target.name] = target.value;
         setGeneralForm(source);
@@ -299,6 +311,7 @@ function DistributionForm(props) {
             
             src['position'] = item.position;
             src['requestorName'] = item.name;
+            src['requestorId'] = item.id;
         
         } else if (item.categoryType === 'patient') {
             src['patient'] = item;  

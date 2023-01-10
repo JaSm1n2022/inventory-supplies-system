@@ -18,6 +18,7 @@ const TemplatePrint = (props) => {
     const [details, setDetails] = useState([]);
     const classes = useStyles();
     useEffect(() => {
+        console.log('[Template Print[',props);
         setGeneral(props.general);
         setDetails(props.details);
     }, [props]);
@@ -117,7 +118,7 @@ const TemplatePrint = (props) => {
                                                         {map + 1}
                                                     </TableCell>
                                                     <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription : ''}</small>
+                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}</small>
                                                     </TableCell>
                                                     <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                         <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||'') : ''}</Typography>
@@ -264,7 +265,7 @@ const TemplatePrint = (props) => {
                                                         <small>{details && details.length && details.length > map ? details[map].search.category : ''}</small>
                                                     </TableCell>
                                                     <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription : ''}</small>
+                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription  || details[map].search.short_description: ''}</small>
                                                     </TableCell>
                                                     <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                         <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||'') : ''}</Typography>
