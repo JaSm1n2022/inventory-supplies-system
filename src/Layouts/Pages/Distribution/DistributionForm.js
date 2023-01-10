@@ -233,9 +233,10 @@ function DistributionForm(props) {
             TOAST.error('location is required');
             return;
         }
-        setIsPrintFrom(true);
+        
         console.log('[Print Handler]',generalForm,detailForm);
         props.createDistributionHandler(generalForm,detailForm,props.mode);
+      
         
     }
     const footerActions = [
@@ -381,6 +382,9 @@ function DistributionForm(props) {
         } else {
             return 'Create Supplies Delivery Record';
         }
+    }
+    const closePrintFormHandler = () => {
+        setIsPrintFrom(false);
     }
     console.log('[general form]', generalForm, detailForm);
     return (
@@ -534,7 +538,7 @@ function DistributionForm(props) {
                 }
             </div>
             {isPrintForm && 
-            <PrintForm isOpen={isPrintForm} generalForm={generalForm} detailForm={detailForm}/>
+            <PrintForm isOpen={isPrintForm} generalForm={generalForm} closePrintForm={closePrintFormHandler} detailForm={detailForm}/>
 }
         </ReactModal >
 

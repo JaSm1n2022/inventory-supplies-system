@@ -30,7 +30,7 @@ const TemplatePrint = (props) => {
     }
     return (
         <React.Fragment>
-            {general &&
+            {general && details && details.length &&
                 <Grid container style={{ width: '800px', height: '1000px', paddingLeft: 20 }}>
                     <Grid item xs={12}>
                         <div style={{ display: 'inline-flex', gap: 10 }}>

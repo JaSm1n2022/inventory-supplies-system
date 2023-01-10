@@ -5,8 +5,9 @@ import ComponentToPrint from "../../Document/ComponentToPrint";
 import PrintComponent from "../../Document/PrintComponent";
 import styles from "./distribution.module.css";
 function PrintForm(props) {
+    
     const onClose = () => {
-
+        props.closePrintForm();
     }
      return (
         <ReactModal

@@ -26,6 +26,8 @@ import { attemptToFetchPatient, resetFetchPatientState } from "../../../store/ac
 import { patientListStateSelector } from "../../../store/selectors/patientSelector";
 import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/actions/employeeAction";
 import { employeeListStateSelector } from "../../../store/selectors/employeeSelector";
+import PrintForm from "./PrintForm";
+import TOAST from "../../../modules/toastManager";
 
 
 let productList = [];
@@ -40,12 +42,14 @@ let isDistributionListDone = false;
 let isPatientListDone = false;
 let isEmployeeListDone = false;
 let isAllFetchDone = false;
-
+let mainGeneral = {};
+let mainDetails = [];
 let grandTotal = 0.0;
 let originalSource = undefined;
 
 const Distribution = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isPrintForm, setIsPrintForm] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState(DataHandler.columns());
   const [isFormModal, setIsFormModal] = useState(false);
@@ -201,8 +205,9 @@ const Distribution = (props) => {
   }
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
   if (isCreateDistributionCollection && props.createDistributionState && props.createDistributionState.status === ACTION_STATUSES.SUCCEED) {
-    setIsCreateDistributionCollection(false);
     
+    setIsCreateDistributionCollection(false);
+    setIsPrintForm(true);
     props.listDistributions({from : dateFrom,to:dateTo});
 
   }
@@ -230,6 +235,8 @@ const Distribution = (props) => {
   }
 
   const createDistributionHandler = (general, details, mode) => {
+    mainGeneral= general;
+    mainDetails = details;
     console.log('[Create Distribution Handler]', general, details, mode);
 
 
@@ -344,12 +351,19 @@ const Distribution = (props) => {
 
 
   }
-
+ const closePrintFormHandler = () => {
+   setIsPrintForm(false);
+ }
   const changeStatusHandler = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const closeChangeStatusMenuHandler = () => {
     setAnchorEl(null);
+  }
+
+  const createOrderHandler = () => {
+    const selectedData = dataSource.filter((r) => r.isChecked);
+    console.log('[Selected Data]',selectedData);
   }
   if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
@@ -419,6 +433,26 @@ const Distribution = (props) => {
                       component="span"
                       startIcon={<AddIcon />}
                     > Export Excel </Button>
+                      <Button
+                      onClick={() => createOrderHandler()}
+                      variant="contained"
+                      style={{
+                        border: 'solid 1px blue',
+                        color: 'white',
+                        background: 'blue',
+                        fontFamily: "Roboto",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        fontStretch: "normal",
+                        fontStyle: "normal",
+                        lineHeight: 1.71,
+                        letterSpacing: "0.4px",
+                        textAlign: "left",
+                        cursor: 'pointer'
+                      }}
+                      component="span"
+                      startIcon={<AddIcon />}
+                    > Create Order </Button>
                     <Button
                       onClick={changeStatusHandler}
                       variant="contained"
@@ -460,7 +494,10 @@ const Distribution = (props) => {
       {isFormModal &&
         <Form filterRecordHandler={filterRecordHandler} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
-
+      {isPrintForm &&
+   <PrintForm isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails}/>
+      }
+}
     </React.Fragment>
   )
 }
