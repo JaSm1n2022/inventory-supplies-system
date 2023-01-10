@@ -15,8 +15,7 @@ class ComponentToPrint extends React.Component {
         console.log('[Details]',details,general);
         return (
                 <TemplatePrint general={general} details={details} />
-           
-        );
+        )
     }
 }
 export default ComponentToPrint;

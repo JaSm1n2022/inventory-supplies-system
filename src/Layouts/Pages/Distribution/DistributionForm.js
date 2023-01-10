@@ -233,6 +233,8 @@ function DistributionForm(props) {
             TOAST.error('location is required');
             return;
         }
+        setIsPrintFrom(true);
+        console.log('[Print Handler]',generalForm,detailForm);
         props.createDistributionHandler(generalForm,detailForm,props.mode);
         
     }
@@ -323,6 +325,11 @@ function DistributionForm(props) {
         const productInfo = props.productList.find(product => product.id === item.productId);
         if(productInfo) {
         source.price_per_pcs = productInfo.price_per_pcs;
+        source.search.shortDescription = productInfo.short_description;
+        source.search.unitDistribution = productInfo.unit_distribution;
+        source.search.category = productInfo.category;
+        source.search.vendor = productInfo.vendor;
+        source.search.size = productInfo.size;
         }
         setIsRefresh(!isRefresh);
 
