@@ -209,6 +209,7 @@ function DistributionForm(props) {
         if(props.generalInfo) {
             const gen = {...props.generalInfo};
             gen.patientName = gen.patient?.name;
+            gen.patientId = gen.patient?.id;
             gen.requestorName = gen.requestor.name;
             gen.facility = gen.patient?.place_of_service;
             gen.position = gen.requestor?.position;
@@ -220,6 +221,11 @@ function DistributionForm(props) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
             generalFm.orderDt = new Date(generalFm.order_at);
+            generalFm.patientName = generalFm.patient?.name;
+            generalFm.patientId = generalFm.patient?.id;
+            generalFm.requestorName = generalFm.requestor.name;
+            generalFm.facility = generalFm.patient?.place_of_service;
+            generalFm.position = generalFm.requestor?.position;
             const detailFm = generalFm.details ? generalFm.details : [generalFm] ;
 
             setGeneralForm(generalFm);
@@ -537,7 +543,7 @@ function DistributionForm(props) {
                     })}
 
                     {details && details.length > 0 &&
-                    <div style={{paddingTop:4}}>
+                    <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>
                     

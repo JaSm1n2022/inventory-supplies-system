@@ -58,17 +58,43 @@ const Distribution = (props) => {
   const [mode, setMode] = useState('create');
   const [isAddGroupButtons, setIsAddGroupButtons] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
-  const [dateTo,setDateTo] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [isDistributionsCollection, setIsDistributionsCollection] = useState(true);
   const [isCreateDistributionCollection, setIsCreateDistributionCollection] = useState(true);
   const [isUpdateDistributionCollection, setIsUpdateDistributionCollection] = useState(true);
   const [isDeleteDistributionCollection, setIsDeleteDistributionCollection] = useState(true);
-  const [generalForm,setGeneralForm] = useState(undefined);
-  const [detailForm,setDetailForm] = useState([]);
+  const [generalForm, setGeneralForm] = useState(undefined);
+  const [detailForm, setDetailForm] = useState([]);
 
   const createFormHandler = (data, mode) => {
-    setItem(data);
+    console.log('[data]',data);
     setMode(mode || 'create');
+    if (mode === 'edit') {
+      //setItem(data);
+      data.distributionId = data.id;
+      data.patient = patientList.find(p => p.id === data.patient_id);
+      if (data.requestor_id) {
+        data.requestor = employeeList.find(e => e.id === data.requestor_id);
+      } else if (data.requestor) {
+        data.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === data.requestor.toUpperCase());
+      }
+      data.requestorName = data.requestor;
+      const prod = productList.find(p => p.id === data.productId);
+
+      
+      data.details = [{
+        search: { ...prod },
+        ...prod,
+        orderQty: data.order_qty,
+        productId: data.productId,
+        distributionId : data.id
+      }];
+      setItem(data);
+    } else {
+
+      setItem(data);
+    }
+
     setIsFormModal(true);
   }
   const closeFormModalHandler = () => {
@@ -86,7 +112,7 @@ const Distribution = (props) => {
     props.listProducts();
     props.listStocks();
     props.listPatients();
-    props.listDistributions({from : dates.from,to:dates.to});
+    props.listDistributions({ from: dates.from, to: dates.to });
     props.listEmployees();
   }, []);
 
@@ -188,7 +214,7 @@ const Distribution = (props) => {
         return {
           ...col,
           editable: () => false,
-          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status && cellProps.data.order_status.toLowerCase() !== 'order' ? false: false} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
+          render: (cellProps) => <ActionsFunction deleteRecordItemHandler={deleteRecordItemHandler} disabled={cellProps.data.order_status && cellProps.data.order_status.toLowerCase() !== 'order' ? false : false} createFormHandler={createFormHandler} data={{ ...cellProps.data }} />
         }
 
       } else {
@@ -207,28 +233,28 @@ const Distribution = (props) => {
   }
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
   if (isCreateDistributionCollection && props.createDistributionState && props.createDistributionState.status === ACTION_STATUSES.SUCCEED) {
-    
+
     setIsCreateDistributionCollection(false);
     setIsPrintForm(true);
-    props.listDistributions({from : dateFrom,to:dateTo});
+    props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
   if (isUpdateDistributionCollection && props.updateDistributionState && props.updateDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsUpdateDistributionCollection(false);
-    props.listDistributions();
+    props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
   console.log('[isDeleteDistribution]', isDeleteDistributionCollection, props.deleteDistributionState);
   if (isDeleteDistributionCollection && props.deleteDistributionState && props.deleteDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteDistributionCollection(false);
-    props.listDistributions({from : dateFrom,to:dateTo});
+    props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
 
   const filterByDateHandler = (dates) => {
     setDateTo(dates.to);
     setDateFrom(dates.from);
-    props.listDistributions({from : dates.from,to:dates.to});
+    props.listDistributions({ from: dates.from, to: dates.to });
   }
 
   const deleteRecordItemHandler = (id) => {
@@ -237,7 +263,7 @@ const Distribution = (props) => {
   }
 
   const createDistributionHandler = (general, details, mode) => {
-    mainGeneral= general;
+    mainGeneral = general;
     mainDetails = details;
     console.log('[Create Distribution Handler]', general, details, mode);
 
@@ -259,13 +285,17 @@ const Distribution = (props) => {
         patient_name: general.patientName,
         delivery_location: general.facility,
         requestor: general.requestorName,
-        requestor_id : general.requestorId,
+        requestor_id: general.requestorId,
         patient_caregiver: general.caregiver,
         patient_id: general.patientId || 0,
         stock_status: payload.stockStatus,
         group_id: groupId
 
       };
+      if(mode === 'edit' && payload.distributionId) {
+        params.id = payload.distributionId;
+      }
+    
       console.log('[params]', params);
       finalPayload.push(params);
     }
@@ -274,7 +304,7 @@ const Distribution = (props) => {
       props.createDistribution(finalPayload);
 
     } else if (mode === 'edit') {
-
+      console.log('[Final Payload]',finalPayload);
       props.updateDistribution(finalPayload);
     }
     setIsFormModal(false);
@@ -285,19 +315,19 @@ const Distribution = (props) => {
   }
   console.log('[Is Create Distribution Collection]', props.createDistributionState);
 
-  
+
   const filterRecordHandler = (keyword) => {
-    console.log('[Keyword]',keyword);
-    if(!keyword) {
-      grandTotalHandler([...originalSource]);  
+    console.log('[Keyword]', keyword);
+    if (!keyword) {
+      grandTotalHandler([...originalSource]);
       setDataSource([...originalSource]);
     } else {
-    const temp = [...originalSource];
-    const found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
-    || data.patient_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
-    );
-    grandTotalHandler(found);
-   setDataSource(found);
+      const temp = [...originalSource];
+      const found = temp.filter(data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+        || data.patient_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+      );
+      grandTotalHandler(found);
+      setDataSource(found);
     }
   };
 
@@ -354,9 +384,9 @@ const Distribution = (props) => {
 
 
   }
- const closePrintFormHandler = () => {
-   setIsPrintForm(false);
- }
+  const closePrintFormHandler = () => {
+    setIsPrintForm(false);
+  }
   const changeStatusHandler = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -366,31 +396,31 @@ const Distribution = (props) => {
 
   const createOrderHandler = () => {
     const selectedData = dataSource.filter((r) => r.isChecked);
-    console.log('[Selected Data]',selectedData);
+    console.log('[Selected Data]', selectedData);
     const generalData = {};
     const detailsData = [];
     selectedData.forEach(ea => {
       generalData.patient = patientList.find(p => p.id === ea.patient_id);
-      if(ea.requestor_id) {
+      if (ea.requestor_id) {
         generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
-      } else if(ea.requestor) {
+      } else if (ea.requestor) {
         generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
       }
       generalData.requestorName = ea.requestor;
       const prod = productList.find(p => p.id === ea.productId);
-    
-  
+
+
       detailsData.push({
-        search: {...prod},
+        search: { ...prod },
         ...prod,
-        orderQty : ea.order_qty,
-        productId : ea.productId
+        orderQty: ea.order_qty,
+        productId: ea.productId
       });
-      });
+    });
     setGeneralForm(generalData);
     setDetailForm(detailsData);
     setMode('create');
-    setIsFormModal(true); 
+    setIsFormModal(true);
 
   }
   if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
@@ -411,7 +441,7 @@ const Distribution = (props) => {
                 <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
               </div>
               <div>
-                <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler}/>
+                <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler} />
               </div>
             </Grid>
 
@@ -461,7 +491,7 @@ const Distribution = (props) => {
                       component="span"
                       startIcon={<AddIcon />}
                     > Export Excel </Button>
-                      <Button
+                    <Button
                       onClick={() => createOrderHandler()}
                       variant="contained"
                       style={{
@@ -523,7 +553,7 @@ const Distribution = (props) => {
         <Form filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
       {isPrintForm &&
-   <PrintForm isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails}/>
+        <PrintForm isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails} />
       }
 }
     </React.Fragment>
