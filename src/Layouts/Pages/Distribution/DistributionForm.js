@@ -19,6 +19,7 @@ let patients = [];
 let employees = [];
 let facilities = [];
 let statuses = [];
+let originalOrderQty = 0;
 SUPPLY_STATUS.forEach((item, index) => {
     statuses.push({
         ...item,
@@ -229,6 +230,9 @@ function DistributionForm(props) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
             generalFm.orderDt = new Date(generalFm.order_at);
+            if(props.mode === 'edit') {
+                originalOrderQty = generalFm.order_qty;
+            }
             generalFm.patientName = generalFm.patient?.name;
             generalFm.patientId = generalFm.patient?.id;
             generalFm.requestorName = generalFm.requestor.name;
@@ -301,18 +305,24 @@ function DistributionForm(props) {
 
     };
     const inputDetailHandler = ({ target }, source) => {
-        console.log('[source]',target,source,props.stockList);
+        console.log('[source input val]',originalOrderQty,target,source,props.stockList);
         source[target.name] = target.value;
        
         if(target.name === 'orderQty') {
+            let val = parseInt(target.value|| 0,10)
+            if(props.mode === 'edit') {
+                val = val - originalOrderQty;
+            }
+            console.log('[source input val2]',val);
             const qtyOnHand = props.stockList.find(stock => stock.productId === source.productId).qty_on_hand;
-            const calc = parseInt(qtyOnHand,10) - parseInt(target.value||0,10);
+            const calc = parseInt(qtyOnHand,10) - parseInt(val,10);
+            source.adjustedQty = val;
             source.qtyOnHand = qtyOnHand;
             if(calc > 0) {
                 
-                source.stockStatus = 'In Stock';
+                source.stockStatus = `Qty On Hand : ${qtyOnHand} ( In Stock )`;
             } else {
-                source.stockStatus = 'Out of Stock';
+                source.stockStatus = `Qty On Hand: ${qtyOnHand}  ( Out of Stock)`;
             }
         }
         setIsRefresh(!isRefresh);
@@ -545,10 +555,10 @@ function DistributionForm(props) {
                                     <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
                                 </Grid>
                                 {item.stockStatus &&
-                                <Grid item xs={2} >
+                                <Grid item xs={12} >
                                 <div id="in-stock" style={{borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8,paddingBottom:2 }}>
 					
-                                    <Typography variant="h6" style={{color:item.stockStatus === 'In Stock' ? 'blue':'red'}}>{item.stockStatus}</Typography>
+                                    <Typography variant="h6" style={{color:item.stockStatus.indexOf('In Stock') !== -1 ? 'blue':'red'}}>{item.stockStatus}</Typography>
                                     </div>
                                 </Grid>
                     }

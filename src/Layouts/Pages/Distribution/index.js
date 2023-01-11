@@ -244,6 +244,7 @@ const Distribution = (props) => {
   }
   if (isUpdateDistributionCollection && props.updateDistributionState && props.updateDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsUpdateDistributionCollection(false);
+    props.updateStock(forStockUpdates);
     props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
@@ -254,6 +255,7 @@ const Distribution = (props) => {
 
   }
   if ( props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
+    props.listStocks();
     props.resetUpdateStock();
   }
   const filterByDateHandler = (dates) => {
@@ -303,10 +305,14 @@ const Distribution = (props) => {
       }
       const stock = stockList.find(s => s.productId === payload.productId);
       if (stock) {
+        let qty = parseInt(payload.orderQty, 10);
+        if(mode === 'edit') {
+          qty = parseInt(payload.adjustedQty, 10);
+        }
         forStockUpdates.push(
           {
             id : stock.id,
-            qty_on_hand: parseInt(stock.qty_on_hand, 10) - parseInt(payload.orderQty, 10)
+            qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10))
 
           });
       }
