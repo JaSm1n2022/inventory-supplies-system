@@ -6,7 +6,7 @@ import FilterTable from "./FilterTable";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { ACTION_STATUSES } from "../../../utils/constants";
+import { ACTION_STATUSES, SUPPLY_STATUS } from "../../../utils/constants";
 import { useState } from "react";
 import * as FileSaver from 'file-saver';
 import { v4 as uuidv4 } from 'uuid';
@@ -414,7 +414,19 @@ const Distribution = (props) => {
   const closeChangeStatusMenuHandler = () => {
     setAnchorEl(null);
   }
-
+  const updateStatusHandler = (status) => {
+    const selectedData = dataSource.filter((r) => r.isChecked);
+    console.log('[selected Data Status]',selectedData,status);
+    const forUpdateStatus = [];
+    selectedData.forEach(sel => {
+      forUpdateStatus.push({
+        id : sel.id,
+        order_status : status
+      });
+    })
+    props.updateDistribution(forUpdateStatus);
+    setAnchorEl(null);
+  }
   const createOrderHandler = () => {
     const selectedData = dataSource.filter((r) => r.isChecked);
     console.log('[Selected Data]', selectedData);
@@ -510,7 +522,7 @@ const Distribution = (props) => {
                         cursor: 'pointer'
                       }}
                       component="span"
-                      startIcon={<AddIcon />}
+                     
                     > Export Excel </Button>
                     <Button
                       onClick={() => createOrderHandler()}
@@ -530,8 +542,8 @@ const Distribution = (props) => {
                         cursor: 'pointer'
                       }}
                       component="span"
-                      startIcon={<AddIcon />}
-                    > Create Order </Button>
+                      
+                    > Create Order Template </Button>
                     <Button
                       onClick={changeStatusHandler}
                       variant="contained"
@@ -550,11 +562,10 @@ const Distribution = (props) => {
                       open={Boolean(anchorEl)}
                       onClose={closeChangeStatusMenuHandler}
                     >
-                      <MenuItem>Fullfill</MenuItem>
-                      <MenuItem>Delivered</MenuItem>
-                      <MenuItem>Returned</MenuItem>
-
-
+                      {SUPPLY_STATUS.map(map => {
+                        return (
+                      <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
+                        )})}
                     </Menu>
                   </div>
                 }

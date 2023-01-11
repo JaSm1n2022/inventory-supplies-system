@@ -339,7 +339,7 @@ export const countries =
     
     'Order',
     'Fulfill',
-    
+    'Picked Up',
     'Delivered',
     'Return',
   ]
