@@ -416,7 +416,9 @@ export const countries =
     'Plastic',
     'Straw',
     'BP Monitor',
-    'Soap'
+    'Soap',
+    'Matress Pad',
+    'Catheters'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [
