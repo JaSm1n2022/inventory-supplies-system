@@ -216,6 +216,7 @@ function DistributionForm(props) {
     useEffect(() => {
         console.log('[Props Distribution]',props);
         if(props.generalInfo) {
+            console.log('[Props Distribution2]',props.generalInfo);
             const gen = {...props.generalInfo};
             gen.patientName = gen.patient?.name;
             gen.patientId = gen.patient?.id;
@@ -239,7 +240,11 @@ function DistributionForm(props) {
             generalFm.facility = generalFm.patient?.place_of_service;
             generalFm.position = generalFm.requestor?.position;
             const detailFm = generalFm.details ? generalFm.details : [generalFm] ;
+            detailFm.forEach(e => {
+                e.unitDistribution = e.unit_uom ? e.unit_uom : e.search.unitDistribution || e.search.unit_distribution;
 
+            });
+            console.log('[Detail]',detailFm);
             setGeneralForm(generalFm);
             setDetailForm(detailFm);
 

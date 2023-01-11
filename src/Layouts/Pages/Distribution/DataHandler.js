@@ -9,6 +9,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 240, name: 'description', header: 'Description' },
       { defaultFlex: 1, minWidth: 200, name: 'category', header: 'Category' },
       { defaultFlex: 1, minWidth: 160, name: 'order_qty', header: 'Ordered Qty' },
+      { defaultFlex: 1, minWidth: 160, name: 'unit_uom', header: 'Unit Uom' },
       { defaultFlex: 1, minWidth: 160, name: 'estimated_total_amt', header: 'Estimated Amount' },
       { defaultFlex: 1, minWidth: 260, name: 'delivery_location', header: 'Location' },
       { defaultFlex: 1, minWidth: 160, name: 'order_status', header: 'Order Status' },

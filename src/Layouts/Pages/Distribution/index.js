@@ -88,11 +88,14 @@ const Distribution = (props) => {
         ...prod,
         orderQty: data.order_qty,
         productId: data.productId,
+        unitDistribution : data.unit_distribution || data.unitDistribution || data.unit_uom,
         distributionId: data.id
       }];
       setItem(data);
     } else {
-
+      data.details.forEach(e => {
+        e.unitDistribution = e.unit_distribution || e.unitDistribution || e.unit_uom;
+      });
       setItem(data);
     }
 
@@ -297,7 +300,8 @@ const Distribution = (props) => {
         patient_caregiver: general.caregiver,
         patient_id: general.patientId || 0,
         stock_status: payload.stockStatus,
-        group_id: groupId
+        group_id: groupId,
+        unit_uom : payload.unitDistribution
 
       };
       if (mode === 'edit' && payload.distributionId) {
@@ -448,7 +452,8 @@ const Distribution = (props) => {
         search: { ...prod },
         ...prod,
         orderQty: ea.order_qty,
-        productId: ea.productId
+        productId: ea.productId,
+        unitDistribution : prod.unit_distribution || prod.unitDistribution || ea.unit_uom
       });
     }
     });

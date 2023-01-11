@@ -121,7 +121,7 @@ const TemplatePrint = (props) => {
                                                         <small>{details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}</small>
                                                     </TableCell>
                                                     <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||'') : ''}</Typography>
+                                                        <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||details[map].search.unit_distribution || details[map].unit_distribution) : ''}</Typography>
                                                     </TableCell>
 
                                                 </TableRow>
