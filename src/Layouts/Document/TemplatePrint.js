@@ -74,7 +74,7 @@ const TemplatePrint = (props) => {
 
 
                                             <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                Facility/POS : N/A
+                                                Facility/POS : {general.facility || ''}
                                             </TableCell>
                                             <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up:</TableCell>
 

@@ -20,8 +20,8 @@ import ActionsFunction from "../../../Common/components/inventorySystem/ActionsF
 import { productListStateSelector } from "../../../store/selectors/productSelector";
 import { attemptToFetchProduct, resetFetchProductState } from "../../../store/actions/productAction";
 import { attemptToCreateDistribution, attemptToDeleteDistribution, attemptToFetchDistribution, attemptToUpdateDistribution, resetCreateDistributionState, resetDeleteDistributionState, resetFetchDistributionState, resetUpdateDistributionState } from "../../../store/actions/distributionAction";
-import { stockListStateSelector } from "../../../store/selectors/stockSelector";
-import { attemptToFetchStock, resetFetchStockState } from "../../../store/actions/stockAction";
+import { stockListStateSelector, stockUpdateStateSelector } from "../../../store/selectors/stockSelector";
+import { attemptToFetchStock, attemptToUpdateStock, resetFetchStockState, resetUpdateStockState } from "../../../store/actions/stockAction";
 import { attemptToFetchPatient, resetFetchPatientState } from "../../../store/actions/patientAction";
 import { patientListStateSelector } from "../../../store/selectors/patientSelector";
 import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/actions/employeeAction";
@@ -46,6 +46,7 @@ let isAllFetchDone = false;
 let mainGeneral = {};
 let mainDetails = [];
 let grandTotal = 0.0;
+let forStockUpdates = [];
 let originalSource = undefined;
 
 const Distribution = (props) => {
@@ -67,7 +68,7 @@ const Distribution = (props) => {
   const [detailForm, setDetailForm] = useState([]);
 
   const createFormHandler = (data, mode) => {
-    console.log('[data]',data);
+    console.log('[data]', data);
     setMode(mode || 'create');
     if (mode === 'edit') {
       //setItem(data);
@@ -81,13 +82,13 @@ const Distribution = (props) => {
       data.requestorName = data.requestor;
       const prod = productList.find(p => p.id === data.productId);
 
-      
+
       data.details = [{
         search: { ...prod },
         ...prod,
         orderQty: data.order_qty,
         productId: data.productId,
-        distributionId : data.id
+        distributionId: data.id
       }];
       setItem(data);
     } else {
@@ -236,6 +237,8 @@ const Distribution = (props) => {
 
     setIsCreateDistributionCollection(false);
     setIsPrintForm(true);
+    console.log('Update Stock',forStockUpdates);
+    props.updateStock(forStockUpdates);
     props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
@@ -250,7 +253,9 @@ const Distribution = (props) => {
     props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
-
+  if ( props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
+    props.resetUpdateStock();
+  }
   const filterByDateHandler = (dates) => {
     setDateTo(dates.to);
     setDateFrom(dates.from);
@@ -269,6 +274,7 @@ const Distribution = (props) => {
 
 
     const finalPayload = [];
+    forStockUpdates = [];
     const groupId = uuidv4();
     for (const payload of details) {
 
@@ -292,19 +298,28 @@ const Distribution = (props) => {
         group_id: groupId
 
       };
-      if(mode === 'edit' && payload.distributionId) {
+      if (mode === 'edit' && payload.distributionId) {
         params.id = payload.distributionId;
       }
-    
+      const stock = stockList.find(s => s.productId === payload.productId);
+      if (stock) {
+        forStockUpdates.push(
+          {
+            id : stock.id,
+            qty_on_hand: parseInt(stock.qty_on_hand, 10) - parseInt(payload.orderQty, 10)
+
+          });
+      }
       console.log('[params]', params);
       finalPayload.push(params);
     }
+    console.log('[For Stock Updates]', forStockUpdates);
     if (mode === 'create') {
       console.log('[final payload]', finalPayload);
       props.createDistribution(finalPayload);
 
     } else if (mode === 'edit') {
-      console.log('[Final Payload]',finalPayload);
+      console.log('[Final Payload]', finalPayload);
       props.updateDistribution(finalPayload);
     }
     setIsFormModal(false);
@@ -568,7 +583,7 @@ const mapStateToProps = store => ({
   createDistributionState: distributionCreateStateSelector(store),
   updateDistributionState: distributionUpdateStateSelector(store),
   deleteDistributionState: distributionDeleteStateSelector(store),
-
+  updateStockState: stockUpdateStateSelector(store),
 
 });
 
@@ -588,7 +603,9 @@ const mapDispatchToProps = dispatch => ({
   updateDistribution: (data) => dispatch(attemptToUpdateDistribution(data)),
   resetUpdateDistribution: () => dispatch(resetUpdateDistributionState()),
   deleteDistribution: (data) => dispatch(attemptToDeleteDistribution(data)),
-  resetDeleteDistribution: () => dispatch(resetDeleteDistributionState())
+  resetDeleteDistribution: () => dispatch(resetDeleteDistributionState()),
+  updateStock: (data) => dispatch(attemptToUpdateStock(data)),
+  resetUpdateStock: () => dispatch(resetUpdateStockState()),
 
 });
 

@@ -184,6 +184,14 @@ function DistributionForm(props) {
             type: 'number'
         },
         {
+            id: 'unitDistribution',
+            component: 'textfield',
+            placeholder: 'Unit',
+            label: 'Unit',
+            name: 'unitDistribution',
+           
+        },
+        {
             id: 'vendor',
             component: 'textfield',
             placeholder: 'Vendor',
@@ -299,7 +307,9 @@ function DistributionForm(props) {
         if(target.name === 'orderQty') {
             const qtyOnHand = props.stockList.find(stock => stock.productId === source.productId).qty_on_hand;
             const calc = parseInt(qtyOnHand,10) - parseInt(target.value||0,10);
+            source.qtyOnHand = qtyOnHand;
             if(calc > 0) {
+                
                 source.stockStatus = 'In Stock';
             } else {
                 source.stockStatus = 'Out of Stock';
@@ -344,6 +354,7 @@ function DistributionForm(props) {
         source.vendor = item.vendor || '-';
         const productInfo = props.productList.find(product => product.id === item.productId);
         if(productInfo) {
+        source.unitDistribution = productInfo.unit_distribution;
         source.price_per_pcs = productInfo.price_per_pcs;
         source.search.shortDescription = productInfo.short_description;
         source.search.unitDistribution = productInfo.unit_distribution;
@@ -374,6 +385,7 @@ function DistributionForm(props) {
             description: '-',
             orderQty: 0,
             stockQty: 0,
+            unitDistribution : '-',
             status: '',
             productId : ''
         });
@@ -520,11 +532,14 @@ function DistributionForm(props) {
                                     </div>
                                 </Grid>
 
-                                <Grid item xs={8}>
+                                <Grid item xs={6}>
                                     <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'description')} value={item['description']||'-'} onChange={inputDetailHandler} />
                                 </Grid>
                                 <Grid item xs={2}>
                                     <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']}/>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
@@ -542,7 +557,7 @@ function DistributionForm(props) {
                         )
                     })}
 
-                    {details && details.length > 0 &&
+                    {detailForm && detailForm.length && detailForm.length < 10 &&
                     <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>
