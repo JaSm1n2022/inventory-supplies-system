@@ -47,12 +47,16 @@ const FilterTable = (props) => {
 			if (item.value !== 'custom') {
 				data = Helper.formatDateRangeByCriteriaV2(item.value);
 				console.log('[item data]', data);
-			}
+			} else {
+                data = Helper.formatDateRangeByCriteriaV2('last7Days');
+            }
             setDateFrom(data.from);
             setDateTo(data.to);
 			setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
 			setDateSelected(item);
+            if (item.value !== 'custom') {
             props.filterByDateHandler({from : data.from,to:data.to});
+            }
 			
     }
 
@@ -129,7 +133,7 @@ const FilterTable = (props) => {
 					value={dateSelected || DEFAULT_ITEM}
 					name="dateType"
 
-					placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+					placeholder={dateSelected && dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
 					onSelectHandler={autoCompleteInputHander}
 					onClearHandler={onClearHandler}
 					options={dateOptions || [DEFAULT_ITEM]}>

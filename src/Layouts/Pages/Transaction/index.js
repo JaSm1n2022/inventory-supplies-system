@@ -1,12 +1,12 @@
 
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import React, {useEffect } from "react";
 import DataHandler from "./DataHandler";
 import FilterTable from "./FilterTable";
-
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
 
-import { ACTION_STATUSES} from "../../../utils/constants";
+import { ACTION_STATUSES, SUPPLY_STATUS} from "../../../utils/constants";
 import { useState } from "react";
 import * as FileSaver from 'file-saver';
 
@@ -39,6 +39,7 @@ const Transaction = (props) => {
   const [mode, setMode] = useState('create');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo,setDateTo] = useState('');
+  const [anchorEl,setAnchorEl] = useState(undefined);
   const [isAddGroupButtons,setIsAddGroupButtons] = useState(false);
 
   const createFormHandler = (data, mode) => {
@@ -181,13 +182,34 @@ const Transaction = (props) => {
     
     } else if (mode === 'edit') {
       params.id = payload.id;
-      props.UpdateTransaction(params);
+      props.updateTransaction(params);
     }
     setIsFormModal(false);
     
 
     
 
+  }
+  const changeStatusHandler = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const closeChangeStatusMenuHandler = () => {
+    setAnchorEl(null);
+  }
+  const updateStatusHandler = (stat) => {
+    const selectedData = dataSource.filter((r) => r.isChecked);
+    console.log('[selected Data Status]',selectedData,stat);
+    const forUpdateStatus = [];
+    selectedData.forEach(sel => {
+      forUpdateStatus.push({
+        id : sel.id,
+        status : stat
+      });
+    })
+    setAnchorEl(null);
+    console.log('[forUpdateStatus]',forUpdateStatus);
+    props.updateTransaction(forUpdateStatus);
+   
   }
   console.log('[Is Create Transaction Collection]',props.CreateTransactionState);
   if (isCreateTransactionCollection && props.CreateTransactionState && props.CreateTransactionState.status === ACTION_STATUSES.SUCCEED) {
@@ -324,6 +346,7 @@ const exportToExcelHandler = () => {
             ADD TRANSACTION
           </Button>
           {isAddGroupButtons &&
+          <div style={{ display: 'inline-flex', gap: 10 }}>
           <Button
           onClick={() => exportToExcelHandler()}
           variant="contained"
@@ -344,6 +367,32 @@ const exportToExcelHandler = () => {
           component="span"
           startIcon={<AddIcon />}
         > Export Excel </Button>
+         <Button
+                      onClick={changeStatusHandler}
+                      variant="contained"
+                      color="primary"
+                      aria-controls="simple-menu" aria-haspopup="true"
+                      component="span"
+                      endIcon={<ArrowDownwardIcon />}
+                    >
+
+                      Change Status
+                    </Button>
+                    <Menu
+                      id="simple-menu"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={closeChangeStatusMenuHandler}
+                    >
+                      {SUPPLY_STATUS.map(map => {
+                        return (
+                      <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
+                        )})}
+                    </Menu>
+        </div>
+        
+        
 }
           </div>
           <Typography variant="h5">{`GRAND TOTAL: $${parseFloat(grandTotal|| 0.00).toFixed(2)}`} </Typography>
@@ -377,7 +426,7 @@ const mapDispatchToProps = dispatch => ({
   resetlistTransactions: () => dispatch(resetFetchTransactionState()),
   CreateTransaction : (data) => dispatch(attemptToCreateTransaction(data)),
   resetCreateTransaction : () => dispatch(resetCreateTransactionState()),
-  UpdateTransaction : (data) => dispatch(attemptToUpdateTransaction(data)),
+  updateTransaction : (data) => dispatch(attemptToUpdateTransaction(data)),
   resetUpdateTransaction : () => dispatch(resetUpdateTransactionState()),
   DeleteTransaction : (data) => dispatch(attemptToDeleteTransaction(data)),
   resetDeleteTransaction : () => dispatch(resetDeleteTransactionState())

@@ -479,7 +479,7 @@ const Distribution = (props) => {
             </Grid>
 
             <Grid container>
-              <div style={{ display: 'inline-flex', gap: 10 }}>
+              <div style={{ display: 'inline-flex', gap: 10,paddingTop:10 }}>
                 <Button
                   onClick={() => createFormHandler()}
                   variant="contained"
