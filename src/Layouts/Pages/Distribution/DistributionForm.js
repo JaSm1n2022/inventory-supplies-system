@@ -229,7 +229,7 @@ function DistributionForm(props) {
         if (props.item) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
-            generalFm.orderDt = new Date(generalFm.order_at);
+            generalFm.orderDt = moment(generalFm.order_at).utc().format('YYYY-MM-DD HH:mm');
             if(props.mode === 'edit') {
                 originalOrderQty = generalFm.order_qty;
             }

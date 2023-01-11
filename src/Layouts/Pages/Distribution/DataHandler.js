@@ -22,7 +22,7 @@ class DataHandler {
   }
   static mapData(items, lang) {
     items.forEach(item => {
-      item.order_at = moment(item.order_at).utc().format('YYYY-MM-DD');
+      item.order_at = moment(new Date(item.order_at)).format('YYYY-MM-DD');
     })
   return items;
   }

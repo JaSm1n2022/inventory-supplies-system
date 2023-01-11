@@ -1,5 +1,5 @@
 
-import { Button, CircularProgress, Grid, Menu, MenuItem, Typography } from "@mui/material";
+import { Button, CircularProgress, Grid, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import DataHandler from "./DataHandler";
 import FilterTable from "./FilterTable";
@@ -432,7 +432,8 @@ const Distribution = (props) => {
     console.log('[Selected Data]', selectedData);
     const generalData = {};
     const detailsData = [];
-    selectedData.forEach(ea => {
+    selectedData.forEach((ea,indx) => {
+      if(indx < 10) {
       generalData.patient = patientList.find(p => p.id === ea.patient_id);
       if (ea.requestor_id) {
         generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
@@ -449,6 +450,7 @@ const Distribution = (props) => {
         orderQty: ea.order_qty,
         productId: ea.productId
       });
+    }
     });
     setGeneralForm(generalData);
     setDetailForm(detailsData);
@@ -524,6 +526,7 @@ const Distribution = (props) => {
                       component="span"
                      
                     > Export Excel </Button>
+                    <Tooltip title={'Limit to 10 records'}>
                     <Button
                       onClick={() => createOrderHandler()}
                       variant="contained"
@@ -544,6 +547,7 @@ const Distribution = (props) => {
                       component="span"
                       
                     > Create Order Template </Button>
+                    </Tooltip>
                     <Button
                       onClick={changeStatusHandler}
                       variant="contained"
