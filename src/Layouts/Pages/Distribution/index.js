@@ -93,9 +93,7 @@ const Distribution = (props) => {
       }];
       setItem(data);
     } else {
-      data.details.forEach(e => {
-        e.unitDistribution = e.unit_distribution || e.unitDistribution || e.unit_uom;
-      });
+      
       setItem(data);
     }
 
