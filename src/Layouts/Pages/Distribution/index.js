@@ -252,6 +252,9 @@ const Distribution = (props) => {
   console.log('[isDeleteDistribution]', isDeleteDistributionCollection, props.deleteDistributionState);
   if (isDeleteDistributionCollection && props.deleteDistributionState && props.deleteDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteDistributionCollection(false);
+    console.log('[delete distribution stock]',forStockUpdates);
+    props.updateStock(forStockUpdates);
+  
     props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
@@ -265,8 +268,17 @@ const Distribution = (props) => {
     props.listDistributions({ from: dates.from, to: dates.to });
   }
 
-  const deleteRecordItemHandler = (id) => {
-    console.log('[delete Distribution id]', id);
+  const deleteRecordItemHandler = (id,data) => {
+    forStockUpdates = [];
+    console.log('[delete Distribution id]', id,data);
+    const stock = stockList.find(s => s.productId === data.productId);
+    console.log('[delete distribution stock',stock);
+      forStockUpdates.push(
+        {
+          id : stock.id,
+          qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(data.order_qty, 10))
+
+        });
     props.deleteDistribution(id);
   }
 

@@ -18,7 +18,7 @@ export default function ActionsFunction(props) {
     const deleteRowHandler = () => {
       setIsRowForDelete(false);
       console.log('[Delete Id]',props.data.id);
-      props.deleteRecordItemHandler(props.data.id);
+      props.deleteRecordItemHandler(props.data.id,props.data);
     }
     console.log('[Actions Function props]',props);
     return (
