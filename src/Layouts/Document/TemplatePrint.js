@@ -57,10 +57,10 @@ const TemplatePrint = (props) => {
                                                 height: 10
                                             }
                                         }}>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
+                                            <TableCell style={{ border: 'solid 1px black',width:'60%' }} component="th" scope="row" >
                                                 Patient Name : {general.patientName || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: </TableCell>
+                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: <input /></TableCell>
 
                                         </TableRow>
                                         <TableRow sx={{
@@ -76,7 +76,7 @@ const TemplatePrint = (props) => {
                                             <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                 Facility/POS : {general.facility || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up:</TableCell>
+                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up:&nbsp;<input /></TableCell>
 
                                         </TableRow>
                                     </TableBody>
