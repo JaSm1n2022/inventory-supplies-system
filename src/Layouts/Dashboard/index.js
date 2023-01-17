@@ -23,6 +23,7 @@ import { productListStateSelector } from '../../store/selectors/productSelector'
 import { attemptToFetchProduct, resetFetchProductState } from '../../store/actions/productAction';
 import { attemptToFetchStock, resetFetchStockState } from '../../store/actions/stockAction';
 import { stockListStateSelector } from '../../store/selectors/stockSelector';
+import BriefPlot from './components/BriefPlot';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -106,7 +107,7 @@ let transactionDashboard =
   office: 0
 }
 let patientGrandTotal = 0.0;
-let patientPlot = [];
+let patientBriefPlot = [];
 let patientDashboard = [
   {
     name: '',
@@ -301,6 +302,160 @@ const Dashboard = (props) => {
     listTransactions({ from: _sfrom, to: _sTo });
 
   }
+  const setPatientsProducsHandler = (patient,briefs,underpads,underwears,wipes,gloves) => {
+    const temp = {
+      patientName: patient.name,
+      briefProductId: briefs && briefs.length ? briefs[0].productId : '',
+      briefProduct: briefs && briefs.length ? briefs[0].description : '',
+      briefQty: briefs && briefs.length ? briefs[0].order_qty : 0,
+      briefVendor: '',
+      briefSize: '',
+      underPadProductId: underpads && underpads.length ? underpads[0].productId : '',
+      underPadProduct: underpads && underpads.length ? underpads[0].description : '',
+      underPadQty: underpads && underpads.length ? underpads[0].order_qty : 0,
+      underPadVendor: '',
+      underPadSize: '',
+      underWearProductId: underwears && underwears.length ? underwears[0].productId : '',
+      underWearProduct: underwears && underwears.length ? underwears[0].description : '',
+      underWearQty: underwears && underwears.length ? underwears[0].order_qty : 0,
+      underWearVendor: '',
+      underWearSize: '',
+      wipeProductId: wipes && wipes.length ? wipes[0].productId : '',
+      wipeProduct: wipes && wipes.length ? wipes[0].description : '',
+      wipeQty: wipes && wipes.length ? wipes[0].order_qty : 0,
+      wipeVendor: '',
+      wipeSize: '',
+      gloveProductId: gloves && gloves.length ? gloves[0].productId : '',
+      gloveProduct: gloves && gloves.length ? gloves[0].description : '',
+      gloveQty: gloves && gloves.length ? gloves[0].order_qty : 0,
+      gloveVendor: '',
+      gloveSize: ''
+
+    };
+    if (temp.briefProductId && productList.find(p => p.id === temp.briefProductId)) {
+      const item = productList.find(p => p.id === temp.briefProductId);
+      temp.briefVendor = item.vendor;
+      temp.briefSize = item.size;
+      temp.briefUnitPrice = item.unit_price;
+      temp.briefCnt = item.count;
+      temp.briefUnitDist = item.unit_distribution;
+      temp.briefThreshold = briefThresholdList.find(m => m.productId === item.briefProductId) ? briefThresholdList.find(m => m.productId === item.briefProductId).value : 40;
+      if (briefs[0].requestor.toLowerCase().indexOf('arela')) {
+        temp.briefThreshold = temp.briefThreshold * 2;
+      }
+    }
+    if (temp.underPadProductId && productList.find(p => p.id === temp.underPadProductId)) {
+      const item = productList.find(p => p.id === temp.underPadProductId);
+      temp.underPadVendor = item.vendor;
+      temp.underPadSize = item.size;
+    }
+    if (temp.underWearProductId && productList.find(p => p.id === temp.underWearProductId)) {
+      const item = productList.find(p => p.id === temp.underWearProductId);
+      temp.underWearVendor = item.vendor;
+      temp.underWearSize = item.size;
+    }
+    if (temp.wipeProductId && productList.find(p => p.id === temp.wipeProductId)) {
+      const item = productList.find(p => p.id === temp.wipeProductId);
+      temp.wipeVendor = item.vendor;
+      temp.wipeSize = item.size;
+    }
+    if (temp.gloveProductId && productList.find(p => p.id === temp.gloveProductId)) {
+      const item = productList.find(p => p.id === temp.gloveProductId);
+      temp.gloveVendor = item.vendor;
+      temp.gloveSize = item.size;
+    }
+    patientBriefPlot.push(temp);
+  }
+  const briefPlotHandler = () => {
+    const newBriefPlot = [];
+    for (const briefPlot of patientBriefPlot) {
+      if (briefPlot.briefProductId) {
+        const tempStock = [...stockList];
+        let currentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId);
+
+        console.log('[CurrentStock]', currentStock, briefPlot.briefProductId);
+        if (currentStock) {
+          briefPlot.briefCurrentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId).qty_on_hand;
+          if (currentStock.qty_on_hand === 0) {
+            briefPlot.briefBalance = 0;
+            briefPlot.briefOrder = briefPlot.briefCnt;
+          } else {
+            const diff1 = parseInt(currentStock.qty_on_hand, 10) - parseInt(briefPlot.briefThreshold);
+            //     currentStock.qty_on_hand = diff1 < 0 ? 0 : diff1;
+            briefPlot.briefBalance = diff1 < 0 ? 0 : diff1;
+            if (diff1 <= 0) {
+              briefPlot.briefOrder = Math.abs(diff1);
+            }
+          }
+
+        }
+        console.log('[CurrentStock2]', currentStock, briefPlot.briefProductId);
+
+        newBriefPlot.push(briefPlot);
+      }
+    }
+    //one by one 
+    //make data
+    const briefIds = newBriefPlot.map(m => m.briefProductId);
+    const uBriefIds = Array.from(new Set(briefIds));
+
+    patientBriefPlot = newBriefPlot;
+    const briefAdjustment = [];
+    uBriefIds.forEach(u => {
+      const sel = patientBriefPlot.filter(n => n.briefProductId === u);
+
+      console.log('[se]', sel);
+      sel.forEach((s, indx) => {
+        if (parseInt(indx) > 0) {
+          console.log('[index]', indx, sel[indx - 1]);
+          s.briefCurrentStock = sel[indx - 1].briefBalance;
+          const balance = parseInt(s.briefCurrentStock) - parseInt(s.briefThreshold);
+          s.briefBalance = balance < 0 ? 0 : balance;
+          if (balance <= 0 && s.briefCurrentStock === 0) {
+            s.briefOrder = s.briefCnt;
+          } else if (balance <= 0) {
+            s.briefOrder = s.briefCnt - s.briefCurrentStock;
+          }
+          console.log('[index current]', s);
+        }
+        briefAdjustment.push(s);
+      })
+    })
+    patientBriefPlot = briefAdjustment;
+    uBriefIds.forEach(u => {
+      const sel = patientBriefPlot.filter(n => n.briefProductId === u);
+      console.log('[sel]',sel);
+      let orders = 0;
+      sel.forEach(e => {
+        orders += parseInt(e.briefOrder || 0);
+      });
+      if (orders > 0) {
+        estimatedBriefGrandTotal = parseFloat(estimatedBriefGrandTotal) + parseFloat(parseInt(orders / sel[0].briefCnt) * sel[0].briefUnitPrice);
+        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].briefCnt));
+        
+        briefSummary.push({
+          ...sel[0], total: orders, carton:cartonCnt, amt: parseInt(cartonCnt) * sel[0].briefUnitPrice
+        });
+      }
+    });
+    const stockBriefs = stockList.filter(s => s.category && s.category.toLowerCase() === 'brief');
+    stockBriefs.forEach(b => {
+      if (!uBriefIds.find(u => u === b.productId)) {
+        const pr = productList.find(p => p.id === b.productId);
+        if (pr) {
+          const temp = {
+            product: pr.description,
+            vendor: pr.vendor,
+            size: pr.size,
+            qty: b.qty_on_hand
+          };
+          if (b.qty_on_hand > 0) {
+            unusedBriefSummary.push(temp);
+          }
+        }
+      }
+    })
+  }
 
   console.log('[Dashboard Patient List]', patients);
   console.log('[Dashboard Distribution List]', distributions, isDistributionCollection);
@@ -359,7 +514,7 @@ const Dashboard = (props) => {
     console.log('[Patient Data2]', distributionList);
 
     patientDashboard = [];
-    patientPlot = [];
+    patientBriefPlot = [];
     briefSummary = [];
     unusedBriefSummary = [];
     estimatedBriefGrandTotal = parseFloat(0.0);
@@ -438,163 +593,15 @@ const Dashboard = (props) => {
         })
 
         if (patient.name.indexOf('C/O') === -1 && patient.status !== 'Inactive') {
-
-          const temp = {
-            patientName: patient.name,
-            briefProductId: briefs && briefs.length ? briefs[0].productId : '',
-            briefProduct: briefs && briefs.length ? briefs[0].description : '',
-            briefQty: briefs && briefs.length ? briefs[0].order_qty : 0,
-            briefVendor: '',
-            briefSize: '',
-            underPadProductId: underpads && underpads.length ? underpads[0].productId : '',
-            underPadProduct: underpads && underpads.length ? underpads[0].description : '',
-            underPadQty: underpads && underpads.length ? underpads[0].order_qty : 0,
-            underPadVendor: '',
-            underPadSize: '',
-            underWearProductId: underwears && underwears.length ? underwears[0].productId : '',
-            underWearProduct: underwears && underwears.length ? underwears[0].description : '',
-            underWearQty: underwears && underwears.length ? underwears[0].order_qty : 0,
-            underWearVendor: '',
-            underWearSize: '',
-            wipeProductId: wipes && wipes.length ? wipes[0].productId : '',
-            wipeProduct: wipes && wipes.length ? wipes[0].description : '',
-            wipeQty: wipes && wipes.length ? wipes[0].order_qty : 0,
-            wipeVendor: '',
-            wipeSize: '',
-            gloveProductId: gloves && gloves.length ? gloves[0].productId : '',
-            gloveProduct: gloves && gloves.length ? gloves[0].description : '',
-            gloveQty: gloves && gloves.length ? gloves[0].order_qty : 0,
-            gloveVendor: '',
-            gloveSize: ''
-
-          };
-          if (temp.briefProductId && productList.find(p => p.id === temp.briefProductId)) {
-            const item = productList.find(p => p.id === temp.briefProductId);
-            temp.briefVendor = item.vendor;
-            temp.briefSize = item.size;
-            temp.briefUnitPrice = item.unit_price;
-            temp.briefCnt = item.count;
-            temp.briefUnitDist = item.unit_distribution;
-            temp.briefThreshold = briefThresholdList.find(m => m.productId === item.briefProductId) ? briefThresholdList.find(m => m.productId === item.briefProductId).value : 40;
-            if (briefs[0].requestor.toLowerCase().indexOf('arela')) {
-              temp.briefThreshold = temp.briefThreshold * 2;
-            }
-          }
-          if (temp.underPadProductId && productList.find(p => p.id === temp.underPadProductId)) {
-            const item = productList.find(p => p.id === temp.underPadProductId);
-            temp.underPadVendor = item.vendor;
-            temp.underPadSize = item.size;
-          }
-          if (temp.underWearProductId && productList.find(p => p.id === temp.underWearProductId)) {
-            const item = productList.find(p => p.id === temp.underWearProductId);
-            temp.underWearVendor = item.vendor;
-            temp.underWearSize = item.size;
-          }
-          if (temp.wipeProductId && productList.find(p => p.id === temp.wipeProductId)) {
-            const item = productList.find(p => p.id === temp.wipeProductId);
-            temp.wipeVendor = item.vendor;
-            temp.wipeSize = item.size;
-          }
-          if (temp.gloveProductId && productList.find(p => p.id === temp.gloveProductId)) {
-            const item = productList.find(p => p.id === temp.gloveProductId);
-            temp.gloveVendor = item.vendor;
-            temp.gloveSize = item.size;
-          }
-          patientPlot.push(temp);
+          setPatientsProducsHandler(patient,briefs,underpads,underwears,wipes,gloves);          
         }
 
       }
 
     }
-    patientPlot = sortByProductId(patientPlot, 'briefProductId');
-    const newBriefPlot = [];
-    for (const briefPlot of patientPlot) {
-      if (briefPlot.briefProductId) {
-        const tempStock = [...stockList];
-        let currentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId);
-
-        console.log('[CurrentStock]', currentStock, briefPlot.briefProductId);
-        if (currentStock) {
-          briefPlot.briefCurrentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId).qty_on_hand;
-          if (currentStock.qty_on_hand === 0) {
-            briefPlot.briefBalance = 0;
-            briefPlot.briefOrder = briefPlot.briefCnt;
-          } else {
-            const diff1 = parseInt(currentStock.qty_on_hand, 10) - parseInt(briefPlot.briefThreshold);
-            //     currentStock.qty_on_hand = diff1 < 0 ? 0 : diff1;
-            briefPlot.briefBalance = diff1 < 0 ? 0 : diff1;
-            if (diff1 <= 0) {
-              briefPlot.briefOrder = Math.abs(diff1);
-            }
-          }
-
-        }
-        console.log('[CurrentStock2]', currentStock, briefPlot.briefProductId);
-
-        newBriefPlot.push(briefPlot);
-      }
-    }
-    //one by one 
-    //make data
-    const briefIds = newBriefPlot.map(m => m.briefProductId);
-    const uBriefIds = Array.from(new Set(briefIds));
-
-    patientPlot = newBriefPlot;
-    const briefAdjustment = [];
-    uBriefIds.forEach(u => {
-      const sel = patientPlot.filter(n => n.briefProductId === u);
-
-      console.log('[se]', sel);
-      sel.forEach((s, indx) => {
-        if (parseInt(indx) > 0) {
-          console.log('[index]', indx, sel[indx - 1]);
-          s.briefCurrentStock = sel[indx - 1].briefBalance;
-          const balance = parseInt(s.briefCurrentStock) - parseInt(s.briefThreshold);
-          s.briefBalance = balance < 0 ? 0 : balance;
-          if (balance <= 0 && s.briefCurrentStock === 0) {
-            s.briefOrder = s.briefCnt;
-          } else if (balance <= 0) {
-            s.briefOrder = s.briefCnt - s.briefCurrentStock;
-          }
-          console.log('[index current]', s);
-        }
-        briefAdjustment.push(s);
-      })
-    })
-    patientPlot = briefAdjustment;
-    uBriefIds.forEach(u => {
-      const sel = patientPlot.filter(n => n.briefProductId === u);
-      console.log('[sel]',sel);
-      let orders = 0;
-      sel.forEach(e => {
-        orders += parseInt(e.briefOrder || 0);
-      });
-      if (orders > 0) {
-        estimatedBriefGrandTotal = parseFloat(estimatedBriefGrandTotal) + parseFloat(parseInt(orders / sel[0].briefCnt) * sel[0].briefUnitPrice);
-        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].briefCnt));
-        
-        briefSummary.push({
-          ...sel[0], total: orders, carton:cartonCnt, amt: parseInt(cartonCnt) * sel[0].briefUnitPrice
-        });
-      }
-    });
-    const stockBriefs = stockList.filter(s => s.category && s.category.toLowerCase() === 'brief');
-    stockBriefs.forEach(b => {
-      if (!uBriefIds.find(u => u === b.productId)) {
-        const pr = productList.find(p => p.id === b.productId);
-        if (pr) {
-          const temp = {
-            product: pr.description,
-            vendor: pr.vendor,
-            size: pr.size,
-            qty: b.qty_on_hand
-          };
-          if (b.qty_on_hand > 0) {
-            unusedBriefSummary.push(temp);
-          }
-        }
-      }
-    })
+    briefPlotHandler();
+    patientBriefPlot = sortByProductId(patientBriefPlot, 'briefProductId');
+   
 
     console.log('estimatedBriefGrandTotal', estimatedBriefGrandTotal);
     patientOptions = [...patientDashboard];
@@ -796,7 +803,7 @@ const Dashboard = (props) => {
             />
             <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
             <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
-            <Tab value="four" style={{ fontSize: 14 }} label="BRIEFS/DIAPERS ORDER PLOT" {...a11yProps('four')} />
+            <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
           </Tabs>
 
           <TabPanel value={value} index="one">
@@ -1123,105 +1130,8 @@ const Dashboard = (props) => {
             <Typography variant="h6">{`TOTAL CHARGE FOR 9465 : $${parseFloat(parseFloat(card9465AmountMedline) + parseFloat(card9465AmountAmazon) + parseFloat(card9465AmountMckee)).toFixed(2)}`}</Typography>
           </TabPanel>
           <TabPanel value={value} index="four">
-            <Grid container direction="row">
-              <Typography variant="h5">BRIEF PLOT</Typography>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Patient Name</TableCell>
-                    <TableCell>Product</TableCell>
-                    <TableCell>Vendor</TableCell>
-                    <TableCell>Size</TableCell>
-                    <TableCell>Last Order</TableCell>
-                    <TableCell>Threshold</TableCell>
-                    <TableCell>Current Stock</TableCell>
-                    <TableCell>Balance</TableCell>
-                    <TableCell>Order</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {patientPlot.length && patientPlot.map(map => {
-                    return (
-                      <TableRow>
-                        <TableCell component="th" scope="row">
-                          {map.patientName}
-                        </TableCell>
-                        <TableCell>{map.briefProduct}</TableCell>
-                        <TableCell>{map.briefVendor}</TableCell>
-                        <TableCell>{map.briefSize}</TableCell>
-                        <TableCell>{map.briefQty}</TableCell>
-                        <TableCell>{map.briefThreshold}</TableCell>
-                        <TableCell>{map.briefCurrentStock}</TableCell>
-                        <TableCell>{map.briefBalance}</TableCell>
-                        <TableCell>{map.briefOrder || 0}</TableCell>
 
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </Grid>
-            < br />
-            <Grid container direction="row">
-              <Typography variant="h5">BRIEF SUMMARY</Typography>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Product</TableCell>
-                    <TableCell>Vendor</TableCell>
-                    <TableCell>Size</TableCell>
-                    <TableCell>Total Order</TableCell>
-                    <TableCell>Number of Carton</TableCell>
-                    <TableCell>Estimated Amt</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {briefSummary.length && briefSummary.map(map => {
-                    return (
-                      <TableRow>
-                        <TableCell>{map.briefProduct}</TableCell>
-                        <TableCell>{map.briefVendor}</TableCell>
-                        <TableCell>{map.briefSize}</TableCell>
-                        <TableCell>{map.total}</TableCell>
-                        <TableCell>{map.carton}</TableCell>
-                        <TableCell>{map.amt}</TableCell>
-
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </Grid>
-            <Typography variant="h5">Estimated Grand Amt (no tax/shipping) : {estimatedBriefGrandTotal}</Typography>
-            < br />
-            <Grid container direction="row">
-              <Typography variant="h5">UNUSED SIMILAR BRIEF ITEMS</Typography>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Product</TableCell>
-                    <TableCell>Vendor</TableCell>
-                    <TableCell>Size</TableCell>
-                    <TableCell>Qty On Hand</TableCell>
-
-
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {unusedBriefSummary.length && unusedBriefSummary.map(map => {
-                    return (
-                      <TableRow>
-                        <TableCell>{map.product}</TableCell>
-                        <TableCell>{map.vendor}</TableCell>
-                        <TableCell>{map.size}</TableCell>
-                        <TableCell>{map.qty}</TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </Grid>
-
+              <BriefPlot patientPlot={patientBriefPlot} estimatedBriefGrandTotal={estimatedBriefGrandTotal} unusedBriefSummary={unusedBriefSummary} briefSummary={briefSummary} />
           </TabPanel>
         </React.Fragment>
       }
