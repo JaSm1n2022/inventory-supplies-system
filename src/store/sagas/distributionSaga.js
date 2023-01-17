@@ -9,7 +9,7 @@ function* listDistribution(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('distributions').select().gte('order_at', filter.payload.from).lt('order_at',filter.payload.to);
+        .from('distributions').select().gte('order_at', filter.payload.from).lt('order_at',filter.payload.to).order('order_at', { ascending: false });
   
         
       if (error && status !== 406) {

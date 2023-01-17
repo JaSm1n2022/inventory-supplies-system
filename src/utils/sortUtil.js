@@ -413,6 +413,20 @@ class SortUtil {
       });
       return data;
     }
+    static sortByAttr(data, attr,dType) {
+      data.sort((a, b) => {
+        this._a = a.briefProductId ? parseInt(a.briefProductId,10) : 0;
+        this._b = a.briefProductId ? parseInt(b.briefProductId,10) : 0;
+        if (this._a < this._b) {
+          return -1;
+        } else if (this._a > this._b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      return data;
+    }
     static sortByAsc(data, attr, isAsc) {
       if (!isAsc) {
         data.sort((a, b) => {

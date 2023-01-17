@@ -23,7 +23,11 @@ class DataHandler {
   }
   static mapData(items, lang) {
     items.forEach(item => {
+      if(item.order_at.indexOf('T') !== -1) {
+        item.order_at = item.order_at.substring(0,10);
+      } else {
       item.order_at = moment(new Date(item.order_at)).utc().format('YYYY-MM-DD');
+      }
     })
   return items;
   }

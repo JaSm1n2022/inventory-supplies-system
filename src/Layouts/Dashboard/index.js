@@ -19,6 +19,11 @@ import DateTypeAutoComplete from '../../Common/components/AutoComplete/DateTypeA
 import DateRangeModal from '../../Common/components/Modal/DateRangeModal';
 import moment from 'moment';
 import { v4 as uuidv4 } from "uuid";
+import { productListStateSelector } from '../../store/selectors/productSelector';
+import { attemptToFetchProduct, resetFetchProductState } from '../../store/actions/productAction';
+import { attemptToFetchStock, resetFetchStockState } from '../../store/actions/stockAction';
+import { stockListStateSelector } from '../../store/selectors/stockSelector';
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -62,7 +67,10 @@ const useStyles = makeStyles((theme) => ({
 let isDistributionListDone = false;
 let isPatientListDone = false;
 let isTransactionDone = false;
+let isProductListDone = false;
+let isStockListDone = false;
 let patientList = [];
+let stockList = [];
 let patientOptions = [];
 let distributionList = [];
 let numberActive = 0;
@@ -98,7 +106,7 @@ let transactionDashboard =
   office: 0
 }
 let patientGrandTotal = 0.0;
-
+let patientPlot = [];
 let patientDashboard = [
   {
     name: '',
@@ -114,17 +122,24 @@ let providerDashboard = [
     amazon: 0,
     medline: 0,
     mckesson: 0,
-    other : 0
+    other: 0
 
   }
 ]
+let productList = [];
 let dateOptions = [];
 let lastDateType = '';
+let estimatedBriefGrandTotal = parseFloat(0.0);
+let briefThresholdList = [
+  { productId: 24, value: 32 }
+];
+let briefSummary = [];
+let unusedBriefSummary = [];
 DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
 
 const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
 const Dashboard = (props) => {
-  const { listTransactions, resetlistTransactions, transactions, listPatients, listDistributions, resetListPatients, resetListDistribution, patients, distributions } = props;
+  const { listStocks, resetListStocks, stocks, listTransactions, listProducts, resetListProducts, products, resetlistTransactions, transactions, listPatients, listDistributions, resetListPatients, resetListDistribution, patients, distributions } = props;
   const classes = useStyles();
   const [value, setValue] = React.useState('one');
   const [isPatientCollection, setIsPatientCollection] = useState(true);
@@ -139,9 +154,12 @@ const Dashboard = (props) => {
 
 
   useEffect(() => {
+    listStocks();
+    listProducts();
     listPatients();
     listDistributions({ from: dates.from, to: dates.to });
     listTransactions({ from: dates.from, to: dates.to });
+
 
 
   }, []);
@@ -204,6 +222,22 @@ const Dashboard = (props) => {
     setIsDateCustom(false);
     setDateSelected(dateOptions.find(e => e.value === lastDateType));
 
+  }
+  const sortByProductId = (data, attr) => {
+    console.log('[data]', data);
+    data.sort((a, b) => {
+      const _a = a[attr] ? parseInt(a[attr]) : 0;
+      const _b = b[attr] ? parseInt(b[attr]) : 0;
+      if (_a < _b) {
+        return -1;
+      } else if (_a > _b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    console.log('[new Data]', data);
+    return data;
   }
   const sortByName = (items) => {
     console.log('[items to sort]', items);
@@ -270,6 +304,19 @@ const Dashboard = (props) => {
 
   console.log('[Dashboard Patient List]', patients);
   console.log('[Dashboard Distribution List]', distributions, isDistributionCollection);
+  console.log('[products]', products);
+  console.log('[stokcs]', stocks);
+  if (props.stocks && props.stocks.status === ACTION_STATUSES.SUCCEED) {
+    stockList = [...props.stocks.data];
+
+    isStockListDone = true;
+    props.resetListStocks();
+  }
+  if (products && products.status === ACTION_STATUSES.SUCCEED) {
+    productList = [...products.data];
+    isProductListDone = true;
+    resetListProducts();
+  }
   if (isPatientCollection && patients && patients.status === ACTION_STATUSES.SUCCEED) {
     setIsPatientCollection(false);
     isPatientListDone = true;
@@ -301,8 +348,9 @@ const Dashboard = (props) => {
 
 
   }
-  if (isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
+  if (stockList.length && isDistributionCollection && distributions && distributions.status === ACTION_STATUSES.SUCCEED) {
     isDistributionListDone = true;
+    setIsDistributionCollection(false);
     patientGrandTotal = 0.0;
 
 
@@ -311,7 +359,11 @@ const Dashboard = (props) => {
     console.log('[Patient Data2]', distributionList);
 
     patientDashboard = [];
-    patientList.forEach(patient => {
+    patientPlot = [];
+    briefSummary = [];
+    unusedBriefSummary = [];
+    estimatedBriefGrandTotal = parseFloat(0.0);
+    for (const patient of patientList) {
       let estimatedAmt = 0.0;
       patient.label = patient.name;
       patient.value = patient.name;
@@ -334,6 +386,8 @@ const Dashboard = (props) => {
       const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
       const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category))
       const briefs = supplies.filter(supply => supply.category === 'Brief');
+      const wipes = supplies.filter(supply => supply.category === 'Wipes');
+      const gloves = supplies.filter(supply => supply.category === 'Gloves');
       const underwears = supplies.filter(supply => supply.category === 'Underwear/Pull-ups');
       const underpads = supplies.filter(supply => supply.category === 'Underpads');
       const lotions = supplies.filter(supply => ['Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
@@ -382,13 +436,170 @@ const Dashboard = (props) => {
           series: [parseFloat(seriesList.underpad), parseFloat(seriesList.brief), parseFloat(seriesList.underwear), parseFloat(seriesList.lotion), parseFloat(seriesList.nutrition), parseFloat(seriesList.other)]
 
         })
+
+        if (patient.name.indexOf('C/O') === -1 && patient.status !== 'Inactive') {
+
+          const temp = {
+            patientName: patient.name,
+            briefProductId: briefs && briefs.length ? briefs[0].productId : '',
+            briefProduct: briefs && briefs.length ? briefs[0].description : '',
+            briefQty: briefs && briefs.length ? briefs[0].order_qty : 0,
+            briefVendor: '',
+            briefSize: '',
+            underPadProductId: underpads && underpads.length ? underpads[0].productId : '',
+            underPadProduct: underpads && underpads.length ? underpads[0].description : '',
+            underPadQty: underpads && underpads.length ? underpads[0].order_qty : 0,
+            underPadVendor: '',
+            underPadSize: '',
+            underWearProductId: underwears && underwears.length ? underwears[0].productId : '',
+            underWearProduct: underwears && underwears.length ? underwears[0].description : '',
+            underWearQty: underwears && underwears.length ? underwears[0].order_qty : 0,
+            underWearVendor: '',
+            underWearSize: '',
+            wipeProductId: wipes && wipes.length ? wipes[0].productId : '',
+            wipeProduct: wipes && wipes.length ? wipes[0].description : '',
+            wipeQty: wipes && wipes.length ? wipes[0].order_qty : 0,
+            wipeVendor: '',
+            wipeSize: '',
+            gloveProductId: gloves && gloves.length ? gloves[0].productId : '',
+            gloveProduct: gloves && gloves.length ? gloves[0].description : '',
+            gloveQty: gloves && gloves.length ? gloves[0].order_qty : 0,
+            gloveVendor: '',
+            gloveSize: ''
+
+          };
+          if (temp.briefProductId && productList.find(p => p.id === temp.briefProductId)) {
+            const item = productList.find(p => p.id === temp.briefProductId);
+            temp.briefVendor = item.vendor;
+            temp.briefSize = item.size;
+            temp.briefUnitPrice = item.unit_price;
+            temp.briefCnt = item.count;
+            temp.briefUnitDist = item.unit_distribution;
+            temp.briefThreshold = briefThresholdList.find(m => m.productId === item.briefProductId) ? briefThresholdList.find(m => m.productId === item.briefProductId).value : 40;
+            if (briefs[0].requestor.toLowerCase().indexOf('arela')) {
+              temp.briefThreshold = temp.briefThreshold * 2;
+            }
+          }
+          if (temp.underPadProductId && productList.find(p => p.id === temp.underPadProductId)) {
+            const item = productList.find(p => p.id === temp.underPadProductId);
+            temp.underPadVendor = item.vendor;
+            temp.underPadSize = item.size;
+          }
+          if (temp.underWearProductId && productList.find(p => p.id === temp.underWearProductId)) {
+            const item = productList.find(p => p.id === temp.underWearProductId);
+            temp.underWearVendor = item.vendor;
+            temp.underWearSize = item.size;
+          }
+          if (temp.wipeProductId && productList.find(p => p.id === temp.wipeProductId)) {
+            const item = productList.find(p => p.id === temp.wipeProductId);
+            temp.wipeVendor = item.vendor;
+            temp.wipeSize = item.size;
+          }
+          if (temp.gloveProductId && productList.find(p => p.id === temp.gloveProductId)) {
+            const item = productList.find(p => p.id === temp.gloveProductId);
+            temp.gloveVendor = item.vendor;
+            temp.gloveSize = item.size;
+          }
+          patientPlot.push(temp);
+        }
+
       }
 
-    })
+    }
+    patientPlot = sortByProductId(patientPlot, 'briefProductId');
+    const newBriefPlot = [];
+    for (const briefPlot of patientPlot) {
+      if (briefPlot.briefProductId) {
+        const tempStock = [...stockList];
+        let currentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId);
+
+        console.log('[CurrentStock]', currentStock, briefPlot.briefProductId);
+        if (currentStock) {
+          briefPlot.briefCurrentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId).qty_on_hand;
+          if (currentStock.qty_on_hand === 0) {
+            briefPlot.briefBalance = 0;
+            briefPlot.briefOrder = briefPlot.briefCnt;
+          } else {
+            const diff1 = parseInt(currentStock.qty_on_hand, 10) - parseInt(briefPlot.briefThreshold);
+            //     currentStock.qty_on_hand = diff1 < 0 ? 0 : diff1;
+            briefPlot.briefBalance = diff1 < 0 ? 0 : diff1;
+            if (diff1 <= 0) {
+              briefPlot.briefOrder = Math.abs(diff1);
+            }
+          }
+
+        }
+        console.log('[CurrentStock2]', currentStock, briefPlot.briefProductId);
+
+        newBriefPlot.push(briefPlot);
+      }
+    }
+    //one by one 
     //make data
+    const briefIds = newBriefPlot.map(m => m.briefProductId);
+    const uBriefIds = Array.from(new Set(briefIds));
+
+    patientPlot = newBriefPlot;
+    const briefAdjustment = [];
+    uBriefIds.forEach(u => {
+      const sel = patientPlot.filter(n => n.briefProductId === u);
+
+      console.log('[se]', sel);
+      sel.forEach((s, indx) => {
+        if (parseInt(indx) > 0) {
+          console.log('[index]', indx, sel[indx - 1]);
+          s.briefCurrentStock = sel[indx - 1].briefBalance;
+          const balance = parseInt(s.briefCurrentStock) - parseInt(s.briefThreshold);
+          s.briefBalance = balance < 0 ? 0 : balance;
+          if (balance <= 0 && s.briefCurrentStock === 0) {
+            s.briefOrder = s.briefCnt;
+          } else if (balance <= 0) {
+            s.briefOrder = s.briefCnt - s.briefCurrentStock;
+          }
+          console.log('[index current]', s);
+        }
+        briefAdjustment.push(s);
+      })
+    })
+    patientPlot = briefAdjustment;
+    uBriefIds.forEach(u => {
+      const sel = patientPlot.filter(n => n.briefProductId === u);
+      console.log('[sel]',sel);
+      let orders = 0;
+      sel.forEach(e => {
+        orders += parseInt(e.briefOrder || 0);
+      });
+      if (orders > 0) {
+        estimatedBriefGrandTotal = parseFloat(estimatedBriefGrandTotal) + parseFloat(parseInt(orders / sel[0].briefCnt) * sel[0].briefUnitPrice);
+        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].briefCnt));
+        
+        briefSummary.push({
+          ...sel[0], total: orders, carton:cartonCnt, amt: parseInt(cartonCnt) * sel[0].briefUnitPrice
+        });
+      }
+    });
+    const stockBriefs = stockList.filter(s => s.category && s.category.toLowerCase() === 'brief');
+    stockBriefs.forEach(b => {
+      if (!uBriefIds.find(u => u === b.productId)) {
+        const pr = productList.find(p => p.id === b.productId);
+        if (pr) {
+          const temp = {
+            product: pr.description,
+            vendor: pr.vendor,
+            size: pr.size,
+            qty: b.qty_on_hand
+          };
+          if (b.qty_on_hand > 0) {
+            unusedBriefSummary.push(temp);
+          }
+        }
+      }
+    })
+
+    console.log('estimatedBriefGrandTotal', estimatedBriefGrandTotal);
     patientOptions = [...patientDashboard];
 
-    setIsDistributionCollection(false);
+
 
 
     //listTransactions();
@@ -516,7 +727,7 @@ const Dashboard = (props) => {
     providerDashboard.mckesson = mckessonAmount;
     providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
 
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount),parseFloat(providerDashboard.other)];
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount), parseFloat(providerDashboard.other)];
     isTransactionDone = true;
     setIsTransactionCollection(false);
   }
@@ -552,7 +763,7 @@ const Dashboard = (props) => {
   console.log('[series]', patientDashboard);
   return (
     <div className={classes.root}>
-      {!isDistributionListDone || !isPatientListDone || !isTransactionDone ?
+      {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
         <div align="center" style={{ paddingTop: '100px' }}>
           <br />
           <CircularProgress />&nbsp;<span>Loading</span>...
@@ -585,6 +796,7 @@ const Dashboard = (props) => {
             />
             <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
             <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
+            <Tab value="four" style={{ fontSize: 14 }} label="BRIEFS/DIAPERS ORDER PLOT" {...a11yProps('four')} />
           </Tabs>
 
           <TabPanel value={value} index="one">
@@ -679,7 +891,7 @@ const Dashboard = (props) => {
                   <Typography variant="h6">{`Other Provider Expenses - $${parseFloat(providerDashboard.other).toFixed(2)}`}</Typography>
                 </div>
                 <div>
-                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON','OTHER']} series={providerDashboard.series} />
+                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON', 'OTHER']} series={providerDashboard.series} />
                 </div>
               </Grid>
             </Grid>
@@ -910,6 +1122,107 @@ const Dashboard = (props) => {
             <Typography variant="h6">{`TOTAL CHARGE FOR 0994 : $${parseFloat(parseFloat(card0994AmountMedline) + parseFloat(card0994AmountAmazon) + parseFloat(card0994AmountMckee)).toFixed(2)}`}</Typography>
             <Typography variant="h6">{`TOTAL CHARGE FOR 9465 : $${parseFloat(parseFloat(card9465AmountMedline) + parseFloat(card9465AmountAmazon) + parseFloat(card9465AmountMckee)).toFixed(2)}`}</Typography>
           </TabPanel>
+          <TabPanel value={value} index="four">
+            <Grid container direction="row">
+              <Typography variant="h5">BRIEF PLOT</Typography>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Patient Name</TableCell>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Vendor</TableCell>
+                    <TableCell>Size</TableCell>
+                    <TableCell>Last Order</TableCell>
+                    <TableCell>Threshold</TableCell>
+                    <TableCell>Current Stock</TableCell>
+                    <TableCell>Balance</TableCell>
+                    <TableCell>Order</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {patientPlot.length && patientPlot.map(map => {
+                    return (
+                      <TableRow>
+                        <TableCell component="th" scope="row">
+                          {map.patientName}
+                        </TableCell>
+                        <TableCell>{map.briefProduct}</TableCell>
+                        <TableCell>{map.briefVendor}</TableCell>
+                        <TableCell>{map.briefSize}</TableCell>
+                        <TableCell>{map.briefQty}</TableCell>
+                        <TableCell>{map.briefThreshold}</TableCell>
+                        <TableCell>{map.briefCurrentStock}</TableCell>
+                        <TableCell>{map.briefBalance}</TableCell>
+                        <TableCell>{map.briefOrder || 0}</TableCell>
+
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </Grid>
+            < br />
+            <Grid container direction="row">
+              <Typography variant="h5">BRIEF SUMMARY</Typography>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Vendor</TableCell>
+                    <TableCell>Size</TableCell>
+                    <TableCell>Total Order</TableCell>
+                    <TableCell>Number of Carton</TableCell>
+                    <TableCell>Estimated Amt</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {briefSummary.length && briefSummary.map(map => {
+                    return (
+                      <TableRow>
+                        <TableCell>{map.briefProduct}</TableCell>
+                        <TableCell>{map.briefVendor}</TableCell>
+                        <TableCell>{map.briefSize}</TableCell>
+                        <TableCell>{map.total}</TableCell>
+                        <TableCell>{map.carton}</TableCell>
+                        <TableCell>{map.amt}</TableCell>
+
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </Grid>
+            <Typography variant="h5">Estimated Grand Amt (no tax/shipping) : {estimatedBriefGrandTotal}</Typography>
+            < br />
+            <Grid container direction="row">
+              <Typography variant="h5">UNUSED SIMILAR BRIEF ITEMS</Typography>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Vendor</TableCell>
+                    <TableCell>Size</TableCell>
+                    <TableCell>Qty On Hand</TableCell>
+
+
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {unusedBriefSummary.length && unusedBriefSummary.map(map => {
+                    return (
+                      <TableRow>
+                        <TableCell>{map.product}</TableCell>
+                        <TableCell>{map.vendor}</TableCell>
+                        <TableCell>{map.size}</TableCell>
+                        <TableCell>{map.qty}</TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </Grid>
+
+          </TabPanel>
         </React.Fragment>
       }
     </div>
@@ -918,7 +1231,9 @@ const Dashboard = (props) => {
 const mapStateToProps = store => ({
   patients: patientListStateSelector(store),
   distributions: distributionListStateSelector(store),
-  transactions: transactionListStateSelector(store)
+  transactions: transactionListStateSelector(store),
+  products: productListStateSelector(store),
+  stocks: stockListStateSelector(store),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -928,7 +1243,10 @@ const mapDispatchToProps = dispatch => ({
   resetListDistribution: () => dispatch(resetFetchDistributionState()),
   listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
   resetlistTransactions: () => dispatch(resetFetchTransactionState()),
-
+  listProducts: (data) => dispatch(attemptToFetchProduct(data)),
+  resetListProducts: () => dispatch(resetFetchProductState()),
+  listStocks: (data) => dispatch(attemptToFetchStock(data)),
+  resetListStocks: () => dispatch(resetFetchStockState()),
 
 });
 
