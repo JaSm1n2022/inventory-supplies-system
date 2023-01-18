@@ -1,12 +1,12 @@
 import { Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import React from "react"
 
-const BriefPlot = (props) => {
+const SupplyPlot = (props) => {
 
     return (
         <React.Fragment>
         <Grid container direction="row">
-                  <Typography variant="h5">BRIEF PLOT</Typography>
+                  <Typography variant="h5">{`${props.title.toUpperCase()} PLOT`}</Typography>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -45,7 +45,7 @@ const BriefPlot = (props) => {
                 </Grid>
                 < br />
                 <Grid container direction="row">
-                  <Typography variant="h5">BRIEF SUMMARY</Typography>
+                  <Typography variant="h5">{`${props.title.toUpperCase()} SUMMARY`}</Typography>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -66,7 +66,7 @@ const BriefPlot = (props) => {
                             <TableCell>{map.size}</TableCell>
                             <TableCell>{map.total}</TableCell>
                             <TableCell>{map.carton}</TableCell>
-                            <TableCell>{`$${map.amt}`}</TableCell>
+                            <TableCell>{`$${parseFloat(map.amt ||0.00).toFixed(2)}`}</TableCell>
     
                           </TableRow>
                         )
@@ -74,10 +74,10 @@ const BriefPlot = (props) => {
                     </TableBody>
                   </Table>
                 </Grid>
-                <Typography variant="h5">Estimated Grand Amt (no tax/shipping) : {`$${parseFloat(props.estimatedBriefGrandTotal || 0.0).toFixed(2)}`}</Typography>
+                <Typography variant="h5">Estimated Grand Amt (no tax/shipping) : {`$${parseFloat(props.estimatedGrandTotal || 0.0).toFixed(2)}`}</Typography>
                 < br />
                 <Grid container direction="row">
-                  <Typography variant="h5">UNUSED SIMILAR BRIEF ITEMS</Typography>
+                  <Typography variant="h5">{`UNUSED ${props.title.toUpperCase()} SIMILAR ITEMS`}</Typography>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -90,7 +90,8 @@ const BriefPlot = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {props.unusedSummary && props.unusedSummary.length && props.unusedSummary.map(map => {
+                      {props.unusedSummary && props.unusedSummary.length ? 
+                       props.unusedSummary.map(map => {
                         return (
                           <TableRow>
                             <TableCell>{map.product}</TableCell>
@@ -99,7 +100,7 @@ const BriefPlot = (props) => {
                             <TableCell style={{width:'200px'}}>{map.qty}</TableCell>
                           </TableRow>
                         )
-                      })}
+                      }):null}
                     </TableBody>
                   </Table>
                 </Grid>
@@ -108,4 +109,4 @@ const BriefPlot = (props) => {
     
     )
     }
-export default BriefPlot;
+export default SupplyPlot;
