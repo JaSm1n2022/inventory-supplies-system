@@ -703,10 +703,11 @@ const Dashboard = (props) => {
 
         })
 
-        if (patient.name.indexOf('C/O') === -1 && patient.status !== 'Inactive') {
-          setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves);
-        }
+       
 
+      }
+      if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) ||  patient.status.toLowerCase() !== 'inactive') {
+        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves);
       }
 
     }
