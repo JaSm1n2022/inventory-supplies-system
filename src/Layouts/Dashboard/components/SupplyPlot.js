@@ -11,6 +11,7 @@ const SupplyPlot = (props) => {
                     <TableHead>
                       <TableRow>
                         <TableCell>Patient Name</TableCell>
+                        <TableCell>Requestor</TableCell>
                         <TableCell>Product</TableCell>
                         <TableCell>Vendor</TableCell>
                         <TableCell>Size</TableCell>
@@ -22,12 +23,13 @@ const SupplyPlot = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {props.patientPlot && props.patientPlot.length && props.patientPlot.map(map => {
+                      {props.patientPlot && props.patientPlot.length && props.patientPlot.map((map,indx) => {
                         return (
-                          <TableRow>
+                          <TableRow key={`patient${indx}`}>
                             <TableCell component="th" scope="row">
                               {map.patientName}
                             </TableCell>
+                            <TableCell>{map.requestor}</TableCell>
                             <TableCell>{map.product}</TableCell>
                             <TableCell>{map.vendor}</TableCell>
                             <TableCell>{map.size}</TableCell>
@@ -58,9 +60,9 @@ const SupplyPlot = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {props.summary && props.summary.length && props.summary.map(map => {
+                      {props.summary && props.summary.length && props.summary.map((map,indx) => {
                         return (
-                          <TableRow>
+                          <TableRow key={`sumary${indx}`}>
                             <TableCell>{map.product}</TableCell>
                             <TableCell>{map.vendor}</TableCell>
                             <TableCell>{map.size}</TableCell>

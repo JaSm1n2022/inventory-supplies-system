@@ -156,6 +156,7 @@ let unusedPlotSummary = {
   glove: [],
   wipe: []
 };
+let requestorDaily = ['jesus arela','shiela roa','silva doody'];
 DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
 
 const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
@@ -376,9 +377,11 @@ const Dashboard = (props) => {
       temp.brief.cnt = item.count;
       temp.brief.unitDist = item.unit_distribution;
       temp.brief.threshold = 40;
-      const cna = briefs && briefs.length ? briefs[0] : [];
+      const cna = briefs && briefs.length ? briefs[0] : {};
+      temp.brief.requestor = cna.requestor;
+      console.log('[cna]',cna);
 
-      if (cna && (cna.requestor.toLowerCase().indexOf('arela') || cna.requestor.toLowerCase().indexOf('shiela') || cna.requestor.toLowerCase().indexOf('snoody'))) {
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
         temp.brief.threshold = 60;
       }
     }
@@ -392,7 +395,8 @@ const Dashboard = (props) => {
       temp.underpad.unitDist = item.unit_distribution;
       temp.underpad.threshold = 20;//item.count;
       const cna = underpads && underpads.length ? underpads[0] : [];
-      if (cna && (cna.requestor.toLowerCase().indexOf('arela') || cna.requestor.toLowerCase().indexOf('shiela') || cna.requestor.toLowerCase().indexOf('snoody'))) {
+      temp.underpad.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
         temp.underpad.threshold = 30;
       }
     }
@@ -406,7 +410,8 @@ const Dashboard = (props) => {
       temp.underwear.unitDist = item.unit_distribution;
       temp.underwear.threshold = 40;//item.count;
       const cna = underwears && underwears.length ? underwears[0] : [];
-      if (cna && (cna.requestor.toLowerCase().indexOf('arela') || cna.requestor.toLowerCase().indexOf('shiela') || cna.requestor.toLowerCase().indexOf('snoody'))) {
+      temp.underwear.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
         temp.underwear.threshold = 60;
       }
     }
@@ -420,7 +425,8 @@ const Dashboard = (props) => {
       temp.wipe.unitDist = item.unit_distribution;
       temp.wipe.threshold = 2;
       const cna = wipes && wipes.length ? wipes[0] : [];
-      if (cna && (cna.requestor.toLowerCase().indexOf('arela') || cna.requestor.toLowerCase().indexOf('shiela') || cna.requestor.toLowerCase().indexOf('snoody'))) {
+      temp.wipe.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
         temp.wipe.threshold = 3;
       }
     }
@@ -431,10 +437,11 @@ const Dashboard = (props) => {
       temp.glove.unitPrice = item.unit_price;
       temp.glove.cnt = item.count;
       temp.glove.unitDist = item.unit_distribution;
-      temp.glove.threshold = 2;
+      temp.glove.threshold = 1;
       const cna = gloves && gloves.length ? gloves[0] : [];
-      if (cna && (cna.requestor.toLowerCase().indexOf('arela') || cna.requestor.toLowerCase().indexOf('shiela') || cna.requestor.toLowerCase().indexOf('snoody'))) {
-        temp.glove.threshold = 3;
+      temp.glove.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.glove.threshold = 2;
       }
     }
 
