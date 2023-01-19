@@ -43,7 +43,8 @@ const TemplatePrint = (props) => {
             return 'Cleanser';
         } else if (item && item.toLowerCase() === 'condom catheter') {
             return 'Catheter';
-        
+        } else if (item && item.toLowerCase().endsWith('jelly')) {
+            return 'Jelly';
         } else {
             return item;
         }

@@ -114,9 +114,9 @@ const Patient = (props) => {
     const params = {
       name: payload.name,
       mr_nbr : payload.mrNbr,
-      dob_at : payload.dob,
-      soc_at : payload.soc,
-      eoc_at : payload.eoc,
+      dob_at : payload.dob || new Date(),
+      soc_at : payload.soc || new Date(),
+      eoc_at : payload.eoc || new Date(),
       care_type : payload.careType && payload.careType.name ? payload.careType.name : '',
       place_of_service : payload.placeOfService,
       address : payload.address,
@@ -125,7 +125,7 @@ const Patient = (props) => {
       rn_visit_freq : payload.rnVisitFreq,
       assigned_cna : payload.assignCna,
       cna_visit_freq : payload.cnaVisitFreq,
-      status : payload.status
+      status : payload.status && payload.status.name ? payload.status.name : '',
     
     };
     if (mode === 'create') {

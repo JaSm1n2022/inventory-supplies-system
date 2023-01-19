@@ -10,7 +10,9 @@ import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete
 import { CARE_TYPE} from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
-
+ 
+const statuses  = [{name :'Active',value:'Active',label:'Active',category: 'status'},
+{name :'Inactive',value:'Inactive',label:'Inactive',category : 'status'}];
 let careTypes = [];
 CARE_TYPE.forEach((item, index) => {
     careTypes.push({
@@ -141,10 +143,12 @@ function PatientForm(props) {
         },
         {
             id: 'status',
-            component: 'textfield',
+            component: 'singlecomplete',
             placeholder: 'Status',
             label: 'Status',
             name: 'status',
+            value: 'Active',
+            options :statuses,
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
         
@@ -153,7 +157,11 @@ function PatientForm(props) {
 
     useEffect(() => {
         console.log('[effects 1]');
-        const fm = {};
+        const fm = {status : statuses.find(s => s.name === 'Active'),
+        soc : moment(new Date()).utc().format('YYYY-MM-DD'),
+        eoc :  moment(new Date()).utc().format('YYYY-MM-DD'),
+        dob :  moment(new Date()).utc().format('YYYY-MM-DD')
+    };
         fm.created_at = new Date();
         fm.pricePerPcs = 0.0;
         setGeneralForm(fm);
@@ -176,6 +184,7 @@ function PatientForm(props) {
             generalFm.rnVisitFreq = generalFm.rn_visit_freq;
             generalFm.assignCna = generalFm.assigned_cna;
             generalFm.cnaVisitFreq = generalFm.cna_visit_freq;
+            generalFm.status = statuses.find(s => s.name === generalFm.status);
             ;
            
             
@@ -221,6 +230,9 @@ function PatientForm(props) {
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
         console.log('[src]', src, item);
+        if(item.category === 'status') {
+            src.status = item;
+        }
         if (item.category === 'careType') {
             src.careType = item;
           

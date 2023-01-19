@@ -354,7 +354,7 @@ export const countries =
     'Bandages', 
     'Gloves',
     'Shampoo',
-    'Pertoleum Jelly',
+    'Jelly',
     'Food Thickener',
     'Ointment',
     'Pill Crusher and Grinder',
