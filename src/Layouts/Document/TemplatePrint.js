@@ -8,33 +8,38 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
     tableRow: {
-        height: 20
+        height: 32
+    },
+    tableRow2: {
+        height: 42
+    },
+    tableCell: {
+        padding: "0px 16px"
     }
-
 });
-const items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 const TemplatePrint = (props) => {
     const [general, setGeneral] = useState(undefined);
     const [details, setDetails] = useState([]);
-    const [prepared,setPrepared] = useState('');
-    const [pickup,setPickup] = useState('');
+    const [prepared, setPrepared] = useState('');
+    const [pickup, setPickup] = useState('');
     const classes = useStyles();
     useEffect(() => {
-        console.log('[Template Print[',props);
+        console.log('[Template Print[', props);
         setGeneral(props.general);
         setDetails(props.details);
     }, [props]);
-    const unitDistributionHandler = (qty,unit) => {
+    const unitDistributionHandler = (qty, unit) => {
         if (unit && unit === 'Pcs' && qty < 2) {
             return `${qty} Pc`;
-        } 
-            return `${qty} ${unit}`;
-       
+        }
+        return `${qty} ${unit}`;
+
     }
-    const inputHandler = ({target}) => {
-        if(target.name === 'prepared') {
-        setPrepared(target.value)
-        } else if(target.name === 'pickup') {
+    const inputHandler = ({ target }) => {
+        if (target.name === 'prepared') {
+            setPrepared(target.value)
+        } else if (target.name === 'pickup') {
             setPickup(target.value);
         }
     }
@@ -58,44 +63,30 @@ const TemplatePrint = (props) => {
 
                                     <TableBody>
 
-                                        <TableRow sx={{
-
-                                            "& th": {
-                                                fontSize: "10px",
-
-                                                height: 10
-                                            }
-                                        }}>
-                                            <TableCell style={{ border: 'solid 1px black',width:'50%' }} component="th" scope="row" >
+                                        <TableRow className={classes.tableRow2}>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black', width: '50%' }} component="th" scope="row" >
                                                 Patient Name : {general.patientName || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row"><div style={{display:'inline-flex'}}><Typography variant="bold1">{`Date Prepared : `}</Typography><TextField variant="standard"  inputProps={{
-      style: {
-        height : 20,
-        padding: '0 14px',
-      },
-  }} value={prepared} name="prepared" onChange={inputHandler}/></div></TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row"><div style={{ display: 'inline-flex' }}><Typography variant="bold1">{`Date Prepared : `}</Typography><TextField variant="standard" inputProps={{
+                                                style: {
+                                                    height: 16,
+                                                    padding: '0 14px',
+                                                },
+                                            }} value={prepared} name="prepared" onChange={inputHandler} /></div></TableCell>
 
                                         </TableRow>
-                                        <TableRow sx={{
-
-                                            "& th": {
-                                                fontSize: "10px",
-
-                                                height: 10
-                                            }
-                                        }}>
+                                        <TableRow className={classes.tableRow2}>
 
 
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                 Facility/POS : {general.facility || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row"><div style={{display:'inline-flex'}}><Typography variant="bold1">Date Pickup : </Typography><TextField variant="standard"  inputProps={{
-      style: {
-        height : 20,
-        padding: '0 14px',
-      },
-  }} value={pickup} name="pickup" onChange={inputHandler}/></div></TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row"><div style={{ display: 'inline-flex' }}><Typography variant="bold1">Date Pickup : </Typography><TextField variant="standard" inputProps={{
+                                                style: {
+                                                    height: 16,
+                                                    padding: '0 14px',
+                                                },
+                                            }} value={pickup} name="pickup" onChange={inputHandler} /></div></TableCell>
 
                                         </TableRow>
                                     </TableBody>
@@ -106,17 +97,11 @@ const TemplatePrint = (props) => {
 
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                     <TableHead>
-                                        <TableRow sx={{
+                                        <TableRow className={classes.tableRow}>
 
-                                            "& th": {
-                                                fontSize: "10px",
-
-                                                height: 10
-                                            }
-                                        }}>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ width: '75%', height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
 
                                         </TableRow>
                                     </TableHead>
@@ -126,27 +111,21 @@ const TemplatePrint = (props) => {
 
 
 
-                                                <TableRow sx={{
-                                                    "& th": {
-                                                        fontSize: "12px",
-
-                                                        height: 10
-                                                    }
-                                                }}>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
+                                                <TableRow className={classes.tableRow}>
+                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                         {map + 1}
                                                     </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}</small>
+                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        {details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}
                                                     </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||details[map].search.unit_distribution || details[map].unit_distribution) : ''}</Typography>
+                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        {details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty, details[map].search.unitDistribution || details[map].search.unit_distribution || details[map].unit_distribution) : ''}
                                                     </TableCell>
 
                                                 </TableRow>
                                             )
                                         })}
-                                      
+
                                     </TableBody>
                                 </Table>
                             </div>
@@ -207,34 +186,30 @@ const TemplatePrint = (props) => {
 
                                         <TableBody>
 
-                                            <TableRow sx={{
-
-                                                "& th": {
-                                                    fontSize: "10px",
-
-                                                    height: 10
-                                                }
-                                            }}>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
+                                            <TableRow className={classes.tableRow2}>
+                                                <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black', width: '50%' }} component="th" scope="row" >
                                                     Patient Name : {general.patientName || ''}
                                                 </TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: {prepared}</TableCell>
+                                                <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row"><div style={{ display: 'inline-flex' }}><Typography variant="bold1">{`Date Prepared : `}</Typography><TextField variant="standard" inputProps={{
+                                                    style: {
+                                                        height: 16,
+                                                        padding: '0 14px',
+                                                    },
+                                                }} value={prepared} name="prepared" onChange={inputHandler} /></div></TableCell>
 
                                             </TableRow>
-                                            <TableRow sx={{
-
-                                                "& th": {
-                                                    fontSize: "10px",
-
-                                                    height: 10
-                                                }
-                                            }}>
+                                            <TableRow className={classes.tableRow2}>
 
 
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                    Facility/POS : N/A
+                                                <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                    Facility/POS : {general.facility || ''}
                                                 </TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up : {pickup}</TableCell>
+                                                <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row"><div style={{ display: 'inline-flex' }}><Typography variant="bold1">Date Pickup : </Typography><TextField variant="standard" inputProps={{
+                                                    style: {
+                                                        height: 16,
+                                                        padding: '0 14px',
+                                                    },
+                                                }} value={pickup} name="pickup" onChange={inputHandler} /></div></TableCell>
 
                                             </TableRow>
                                         </TableBody>
@@ -246,61 +221,48 @@ const TemplatePrint = (props) => {
 
                                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                         <TableHead>
-                                            <TableRow sx={{
+                                            <TableRow className={classes.tableRow}>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Category</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
 
-                                                "& th": {
-                                                    fontSize: "10px",
-
-                                                    height: 10
-                                                }
-                                            }}>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Category</TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
-                                                
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Size</TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Vendor</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Size</TableCell>
+                                            <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Vendor</TableCell>
 
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                        {items.map(map => {
-                                            return (
+                                            {items.map(map => {
+                                                return (
 
 
 
-                                                <TableRow sx={{
-                                                    "& th": {
-                                                        fontSize: "12px",
-
-                                                        height: 10
-                                                    }
-                                                }}>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        {map + 1}
-                                                    </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
+                                                    <TableRow className={classes.tableRow}>
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        <small>{map + 1}</small>
+                                                        </TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                         <small>{details && details.length && details.length > map ? details[map].search.category : ''}</small>
-                                                    </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <small>{details && details.length && details.length > map ? details[map].search.shortDescription  || details[map].search.short_description: ''}</small>
-                                                    </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <Typography variant="bold1">{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty,details[map].search.unitDistribution||'') : ''}</Typography>
-                                                    </TableCell>
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <Typography variant="bold1">{details && details.length && details.length > map ? details[map].search.size || '' : ''}</Typography>
-                                                    </TableCell>
-                                                    
-                                                    <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
-                                                        <Typography variant="bold1">{details && details.length && details.length > map ? details[map].search.vendor : ''}</Typography>
-                                                    </TableCell>
+                                                        </TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                           <small>{details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}</small> 
+                                                        </TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        <small>{details && details.length && details.length > map ? unitDistributionHandler(details[map].orderQty, details[map].search.unitDistribution || '') : ''}</small>
+                                                        </TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        <small>{details && details.length && details.length > map ? details[map].search.size || '' : ''}</small>
+                                                        </TableCell>
 
-                                                </TableRow>
-                                            )
-                                        })}
-                                
+                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                        <small>{details && details.length && details.length > map ? details[map].search.vendor : ''}</small>
+                                                        </TableCell>
+
+                                                    </TableRow>
+                                                )
+                                            })}
+
                                         </TableBody>
                                     </Table>
                                 </div>

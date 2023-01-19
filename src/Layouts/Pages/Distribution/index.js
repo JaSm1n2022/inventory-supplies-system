@@ -446,7 +446,7 @@ const Distribution = (props) => {
     const generalData = {};
     const detailsData = [];
     selectedData.forEach((ea,indx) => {
-      if(indx < 10) {
+      if(indx < 15) {
       generalData.patient = patientList.find(p => p.id === ea.patient_id);
       if (ea.requestor_id) {
         generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);

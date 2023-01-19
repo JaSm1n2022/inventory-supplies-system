@@ -572,7 +572,7 @@ function DistributionForm(props) {
                         )
                     })}
 
-                    {detailForm && detailForm.length && detailForm.length < 10 &&
+                    {detailForm && detailForm.length && detailForm.length < 13 &&
                     <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>
