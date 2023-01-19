@@ -36,6 +36,18 @@ const TemplatePrint = (props) => {
         return `${qty} ${unit}`;
 
     }
+    const makeCategoryShortHandler = (item) => {
+        if(item && item.toLowerCase().startsWith('underwear')) {
+            return 'Underwear';
+        } else if(item && item.toLowerCase() === 'perineal cleanser') {
+            return 'Cleanser';
+        } else if (item && item.toLowerCase() === 'condom catheter') {
+            return 'Catheter';
+        
+        } else {
+            return item;
+        }
+    }
     const inputHandler = ({ target }) => {
         if (target.name === 'prepared') {
             setPrepared(target.value)
@@ -243,7 +255,7 @@ const TemplatePrint = (props) => {
                                                         <small>{map + 1}</small>
                                                         </TableCell>
                                                         <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                        <small>{details && details.length && details.length > map ? details[map].search.category : ''}</small>
+                                                        <small>{details && details.length && details.length > map ? makeCategoryShortHandler(details[map].search.category) : ''}</small>
                                                         </TableCell>
                                                         <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                            <small>{details && details.length && details.length > map ? details[map].search.shortDescription || details[map].search.short_description : ''}</small> 
