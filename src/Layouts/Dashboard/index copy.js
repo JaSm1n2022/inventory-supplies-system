@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody } from '@mui/material';
+import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import ClientPieChart from './components/ClientPieChart';
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
@@ -24,6 +24,7 @@ import { attemptToFetchProduct, resetFetchProductState } from '../../store/actio
 import { attemptToFetchStock, resetFetchStockState } from '../../store/actions/stockAction';
 import { stockListStateSelector } from '../../store/selectors/stockSelector';
 import BriefPlot from './components/BriefPlot';
+import SupplyPlot from './components/SupplyPlot';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -107,7 +108,8 @@ let transactionDashboard =
   office: 0
 }
 let patientGrandTotal = 0.0;
-let patientBriefPlot = [];
+let patientSupplyPlot = {};
+let supplyPlot = [];
 let patientDashboard = [
   {
     name: '',
@@ -130,12 +132,31 @@ let providerDashboard = [
 let productList = [];
 let dateOptions = [];
 let lastDateType = '';
-let estimatedBriefGrandTotal = parseFloat(0.0);
-let briefThresholdList = [
-  { productId: 24, value: 32 }
-];
-let briefSummary = [];
-let unusedBriefSummary = [];
+let estimatedSupplyGrandTotal = {
+  brief: parseFloat(0.0),
+  underpad: parseFloat(0.0),
+  underwear: parseFloat(0.0),
+  glove: parseFloat(0.0),
+  wipe: parseFloat(0.0)
+};
+
+let plotSummary = {
+  brief: [],
+  underpad: [],
+  underwear: [],
+  glove: [],
+  wipe: []
+};
+
+
+let unusedPlotSummary = {
+  brief: [],
+  underpad: [],
+  underwear: [],
+  glove: [],
+  wipe: []
+};
+let requestorDaily = ['jesus arela','shiela roa','silva doody'];
 DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
 
 const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
@@ -151,6 +172,7 @@ const Dashboard = (props) => {
   const [dateTo, setDateTo] = useState(dates.to);
   const [dateSelected, setDateSelected] = useState(dateOptions.find(d => d.value === 'thisMonth'));
   const [isDateCustom, setIsDateCustom] = useState(false);
+  const [plotView, setPlotView] = React.useState('brief');
 
 
 
@@ -302,145 +324,205 @@ const Dashboard = (props) => {
     listTransactions({ from: _sfrom, to: _sTo });
 
   }
-  const setPatientsProductsHandler = (patient,briefs,underpads,underwears,wipes,gloves) => {
+  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves) => {
     const temp = {
       patientName: patient.name,
-      briefProductId: briefs && briefs.length ? briefs[0].productId : '',
-      briefProduct: briefs && briefs.length ? briefs[0].description : '',
-      briefQty: briefs && briefs.length ? briefs[0].order_qty : 0,
-      briefVendor: '',
-      briefSize: '',
-      underPadProductId: underpads && underpads.length ? underpads[0].productId : '',
-      underPadProduct: underpads && underpads.length ? underpads[0].description : '',
-      underPadQty: underpads && underpads.length ? underpads[0].order_qty : 0,
-      underPadVendor: '',
-      underPadSize: '',
-      underWearProductId: underwears && underwears.length ? underwears[0].productId : '',
-      underWearProduct: underwears && underwears.length ? underwears[0].description : '',
-      underWearQty: underwears && underwears.length ? underwears[0].order_qty : 0,
-      underWearVendor: '',
-      underWearSize: '',
-      wipeProductId: wipes && wipes.length ? wipes[0].productId : '',
-      wipeProduct: wipes && wipes.length ? wipes[0].description : '',
-      wipeQty: wipes && wipes.length ? wipes[0].order_qty : 0,
-      wipeVendor: '',
-      wipeSize: '',
-      gloveProductId: gloves && gloves.length ? gloves[0].productId : '',
-      gloveProduct: gloves && gloves.length ? gloves[0].description : '',
-      gloveQty: gloves && gloves.length ? gloves[0].order_qty : 0,
-      gloveVendor: '',
-      gloveSize: ''
+      brief: {
+        patientName: patient.name,
+        productId: briefs && briefs.length ? briefs[0].productId : '',
+        product: briefs && briefs.length ? briefs[0].description : '',
+        qty: briefs && briefs.length ? briefs[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      underpad: {
+        patientName: patient.name,
+        productId: underpads && underpads.length ? underpads[0].productId : '',
+        product: underpads && underpads.length ? underpads[0].description : '',
+        qty: underpads && underpads.length ? underpads[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      underwear: {
+        patientName: patient.name,
+        productId: underwears && underwears.length ? underwears[0].productId : '',
+        product: underwears && underwears.length ? underwears[0].description : '',
+        qty: underwears && underwears.length ? underwears[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      wipe: {
+        patientName: patient.name,
+        productId: wipes && wipes.length ? wipes[0].productId : '',
+        product: wipes && wipes.length ? wipes[0].description : '',
+        qty: wipes && wipes.length ? wipes[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      glove: {
+        patientName: patient.name,
+        productId: gloves && gloves.length ? gloves[0].productId : '',
+        product: gloves && gloves.length ? gloves[0].description : '',
+        qty: gloves && gloves.length ? gloves[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      }
 
     };
-    if (temp.briefProductId && productList.find(p => p.id === temp.briefProductId)) {
-      const item = productList.find(p => p.id === temp.briefProductId);
-      temp.briefVendor = item.vendor;
-      temp.briefSize = item.size;
-      temp.briefUnitPrice = item.unit_price;
-      temp.briefCnt = item.count;
-      temp.briefUnitDist = item.unit_distribution;
-      temp.briefThreshold = briefThresholdList.find(m => m.productId === item.briefProductId) ? briefThresholdList.find(m => m.productId === item.briefProductId).value : 40;
-      if (briefs[0].requestor.toLowerCase().indexOf('arela')) {
-        temp.briefThreshold = temp.briefThreshold * 2;
+    if (temp.brief.productId && productList.find(p => p.id === temp.brief.productId)) {
+      const item = productList.find(p => p.id === temp.brief.productId);
+      temp.brief.vendor = item.vendor;
+      temp.brief.size = item.size;
+      temp.brief.unitPrice = item.unit_price;
+      temp.brief.cnt = item.count;
+      temp.brief.unitDist = item.unit_distribution;
+      temp.brief.threshold = 40;
+      const cna = briefs && briefs.length ? briefs[0] : {};
+      temp.brief.requestor = cna.requestor;
+      console.log('[cna]',cna);
+
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.brief.threshold = 60;
       }
     }
-    if (temp.underPadProductId && productList.find(p => p.id === temp.underPadProductId)) {
-      const item = productList.find(p => p.id === temp.underPadProductId);
-      temp.underPadVendor = item.vendor;
-      temp.underPadSize = item.size;
-    }
-    if (temp.underWearProductId && productList.find(p => p.id === temp.underWearProductId)) {
-      const item = productList.find(p => p.id === temp.underWearProductId);
-      temp.underWearVendor = item.vendor;
-      temp.underWearSize = item.size;
-    }
-    if (temp.wipeProductId && productList.find(p => p.id === temp.wipeProductId)) {
-      const item = productList.find(p => p.id === temp.wipeProductId);
-      temp.wipeVendor = item.vendor;
-      temp.wipeSize = item.size;
-    }
-    if (temp.gloveProductId && productList.find(p => p.id === temp.gloveProductId)) {
-      const item = productList.find(p => p.id === temp.gloveProductId);
-      temp.gloveVendor = item.vendor;
-      temp.gloveSize = item.size;
-    }
-    patientBriefPlot.push(temp);
-  }
-  const briefPlotHandler = () => {
-    const newBriefPlot = [];
-    for (const briefPlot of patientBriefPlot) {
-      if (briefPlot.briefProductId) {
-        const tempStock = [...stockList];
-        let currentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId);
 
-        console.log('[CurrentStock]', currentStock, briefPlot.briefProductId);
+    if (temp.underpad.productId && productList.find(p => p.id === temp.underpad.productId)) {
+      const item = productList.find(p => p.id === temp.underpad.productId);
+      temp.underpad.vendor = item.vendor;
+      temp.underpad.size = item.size;
+      temp.underpad.unitPrice = item.unit_price;
+      temp.underpad.cnt = item.count;
+      temp.underpad.unitDist = item.unit_distribution;
+      temp.underpad.threshold = 20;//item.count;
+      const cna = underpads && underpads.length ? underpads[0] : [];
+      temp.underpad.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.underpad.threshold = 30;
+      }
+    }
+
+    if (temp.underwear.productId && productList.find(p => p.id === temp.underwear.productId)) {
+      const item = productList.find(p => p.id === temp.underwear.productId);
+      temp.underwear.vendor = item.vendor;
+      temp.underwear.size = item.size;
+      temp.underwear.unitPrice = item.unit_price;
+      temp.underwear.cnt = item.count;
+      temp.underwear.unitDist = item.unit_distribution;
+      temp.underwear.threshold = 40;//item.count;
+      const cna = underwears && underwears.length ? underwears[0] : [];
+      temp.underwear.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.underwear.threshold = 60;
+      }
+    }
+
+    if (temp.wipe.productId && productList.find(p => p.id === temp.wipe.productId)) {
+      const item = productList.find(p => p.id === temp.wipe.productId);
+      temp.wipe.vendor = item.vendor;
+      temp.wipe.size = item.size;
+      temp.wipe.unitPrice = item.unit_price;
+      temp.wipe.cnt = item.count;
+      temp.wipe.unitDist = item.unit_distribution;
+      temp.wipe.threshold = 2;
+      const cna = wipes && wipes.length ? wipes[0] : [];
+      temp.wipe.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.wipe.threshold = 3;
+      }
+    }
+    if (temp.glove.productId && productList.find(p => p.id === temp.glove.productId)) {
+      const item = productList.find(p => p.id === temp.glove.productId);
+      temp.glove.vendor = item.vendor;
+      temp.glove.size = item.size;
+      temp.glove.unitPrice = item.unit_price;
+      temp.glove.cnt = item.count;
+      temp.glove.unitDist = item.unit_distribution;
+      temp.glove.threshold = 1;
+      const cna = gloves && gloves.length ? gloves[0] : [];
+      temp.glove.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.glove.threshold = 2;
+      }
+    }
+
+
+
+    supplyPlot.push(temp);
+  }
+  const plotHandler = (source) => {
+    const newPlot = [];
+    const plots = supplyPlot.map(map => map[source]);
+    console.log('[plots]', plots);
+    for (const plot of plots) {
+      if (plot.productId) {
+        const tempStock = [...stockList];
+        let currentStock = tempStock.find(stk => stk.productId === plot.productId);
         if (currentStock) {
-          briefPlot.briefCurrentStock = tempStock.find(stk => stk.productId === briefPlot.briefProductId).qty_on_hand;
+          plot.currentStock = tempStock.find(stk => stk.productId === plot.productId).qty_on_hand;
           if (currentStock.qty_on_hand === 0) {
-            briefPlot.briefBalance = 0;
-            briefPlot.briefOrder = briefPlot.briefCnt;
+            plot.balance = 0;
+            plot.order = plot.threshold;
           } else {
-            const diff1 = parseInt(currentStock.qty_on_hand, 10) - parseInt(briefPlot.briefThreshold);
+            const diff1 = parseInt(currentStock.qty_on_hand, 10) - parseInt(plot.threshold);
             //     currentStock.qty_on_hand = diff1 < 0 ? 0 : diff1;
-            briefPlot.briefBalance = diff1 < 0 ? 0 : diff1;
+            plot.balance = diff1 < 0 ? 0 : diff1;
             if (diff1 <= 0) {
-              briefPlot.briefOrder = Math.abs(diff1);
+              plot.order = Math.abs(diff1);
             }
           }
 
         }
-        console.log('[CurrentStock2]', currentStock, briefPlot.briefProductId);
-
-        newBriefPlot.push(briefPlot);
+        newPlot.push(plot);
       }
     }
+    console.log('[new Plot]', newPlot);
     //one by one 
     //make data
-    const briefIds = newBriefPlot.map(m => m.briefProductId);
-    const uBriefIds = Array.from(new Set(briefIds));
+    const ids = newPlot.map(m => m.productId);
+    const uIds = Array.from(new Set(ids));
 
-    patientBriefPlot = newBriefPlot;
-    const briefAdjustment = [];
-    uBriefIds.forEach(u => {
-      const sel = patientBriefPlot.filter(n => n.briefProductId === u);
+    patientSupplyPlot[source] = newPlot;
+    const adjustment = [];
+    uIds.forEach(u => {
+      const sel = patientSupplyPlot[source].filter(n => n.productId === u);
 
       console.log('[se]', sel);
       sel.forEach((s, indx) => {
         if (parseInt(indx) > 0) {
           console.log('[index]', indx, sel[indx - 1]);
-          s.briefCurrentStock = sel[indx - 1].briefBalance;
-          const balance = parseInt(s.briefCurrentStock) - parseInt(s.briefThreshold);
-          s.briefBalance = balance < 0 ? 0 : balance;
-          if (balance <= 0 && s.briefCurrentStock === 0) {
-            s.briefOrder = s.briefCnt;
+          s.currentStock = sel[indx - 1].balance;
+          const balance = parseInt(s.currentStock) - parseInt(s.threshold);
+          s.balance = balance < 0 ? 0 : balance;
+          if (balance <= 0 && s.currentStock === 0) {
+            s.order = s.threshold;
           } else if (balance <= 0) {
-            s.briefOrder = s.briefCnt - s.briefCurrentStock;
+            s.order = s.cnt - s.currentStock;
           }
-          console.log('[index current]', s);
+
         }
-        briefAdjustment.push(s);
+        adjustment.push(s);
       })
     })
-    patientBriefPlot = briefAdjustment;
-    uBriefIds.forEach(u => {
-      const sel = patientBriefPlot.filter(n => n.briefProductId === u);
-      console.log('[sel]',sel);
+    patientSupplyPlot[source] = adjustment;
+    uIds.forEach(u => {
+      const sel = patientSupplyPlot[source].filter(n => n.productId === u);
+
       let orders = 0;
       sel.forEach(e => {
-        orders += parseInt(e.briefOrder || 0);
+        orders += parseInt(e.order || 0);
       });
       if (orders > 0) {
-        estimatedBriefGrandTotal = parseFloat(estimatedBriefGrandTotal) + parseFloat(parseInt(orders / sel[0].briefCnt) * sel[0].briefUnitPrice);
-        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].briefCnt));
-        
-        briefSummary.push({
-          ...sel[0], total: orders, carton:cartonCnt, amt: parseInt(cartonCnt) * sel[0].briefUnitPrice
+        estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + parseFloat(parseInt(orders / sel[0].cnt) * sel[0].unitPrice);
+        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
+
+        plotSummary[source].push({
+          ...sel[0], total: orders, carton: cartonCnt, amt: parseInt(cartonCnt) * sel[0].unitPrice
         });
       }
     });
-    const stockBriefs = stockList.filter(s => s.category && s.category.toLowerCase() === 'brief');
-    stockBriefs.forEach(b => {
-      if (!uBriefIds.find(u => u === b.productId)) {
+    const stocks = stockList.filter(s => s.category && s.category.toLowerCase() === source);
+    stocks.forEach(b => {
+      if (!uIds.find(u => u === b.productId)) {
         const pr = productList.find(p => p.id === b.productId);
         if (pr) {
           const temp = {
@@ -450,7 +532,7 @@ const Dashboard = (props) => {
             qty: b.qty_on_hand
           };
           if (b.qty_on_hand > 0) {
-            unusedBriefSummary.push(temp);
+            unusedPlotSummary[source].push(temp);
           }
         }
       }
@@ -514,10 +596,39 @@ const Dashboard = (props) => {
     console.log('[Patient Data2]', distributionList);
 
     patientDashboard = [];
-    patientBriefPlot = [];
-    briefSummary = [];
-    unusedBriefSummary = [];
-    estimatedBriefGrandTotal = parseFloat(0.0);
+
+    supplyPlot = [];
+    patientSupplyPlot = {
+      brief: [],
+      underpad: [],
+      wipe: [],
+      glove: [],
+      underwear: []
+    };
+    estimatedSupplyGrandTotal = {
+      brief: parseFloat(0.0),
+      underpad: parseFloat(0.0),
+      underwear: parseFloat(0.0),
+      glove: parseFloat(0.0),
+      wipe: parseFloat(0.0)
+    };
+
+    plotSummary = {
+      brief: [],
+      underpad: [],
+      underwear: [],
+      glove: [],
+      wipe: []
+    };
+
+
+    unusedPlotSummary = {
+      brief: [],
+      underpad: [],
+      underwear: [],
+      glove: [],
+      wipe: []
+    };
     for (const patient of patientList) {
       let estimatedAmt = 0.0;
       patient.label = patient.name;
@@ -592,18 +703,25 @@ const Dashboard = (props) => {
 
         })
 
-        if (patient.name.indexOf('C/O') === -1 && patient.status !== 'Inactive') {
-          setPatientsProductsHandler(patient,briefs,underpads,underwears,wipes,gloves);          
-        }
+       
 
+      }
+      if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) ||  patient.status.toLowerCase() !== 'inactive') {
+        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves);
       }
 
     }
-    briefPlotHandler();
-    patientBriefPlot = sortByProductId(patientBriefPlot, 'briefProductId');
-   
-
-    console.log('estimatedBriefGrandTotal', estimatedBriefGrandTotal);
+    console.log('[Plot Supply]', supplyPlot);
+    plotHandler('brief');
+    plotHandler('underpad');
+    plotHandler('underwear');
+    plotHandler('wipe');
+    plotHandler('glove');
+    patientSupplyPlot.brief = sortByProductId(patientSupplyPlot.brief, 'productId');
+    patientSupplyPlot.underpad = sortByProductId(patientSupplyPlot.underpad, 'productId');
+    patientSupplyPlot.underwear = sortByProductId(patientSupplyPlot.underwear, 'productId');
+    patientSupplyPlot.wipe = sortByProductId(patientSupplyPlot.wipe, 'productId');
+    patientSupplyPlot.glove = sortByProductId(patientSupplyPlot.glove, 'productId');
     patientOptions = [...patientDashboard];
 
 
@@ -768,6 +886,9 @@ const Dashboard = (props) => {
 
   }
   console.log('[series]', patientDashboard);
+  const plotViewHandler = (event) => {
+    setPlotView(event.target.value);
+  }
   return (
     <div className={classes.root}>
       {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
@@ -1130,24 +1251,93 @@ const Dashboard = (props) => {
             <Typography variant="h6">{`TOTAL CHARGE FOR 9465 : $${parseFloat(parseFloat(card9465AmountMedline) + parseFloat(card9465AmountAmazon) + parseFloat(card9465AmountMckee)).toFixed(2)}`}</Typography>
           </TabPanel>
           <TabPanel value={value} index="four">
-
-              <BriefPlot patientPlot={patientBriefPlot} estimatedBriefGrandTotal={estimatedBriefGrandTotal} unusedBriefSummary={unusedBriefSummary} briefSummary={briefSummary} />
-          </TabPanel>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Plot View</FormLabel>
+              <div style={{ display: 'inline-flex' }}>
+                <div>
+                
+                  <Radio
+                    checked={plotView === 'brief'}
+                    onChange={plotViewHandler}
+                    value="brief"
+                    label="Brief"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  ></Radio>BRIEFS
+                  <Radio
+                    checked={plotView === 'underpad'}
+                    onChange={plotViewHandler}
+                    value="underpad"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>UNDERPADS
+                  <Radio
+                    checked={plotView === 'underwear'}
+                    onChange={plotViewHandler}
+                    value="underwear"
+                    
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  ></Radio>UNDERWEARS
+                  <Radio
+                    checked={plotView === 'wipe'}
+                    onChange={plotViewHandler}
+                    value="wipe"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>WIPES
+                  <Radio
+                    checked={plotView === 'glove'}
+                    onChange={plotViewHandler}
+                    value="glove"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>GLOVES
+                  {/*
+      <RadioGroup style={{display:'inline-flex'}} aria-label="gender" name="gender1" value={plotView} onChange={plotViewHandler}>
+        <FormControlLabel value="brief" control={<Radio />} label="Briefs" />
+        <FormControlLabel value="underpad" control={<Radio />} label="Underpads" />
+        <FormControlLabel value="underwear" control={<Radio />} label="UnderWears" />
+        <FormControlLabel value="wipe" control={<Radio />} label="Wipes" />
+        <FormControlLabel value="glove" control={<Radio />} label="Gloves" />
+      </RadioGroup>
+              */}
+                </div>
+                </div>
+    </FormControl>
+    <div>
+        <Divider variant="fullWidth" style={{
+          height: '.03em',
+          border: 'solid 1px rgba(0, 0, 0, 0.12)'
+        }} orientation="horizontal" flexItem />
+        </div>
+              {plotView === 'brief' ?
+                <SupplyPlot title={'BRIEF'} patientPlot={patientSupplyPlot.brief} estimatedGrandTotal={estimatedSupplyGrandTotal.brief} unusedSummary={unusedPlotSummary.brief} summary={plotSummary.brief} />
+                : plotView === 'underpad' ?
+                  <SupplyPlot title={'UNDERPAD'} patientPlot={patientSupplyPlot.underpad} estimatedGrandTotal={estimatedSupplyGrandTotal.underpad} unusedSummary={unusedPlotSummary.underpad} summary={plotSummary.underpad} />
+                  : plotView === 'underwear' ?
+                  <SupplyPlot title={'UNDERWEAR'} patientPlot={patientSupplyPlot.underwear} estimatedGrandTotal={estimatedSupplyGrandTotal.underwear} unusedSummary={unusedPlotSummary.underwear} summary={plotSummary.underwear} />
+                  : plotView === 'wipe' ?
+                  <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
+                  : plotView === 'glove' ?
+                  <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
+                : null}
+              </TabPanel>
         </React.Fragment>
       }
     </div>
   );
 }
 const mapStateToProps = store => ({
-  patients: patientListStateSelector(store),
-  distributions: distributionListStateSelector(store),
-  transactions: transactionListStateSelector(store),
-  products: productListStateSelector(store),
-  stocks: stockListStateSelector(store),
+        patients: patientListStateSelector(store),
+      distributions: distributionListStateSelector(store),
+      transactions: transactionListStateSelector(store),
+      products: productListStateSelector(store),
+      stocks: stockListStateSelector(store),
 });
 
 const mapDispatchToProps = dispatch => ({
-  listPatients: (data) => dispatch(attemptToFetchPatient(data)),
+        listPatients: (data) => dispatch(attemptToFetchPatient(data)),
   resetListPatients: () => dispatch(resetFetchPatientState()),
   listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
   resetListDistribution: () => dispatch(resetFetchDistributionState()),
@@ -1160,7 +1350,7 @@ const mapDispatchToProps = dispatch => ({
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+      export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 
 

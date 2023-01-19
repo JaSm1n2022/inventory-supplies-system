@@ -25,6 +25,7 @@ import { attemptToFetchStock, resetFetchStockState } from '../../store/actions/s
 import { stockListStateSelector } from '../../store/selectors/stockSelector';
 import BriefPlot from './components/BriefPlot';
 import SupplyPlot from './components/SupplyPlot';
+import CardTransaction from './components/CardTransaction';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -78,26 +79,8 @@ let distributionList = [];
 let numberActive = 0;
 let numberInactive = 0;
 let patientCnaList = [];
-let card4434AmountAmazon = 0.0;
-let card4434AmountMckee = 0.0;
-let card4434AmountMedline = 0.0;
-let card1001AmountAmazon = 0.0;
-let card1001AmountMckee = 0.0;
-let card1001AmountMedline = 0.0;
-let card1937AmountAmazon = 0.0;
-let card1937AmountMckee = 0.0;
-let card1937AmountMedline = 0.0;
-let card0994AmountMedline = 0.0;
-let card0994AmountAmazon = 0.0;
-let card0994AmountMckee = 0.0;
 
-let card1015AmountAmazon = 0.0;
-let card1015AmountMckee = 0.0;
-let card1015AmountMedline = 0.0;
 
-let card9465AmountAmazon = 0.0;
-let card9465AmountMckee = 0.0;
-let card9465AmountMedline = 0.0;
 
 let transactionDashboard =
 {
@@ -156,7 +139,19 @@ let unusedPlotSummary = {
   glove: [],
   wipe: []
 };
-let requestorDaily = ['jesus arela','shiela roa','silva doody'];
+let transactionType = {
+
+  amazon: 0,
+  medline: 0,
+  mckesson: 0,
+  walmart: 0,
+  others: 0
+}
+let cardTransaction = [
+  { "4344": { ...transactionType } },
+  { "1937": { ...transactionType } }
+];
+let requestorDaily = ['jesus arela', 'shiela roa', 'silva doody'];
 DATE_TYPE_SELECTION.forEach(c => { dateOptions.push({ ...c, category: 'date' }) });
 
 const dates = Helper.formatDateRangeByCriteriaV2('thisMonth');
@@ -379,7 +374,7 @@ const Dashboard = (props) => {
       temp.brief.threshold = 40;
       const cna = briefs && briefs.length ? briefs[0] : {};
       temp.brief.requestor = cna.requestor;
-      console.log('[cna]',cna);
+      console.log('[cna]', cna);
 
       if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
         temp.brief.threshold = 60;
@@ -703,10 +698,10 @@ const Dashboard = (props) => {
 
         })
 
-       
+
 
       }
-      if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) ||  patient.status.toLowerCase() !== 'inactive') {
+      if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) || patient.status.toLowerCase() !== 'inactive') {
         setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves);
       }
 
@@ -737,563 +732,296 @@ const Dashboard = (props) => {
     let amazonAmount = 0.0;
     let medlineAmount = 0.0;
     let mckessonAmount = 0.0;
+    transactionType = {
 
-    card4434AmountAmazon = 0.0;
-    card4434AmountMckee = 0.0;
-    card4434AmountMedline = 0.0;
-    card1001AmountAmazon = 0.0;
-    card1001AmountMckee = 0.0;
-    card1001AmountMedline = 0.0;
+      amazon: 0,
+      medline: 0,
+      mckesson: 0,
+      walmart: 0,
+      others: 0,
+      grand : 0
+    }
+    cardTransaction = [
+      { info: "4344", ...transactionType },
+      { info: "1001", ...transactionType },
+      { info: "1015", ...transactionType },
+      { info: "1937", ...transactionType },
+      { info: "0994", ...transactionType },
+      { info: "9465", ...transactionType }
+    ];
 
-    card1015AmountAmazon = 0.0;
-    card1015AmountMckee = 0.0;
-    card1015AmountMedline = 0.0;
-
-    card1937AmountAmazon = 0.0;
-    card1937AmountMckee = 0.0;
-    card1937AmountMedline = 0.0;
-
-
-    card0994AmountAmazon = 0.0;
-    card0994AmountMckee = 0.0;
-    card0994AmountMedline = 0.0;
-
-
-    card9465AmountAmazon = 0.0;
-    card9465AmountMckee = 0.0;
-    card9465AmountMedline = 0.0;
 
     transactionData.forEach(transact => {
       grandTotal += parseFloat(transact.grand_total);
+      cardTransaction.forEach(card => {
+        if (transact.payment_info.indexOf(card.info) !== -1 && transact.vendor === 'Amazon') {
+          card.amazon += parseFloat(transact.grand_total);
+        }
+        if (transact.payment_info.indexOf(card.info) !== -1 && transact.vendor === 'Mckesson') {
+          card.mckesson += parseFloat(transact.grand_total);
+        }
+        if (transact.payment_info.indexOf(card.info) !== -1 && transact.vendor === 'Medline') {
+          card.medline += parseFloat(transact.grand_total);
+        }
+        if (transact.payment_info.indexOf(card.info) !== -1 && transact.vendor === 'Walmart') {
+          card.walmart += parseFloat(transact.grand_total);
+        }
+        if (transact.payment_info.indexOf(card.info) !== -1 && !['Walmart', 'Medline', 'Mckesson', 'Amazon'].includes(transact.vendor)) {
+          console.log('[Found Others]',transact);
+          card.others += parseFloat(transact.grand_total);
+        }
+        if (transact.payment_info.indexOf(card.info) !== -1) {
+          card.grand += parseFloat(transact.grand_total);
+        }
+        
+      });
 
-      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Amazon') {
-        card4434AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Mckesson') {
-        card4434AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('4434') !== -1 && transact.vendor === 'Medline') {
-        card4434AmountMedline += parseFloat(transact.grand_total);
-      }
+        if (transact.category === 'Office') {
+          officeAmount += parseFloat(transact.grand_total);
+        }
+        if (transact.vendor === 'Amazon') {
+          amazonAmount += parseFloat(transact.grand_total);
+        } else if (transact.vendor === 'Medline') {
+          medlineAmount += parseFloat(transact.grand_total);
+        } else if (transact.vendor === 'Mckesson') {
+          mckessonAmount += parseFloat(transact.grand_total);
 
-      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Amazon') {
-        card1015AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Mckesson') {
-        card1015AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1015') !== -1 && transact.vendor === 'Medline') {
-        card1015AmountMedline += parseFloat(transact.grand_total);
-      }
+        }
+      })
+      grandTotal = parseFloat(grandTotal).toFixed(2);
+      officeAmount = parseFloat(officeAmount).toFixed(2);
+      const clientAmount = parseFloat(grandTotal - officeAmount).toFixed(2);
+      transactionDashboard.expenses = grandTotal;
+      transactionDashboard.client = clientAmount;
+      transactionDashboard.office = officeAmount;
+      transactionDashboard.series = [parseFloat(officeAmount), parseFloat(clientAmount)];
+      providerDashboard.expenses = grandTotal;
+      providerDashboard.amazon = amazonAmount;
+      providerDashboard.medline = medlineAmount;
+      providerDashboard.mckesson = mckessonAmount;
+      providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
 
-      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Amazon') {
-        card1001AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Mckesson') {
-        card1001AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1001') !== -1 && transact.vendor === 'Medline') {
-        card1001AmountMedline += parseFloat(transact.grand_total);
-      }
-
-      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Amazon') {
-        card1937AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Mckesson') {
-        card1937AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('1937') !== -1 && transact.vendor === 'Medline') {
-        card1937AmountMedline += parseFloat(transact.grand_total);
-      }
-
-      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Amazon') {
-        card0994AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Mckesson') {
-        card0994AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('0994') !== -1 && transact.vendor === 'Medline') {
-        card0994AmountMedline += parseFloat(transact.grand_total);
-      }
-
-      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Amazon') {
-        card9465AmountAmazon += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Mckesson') {
-        card9465AmountMckee += parseFloat(transact.grand_total);
-      }
-      if (transact.payment_info.indexOf('9465') !== -1 && transact.vendor === 'Medline') {
-        card9465AmountMedline += parseFloat(transact.grand_total);
-      }
-
-
-      if (transact.category === 'Office') {
-        officeAmount += parseFloat(transact.grand_total);
-      }
-      if (transact.vendor === 'Amazon') {
-        amazonAmount += parseFloat(transact.grand_total);
-      } else if (transact.vendor === 'Medline') {
-        medlineAmount += parseFloat(transact.grand_total);
-      } else if (transact.vendor === 'Mckesson') {
-        mckessonAmount += parseFloat(transact.grand_total);
-
-      }
-    })
-    grandTotal = parseFloat(grandTotal).toFixed(2);
-    officeAmount = parseFloat(officeAmount).toFixed(2);
-    const clientAmount = parseFloat(grandTotal - officeAmount).toFixed(2);
-    transactionDashboard.expenses = grandTotal;
-    transactionDashboard.client = clientAmount;
-    transactionDashboard.office = officeAmount;
-    transactionDashboard.series = [parseFloat(officeAmount), parseFloat(clientAmount)];
-    providerDashboard.expenses = grandTotal;
-    providerDashboard.amazon = amazonAmount;
-    providerDashboard.medline = medlineAmount;
-    providerDashboard.mckesson = mckessonAmount;
-    providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
-
-    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount), parseFloat(providerDashboard.other)];
-    isTransactionDone = true;
-    setIsTransactionCollection(false);
-  }
+      providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount), parseFloat(providerDashboard.other)];
+      isTransactionDone = true;
+      setIsTransactionCollection(false);
+    }
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  const inputGeneralHandler = ({ target }) => {
-    if (target.name === 'patient' && !target.value) {
-      patientDashboard = [...patientOptions];
-      patientDashboard.forEach(e => {
-        patientGrandTotal += e.estimatedAmt;
-      })
-      setPatient(DEFAULT_ITEM);
+      setValue(newValue);
+    };
+    const inputGeneralHandler = ({ target }) => {
+      if (target.name === 'patient' && !target.value) {
+        patientDashboard = [...patientOptions];
+        patientDashboard.forEach(e => {
+          patientGrandTotal += e.estimatedAmt;
+        })
+        setPatient(DEFAULT_ITEM);
+      }
+
+
+    };
+    const autoCompleteGeneralInputHander = (item) => {
+      if (item.category === 'patient') {
+
+        const temp = [...patientOptions];
+        const found = temp.filter(t => (t.name === item.name || t.cna === item.name));
+        console.log('[temp]', temp, found, item);
+        patientDashboard = found;
+        patientGrandTotal = 0;
+        patientDashboard.forEach(e => {
+          patientGrandTotal += e.estimatedAmt;
+        })
+        setPatient(item);
+      }
+
     }
-
-
-  };
-  const autoCompleteGeneralInputHander = (item) => {
-    if (item.category === 'patient') {
-
-      const temp = [...patientOptions];
-      const found = temp.filter(t => (t.name === item.name || t.cna === item.name));
-      console.log('[temp]', temp, found, item);
-      patientDashboard = found;
-      patientGrandTotal = 0;
-      patientDashboard.forEach(e => {
-        patientGrandTotal += e.estimatedAmt;
-      })
-      setPatient(item);
+    console.log('[series]', patientDashboard);
+    const plotViewHandler = (event) => {
+      setPlotView(event.target.value);
     }
-
-  }
-  console.log('[series]', patientDashboard);
-  const plotViewHandler = (event) => {
-    setPlotView(event.target.value);
-  }
-  return (
-    <div className={classes.root}>
-      {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
-        <div align="center" style={{ paddingTop: '100px' }}>
-          <br />
-          <CircularProgress />&nbsp;<span>Loading</span>...
-        </div>
-        :
-        <React.Fragment>
-          <Typography variant="h6">DASHBOARD</Typography>
-          <div style={{ width: 500, paddingTop: 20 }}>
-            <DateTypeAutoComplete
-              value={dateSelected || DEFAULT_ITEM}
-              name="dateType"
-
-              placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
-              onSelectHandler={autoCompleteInputHander}
-              onClearHandler={onClearHandler}
-              options={dateOptions || [DEFAULT_ITEM]}>
-
-            </DateTypeAutoComplete>
-            {isDateCustom &&
-              <DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
-            }
-          </div>
-          <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
-            <Tab
-
-              value="one"
-              label="CLIENT EXPENSES REPORT"
-              wrapped
-              {...a11yProps('one')}
-            />
-            <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
-            <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
-            <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
-          </Tabs>
-
-          <TabPanel value={value} index="one">
-            <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
-              <Grid container style={{ paddingBottom: 20 }}>
-                <Typography variant="h5">Client's Estimated Expenses Report</Typography>
-                &nbsp;
-                <div style={{ paddingTop: 4 }}>
-                  <Typography variant="body1">(excluding tax & shipping)</Typography>
-                </div>
-
-              </Grid>
-              <Grid container style={{ paddingBottom: 10 }}>
-                <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
-              </Grid>
-
-              <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
-                <div style={{ display: 'flex', gap: 10 }}>
-
-
-                  <div style={{ width: 300 }}>
-
-                    <SingleWithClearAutoComplete
-                      id='patient'
-                      placeholder='Select Patient/CNA'
-                      label='Select Patient'
-                      name='patient'
-                      options={patientCnaList}
-                      value={patient}
-                      onSelectHandler={autoCompleteGeneralInputHander}
-                      onChangeHandler={inputGeneralHandler}
-                    />
-                  </div>
-                </div>
-                <Typography variant="h5" style={{ border: '1px solid blue' }}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
-              </Grid>
-              <Grid item xs={12} style={{ paddingBottom: 10 }}>
-                <Divider variant="fullWidth" style={{
-
-                  height: '.02em',
-                  border: 'solid 1px rgba(0, 0, 0, 0.12)'
-                }} orientation="horizontal" flexItem />
-              </Grid>
-              <Grid container direction="row">
-                {patientDashboard.length && patientDashboard.map(map => {
-                  return (
-                    <Grid item xs={4}>
-                      <div align="center">
-                        <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
-                        <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
-                        <Typography variant="body2" style={{ color: 'blue' }}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc), new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
-
-                        {map.cna &&
-                          <Typography variant="body2" style={{ color: 'green' }}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
-                        }
-                      </div>
-                      <div>
-                        <ClientPieChart series={map.series} />
-                      </div>
-                    </Grid>
-                  )
-                })}
-
-              </Grid>
-            </Grid>
-          </TabPanel>
-          <TabPanel value={value} index="two">
-            <Grid container direction="row">
-              <Grid item xs={12}>
-                <Typography variant="h4">{`Total Expenses : $${parseFloat(providerDashboard.expenses).toFixed(2)}`}</Typography>
-
-              </Grid>
-              <Grid item xs={6} style={{ paddingTop: 20 }}>
-                <div>
-                  <Typography variant="h5">Distribution By Category</Typography>
-
-                  <Typography variant="h6">{`Office Supply Expenses - $${parseFloat(transactionDashboard.office).toFixed(2)}`}</Typography>
-                  <Typography variant="h6">{`Client Supply Expenses - $${parseFloat(transactionDashboard.client).toFixed(2)}`}</Typography>
-
-                </div>
-                <div>
-                  <GeneralChart labels={['OFFICE', 'PATIENTS']} series={transactionDashboard.series} />
-                </div>
-              </Grid>
-              <Grid item xs={6} style={{ paddingTop: 20 }}>
-                <div>
-                  <Typography variant="h5">Distribution By Provider/Seller</Typography>
-
-                  <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
-                  <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
-                  <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
-                  <Typography variant="h6">{`Other Provider Expenses - $${parseFloat(providerDashboard.other).toFixed(2)}`}</Typography>
-                </div>
-                <div>
-                  <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON', 'OTHER']} series={providerDashboard.series} />
-                </div>
-              </Grid>
-            </Grid>
-          </TabPanel>
-          <TabPanel value={value} index="three">
-
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>AMOUNT</TableCell>
-                    <TableCell align="right">VENDOR</TableCell>
-                    <TableCell align="right">PAYMENT METHOD</TableCell>
-                    <TableCell align="right">PAYMENT INFO</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card4434AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">4434</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card4434AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">4434</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card4434AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">4434</TableCell>
-                  </TableRow>
-
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1001AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1001</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1001AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1001</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1001AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1001</TableCell>
-                  </TableRow>
-
-
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1015AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1015</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1015AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1015</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1015AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1015</TableCell>
-                  </TableRow>
-
-
-                  {/* 1937 */}
-
-
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1937AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1937</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1937AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1937</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card1937AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">1937</TableCell>
-                  </TableRow>
-
-
-
-
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card0994AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">0994</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card0994AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">0994</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card0994AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">0994</TableCell>
-                  </TableRow>
-
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card9465AmountAmazon).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">AMAZON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">9465</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card9465AmountMckee).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MCKEESON</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">9465</TableCell>
-                  </TableRow>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {parseFloat(card9465AmountMedline).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">MEDLINE</TableCell>
-                    <TableCell align="right">CARD</TableCell>
-                    <TableCell align="right">9465</TableCell>
-                  </TableRow>
-
-
-
-
-
-
-
-                </TableBody>
-              </Table>
-            </TableContainer>
+    console.log('[Card Transaction]',cardTransaction);
+    return (
+      <div className={classes.root}>
+        {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
+          <div align="center" style={{ paddingTop: '100px' }}>
             <br />
-            <Typography variant="h5">SUMMARY FOR MAIN PROVIDERS (AMAZON/MCKESSON/MEDLINE)</Typography>
+            <CircularProgress />&nbsp;<span>Loading</span>...
+          </div>
+          :
+          <React.Fragment>
+            <Typography variant="h6">DASHBOARD</Typography>
+            <div style={{ width: 500, paddingTop: 20 }}>
+              <DateTypeAutoComplete
+                value={dateSelected || DEFAULT_ITEM}
+                name="dateType"
 
-            <Typography variant="h6">{`TOTAL CHARGE FOR 4434 : $${parseFloat(parseFloat(card4434AmountMedline) + parseFloat(card4434AmountAmazon) + parseFloat(card4434AmountMckee)).toFixed(2)}`}</Typography>
-            <Typography variant="h6">{`TOTAL CHARGE FOR 1001 : $${parseFloat(parseFloat(card1001AmountMedline) + parseFloat(card1001AmountAmazon) + parseFloat(card1001AmountMckee)).toFixed(2)}`}</Typography>
-            <Typography variant="h6">{`TOTAL CHARGE FOR 1015 : $${parseFloat(parseFloat(card1015AmountMedline) + parseFloat(card1015AmountAmazon) + parseFloat(card1015AmountMckee)).toFixed(2)}`}</Typography>
-            <Typography variant="h6">{`TOTAL CHARGE FOR 1937 : $${parseFloat(parseFloat(card1937AmountMedline) + parseFloat(card1937AmountAmazon) + parseFloat(card1937AmountMckee)).toFixed(2)}`}</Typography>
-            <Typography variant="h6">{`TOTAL CHARGE FOR 0994 : $${parseFloat(parseFloat(card0994AmountMedline) + parseFloat(card0994AmountAmazon) + parseFloat(card0994AmountMckee)).toFixed(2)}`}</Typography>
-            <Typography variant="h6">{`TOTAL CHARGE FOR 9465 : $${parseFloat(parseFloat(card9465AmountMedline) + parseFloat(card9465AmountAmazon) + parseFloat(card9465AmountMckee)).toFixed(2)}`}</Typography>
-          </TabPanel>
-          <TabPanel value={value} index="four">
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Plot View</FormLabel>
-              <div style={{ display: 'inline-flex' }}>
-                <div>
-                
-                  <Radio
-                    checked={plotView === 'brief'}
-                    onChange={plotViewHandler}
-                    value="brief"
-                    label="Brief"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  ></Radio>BRIEFS
-                  <Radio
-                    checked={plotView === 'underpad'}
-                    onChange={plotViewHandler}
-                    value="underpad"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'B' }}
-                  ></Radio>UNDERPADS
-                  <Radio
-                    checked={plotView === 'underwear'}
-                    onChange={plotViewHandler}
-                    value="underwear"
-                    
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  ></Radio>UNDERWEARS
-                  <Radio
-                    checked={plotView === 'wipe'}
-                    onChange={plotViewHandler}
-                    value="wipe"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'B' }}
-                  ></Radio>WIPES
-                  <Radio
-                    checked={plotView === 'glove'}
-                    onChange={plotViewHandler}
-                    value="glove"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'B' }}
-                  ></Radio>GLOVES
-                  {/*
+                placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+                onSelectHandler={autoCompleteInputHander}
+                onClearHandler={onClearHandler}
+                options={dateOptions || [DEFAULT_ITEM]}>
+
+              </DateTypeAutoComplete>
+              {isDateCustom &&
+                <DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
+              }
+            </div>
+            <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
+              <Tab
+
+                value="one"
+                label="CLIENT EXPENSES REPORT"
+                wrapped
+                {...a11yProps('one')}
+              />
+              <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
+              <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
+              <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
+            </Tabs>
+
+            <TabPanel value={value} index="one">
+              <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
+                <Grid container style={{ paddingBottom: 20 }}>
+                  <Typography variant="h5">Client's Estimated Expenses Report</Typography>
+                  &nbsp;
+                  <div style={{ paddingTop: 4 }}>
+                    <Typography variant="body1">(excluding tax & shipping)</Typography>
+                  </div>
+
+                </Grid>
+                <Grid container style={{ paddingBottom: 10 }}>
+                  <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
+                </Grid>
+
+                <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
+                  <div style={{ display: 'flex', gap: 10 }}>
+
+
+                    <div style={{ width: 300 }}>
+
+                      <SingleWithClearAutoComplete
+                        id='patient'
+                        placeholder='Select Patient/CNA'
+                        label='Select Patient'
+                        name='patient'
+                        options={patientCnaList}
+                        value={patient}
+                        onSelectHandler={autoCompleteGeneralInputHander}
+                        onChangeHandler={inputGeneralHandler}
+                      />
+                    </div>
+                  </div>
+                  <Typography variant="h5" style={{ border: '1px solid blue' }}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
+                </Grid>
+                <Grid item xs={12} style={{ paddingBottom: 10 }}>
+                  <Divider variant="fullWidth" style={{
+
+                    height: '.02em',
+                    border: 'solid 1px rgba(0, 0, 0, 0.12)'
+                  }} orientation="horizontal" flexItem />
+                </Grid>
+                <Grid container direction="row">
+                  {patientDashboard.length && patientDashboard.map(map => {
+                    return (
+                      <Grid item xs={4}>
+                        <div align="center">
+                          <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
+                          <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
+                          <Typography variant="body2" style={{ color: 'blue' }}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc), new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
+
+                          {map.cna &&
+                            <Typography variant="body2" style={{ color: 'green' }}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
+                          }
+                        </div>
+                        <div>
+                          <ClientPieChart series={map.series} />
+                        </div>
+                      </Grid>
+                    )
+                  })}
+
+                </Grid>
+              </Grid>
+            </TabPanel>
+            <TabPanel value={value} index="two">
+              <Grid container direction="row">
+                <Grid item xs={12}>
+                  <Typography variant="h4">{`Total Expenses : $${parseFloat(providerDashboard.expenses).toFixed(2)}`}</Typography>
+
+                </Grid>
+                <Grid item xs={6} style={{ paddingTop: 20 }}>
+                  <div>
+                    <Typography variant="h5">Distribution By Category</Typography>
+
+                    <Typography variant="h6">{`Office Supply Expenses - $${parseFloat(transactionDashboard.office).toFixed(2)}`}</Typography>
+                    <Typography variant="h6">{`Client Supply Expenses - $${parseFloat(transactionDashboard.client).toFixed(2)}`}</Typography>
+
+                  </div>
+                  <div>
+                    <GeneralChart labels={['OFFICE', 'PATIENTS']} series={transactionDashboard.series} />
+                  </div>
+                </Grid>
+                <Grid item xs={6} style={{ paddingTop: 20 }}>
+                  <div>
+                    <Typography variant="h5">Distribution By Provider/Seller</Typography>
+
+                    <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
+                    <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
+                    <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
+                    <Typography variant="h6">{`Other Provider Expenses - $${parseFloat(providerDashboard.other).toFixed(2)}`}</Typography>
+                  </div>
+                  <div>
+                    <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON', 'OTHER']} series={providerDashboard.series} />
+                  </div>
+                </Grid>
+              </Grid>
+            </TabPanel>
+            <TabPanel value={value} index="three">
+              
+              <CardTransaction details={cardTransaction} dateFrom={dateFrom} dateTo={dateTo}/>
+            </TabPanel>
+            <TabPanel value={value} index="four">
+              <FormControl component="fieldset">
+                <FormLabel component="legend">** Plot View based on patient existing delivery supplies record from {dateFrom} to {dateTo}</FormLabel>
+                <div style={{ display: 'inline-flex' }}>
+                  <div>
+
+                    <Radio
+                      checked={plotView === 'brief'}
+                      onChange={plotViewHandler}
+                      value="brief"
+                      label="Brief"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'A' }}
+                    ></Radio>BRIEFS
+                    <Radio
+                      checked={plotView === 'underpad'}
+                      onChange={plotViewHandler}
+                      value="underpad"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>UNDERPADS
+                    <Radio
+                      checked={plotView === 'underwear'}
+                      onChange={plotViewHandler}
+                      value="underwear"
+
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'A' }}
+                    ></Radio>UNDERWEARS
+                    <Radio
+                      checked={plotView === 'wipe'}
+                      onChange={plotViewHandler}
+                      value="wipe"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>WIPES
+                    <Radio
+                      checked={plotView === 'glove'}
+                      onChange={plotViewHandler}
+                      value="glove"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>GLOVES
+                    {/*
       <RadioGroup style={{display:'inline-flex'}} aria-label="gender" name="gender1" value={plotView} onChange={plotViewHandler}>
         <FormControlLabel value="brief" control={<Radio />} label="Briefs" />
         <FormControlLabel value="underpad" control={<Radio />} label="Underpads" />
@@ -1302,55 +1030,55 @@ const Dashboard = (props) => {
         <FormControlLabel value="glove" control={<Radio />} label="Gloves" />
       </RadioGroup>
               */}
+                  </div>
                 </div>
-                </div>
-    </FormControl>
-    <div>
-        <Divider variant="fullWidth" style={{
-          height: '.03em',
-          border: 'solid 1px rgba(0, 0, 0, 0.12)'
-        }} orientation="horizontal" flexItem />
-        </div>
+              </FormControl>
+              <div>
+                <Divider variant="fullWidth" style={{
+                  height: '.03em',
+                  border: 'solid 1px rgba(0, 0, 0, 0.12)'
+                }} orientation="horizontal" flexItem />
+              </div>
               {plotView === 'brief' ?
                 <SupplyPlot title={'BRIEF'} patientPlot={patientSupplyPlot.brief} estimatedGrandTotal={estimatedSupplyGrandTotal.brief} unusedSummary={unusedPlotSummary.brief} summary={plotSummary.brief} />
                 : plotView === 'underpad' ?
                   <SupplyPlot title={'UNDERPAD'} patientPlot={patientSupplyPlot.underpad} estimatedGrandTotal={estimatedSupplyGrandTotal.underpad} unusedSummary={unusedPlotSummary.underpad} summary={plotSummary.underpad} />
                   : plotView === 'underwear' ?
-                  <SupplyPlot title={'UNDERWEAR'} patientPlot={patientSupplyPlot.underwear} estimatedGrandTotal={estimatedSupplyGrandTotal.underwear} unusedSummary={unusedPlotSummary.underwear} summary={plotSummary.underwear} />
-                  : plotView === 'wipe' ?
-                  <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
-                  : plotView === 'glove' ?
-                  <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
-                : null}
-              </TabPanel>
-        </React.Fragment>
-      }
-    </div>
-  );
-}
-const mapStateToProps = store => ({
-        patients: patientListStateSelector(store),
-      distributions: distributionListStateSelector(store),
-      transactions: transactionListStateSelector(store),
-      products: productListStateSelector(store),
-      stocks: stockListStateSelector(store),
-});
+                    <SupplyPlot title={'UNDERWEAR'} patientPlot={patientSupplyPlot.underwear} estimatedGrandTotal={estimatedSupplyGrandTotal.underwear} unusedSummary={unusedPlotSummary.underwear} summary={plotSummary.underwear} />
+                    : plotView === 'wipe' ?
+                      <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
+                      : plotView === 'glove' ?
+                        <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
+                        : null}
+            </TabPanel>
+          </React.Fragment>
+        }
+      </div>
+    );
+  }
+  const mapStateToProps = store => ({
+    patients: patientListStateSelector(store),
+    distributions: distributionListStateSelector(store),
+    transactions: transactionListStateSelector(store),
+    products: productListStateSelector(store),
+    stocks: stockListStateSelector(store),
+  });
 
-const mapDispatchToProps = dispatch => ({
-        listPatients: (data) => dispatch(attemptToFetchPatient(data)),
-  resetListPatients: () => dispatch(resetFetchPatientState()),
-  listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
-  resetListDistribution: () => dispatch(resetFetchDistributionState()),
-  listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
-  resetlistTransactions: () => dispatch(resetFetchTransactionState()),
-  listProducts: (data) => dispatch(attemptToFetchProduct(data)),
-  resetListProducts: () => dispatch(resetFetchProductState()),
-  listStocks: (data) => dispatch(attemptToFetchStock(data)),
-  resetListStocks: () => dispatch(resetFetchStockState()),
+  const mapDispatchToProps = dispatch => ({
+    listPatients: (data) => dispatch(attemptToFetchPatient(data)),
+    resetListPatients: () => dispatch(resetFetchPatientState()),
+    listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
+    resetListDistribution: () => dispatch(resetFetchDistributionState()),
+    listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
+    resetlistTransactions: () => dispatch(resetFetchTransactionState()),
+    listProducts: (data) => dispatch(attemptToFetchProduct(data)),
+    resetListProducts: () => dispatch(resetFetchProductState()),
+    listStocks: (data) => dispatch(attemptToFetchStock(data)),
+    resetListStocks: () => dispatch(resetFetchStockState()),
 
-});
+  });
 
-      export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+  export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 
 
