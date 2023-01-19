@@ -1,4 +1,4 @@
-import { Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
 
@@ -16,6 +16,8 @@ const items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const TemplatePrint = (props) => {
     const [general, setGeneral] = useState(undefined);
     const [details, setDetails] = useState([]);
+    const [prepared,setPrepared] = useState('');
+    const [pickup,setPickup] = useState('');
     const classes = useStyles();
     useEffect(() => {
         console.log('[Template Print[',props);
@@ -28,6 +30,13 @@ const TemplatePrint = (props) => {
         } 
             return `${qty} ${unit}`;
        
+    }
+    const inputHandler = ({target}) => {
+        if(target.name === 'prepared') {
+        setPrepared(target.value)
+        } else if(target.name === 'pickup') {
+            setPickup(target.value);
+        }
     }
     return (
         <React.Fragment>
@@ -57,10 +66,15 @@ const TemplatePrint = (props) => {
                                                 height: 10
                                             }
                                         }}>
-                                            <TableCell style={{ border: 'solid 1px black',width:'60%' }} component="th" scope="row" >
+                                            <TableCell style={{ border: 'solid 1px black',width:'50%' }} component="th" scope="row" >
                                                 Patient Name : {general.patientName || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: <input /></TableCell>
+                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row"><div style={{display:'inline-flex'}}><Typography variant="bold1">{`Date Prepared : `}</Typography><TextField variant="standard"  inputProps={{
+      style: {
+        height : 20,
+        padding: '0 14px',
+      },
+  }} value={prepared} name="prepared" onChange={inputHandler}/></div></TableCell>
 
                                         </TableRow>
                                         <TableRow sx={{
@@ -76,7 +90,12 @@ const TemplatePrint = (props) => {
                                             <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                 Facility/POS : {general.facility || ''}
                                             </TableCell>
-                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up:&nbsp;<input /></TableCell>
+                                            <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row"><div style={{display:'inline-flex'}}><Typography variant="bold1">Date Pickup : </Typography><TextField variant="standard"  inputProps={{
+      style: {
+        height : 20,
+        padding: '0 14px',
+      },
+  }} value={pickup} name="pickup" onChange={inputHandler}/></div></TableCell>
 
                                         </TableRow>
                                     </TableBody>
@@ -199,7 +218,7 @@ const TemplatePrint = (props) => {
                                                 <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                     Patient Name : {general.patientName || ''}
                                                 </TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: </TableCell>
+                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date prepared: {prepared}</TableCell>
 
                                             </TableRow>
                                             <TableRow sx={{
@@ -215,7 +234,7 @@ const TemplatePrint = (props) => {
                                                 <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">
                                                     Facility/POS : N/A
                                                 </TableCell>
-                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up:</TableCell>
+                                                <TableCell style={{ border: 'solid 1px black' }} component="th" scope="row">Date pick-up : {pickup}</TableCell>
 
                                             </TableRow>
                                         </TableBody>

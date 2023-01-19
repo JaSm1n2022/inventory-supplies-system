@@ -334,7 +334,7 @@ export const countries =
     'Sams',
     'Walmart',
     'Mckesson',
-    '99Only'
+    '99Only '
   ]
   export const SUPPLY_STATUS = [
     
@@ -419,7 +419,12 @@ export const countries =
     'BP Monitor',
     'Soap',
     'Matress Pad',
-    'Catheters'
+    'Catheters',
+    'Removal Kit',
+    'Urine Drainage Bag',
+    'Bed Pan',
+    'Condom Catheter',
+    'Injection'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

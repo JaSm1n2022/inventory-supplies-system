@@ -531,7 +531,7 @@ function DistributionForm(props) {
                                     
                                     </div>
                                  
-                                        <div style={{width:800}}>
+                                        <div style={{width:1000}}>
                                         <SingleWithClearAutoComplete
                                             disabled={props.mode && props.mode === 'view' ? true : false}
                                             source={item}
