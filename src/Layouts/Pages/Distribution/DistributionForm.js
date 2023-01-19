@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TOAST from "../../../modules/toastManager";
 import PrintForm from "./PrintForm";
+
 let uoms = [];
 let patients = [];
 let employees = [];
@@ -572,7 +573,7 @@ function DistributionForm(props) {
                         )
                     })}
 
-                    {detailForm && detailForm.length && detailForm.length < 13 &&
+                    {detailForm && detailForm.length && detailForm.length < 16 &&
                     <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>

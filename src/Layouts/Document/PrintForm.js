@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactModal from "react-modal";
-import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeader";
-import ComponentToPrint from "../../Document/ComponentToPrint";
-import PrintComponent from "../../Document/PrintComponent";
-import styles from "./distribution.module.css";
+import ModalHeader from "../../Common/components/Modal/ModalHeader/ModalHeader";
+
+
+
+import styles from "./document.module.css";
+import PrintComponent from "./PrintComponent";
 function PrintForm(props) {
     
     const onClose = () => {
         props.closePrintForm();
     }
-    console.log('[props print]',props);
      return (
         <ReactModal
             style={{
                 overlay: {
-                    zIndex: 999,
+                    zIndex: 999999,
                     position: 'fixed',
                     top: 0,
                     left: 0,
@@ -46,7 +47,7 @@ function PrintForm(props) {
             <div className={styles.form}>
                 <ModalHeader title={'Print Form'} onClose={onClose} />
                 <div className={styles.content}>
-                    <PrintComponent multiPatients={props.multiPatients} details={props.detailForm} general={props.generalForm}/>
+                    <PrintComponent  multiPatients={props.multiPatients} details={props.detailForm} general={props.generalForm}/>
                            </div>
             </div>
         </ReactModal>

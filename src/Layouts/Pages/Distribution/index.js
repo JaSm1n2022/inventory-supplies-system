@@ -26,7 +26,9 @@ import { attemptToFetchPatient, resetFetchPatientState } from "../../../store/ac
 import { patientListStateSelector } from "../../../store/selectors/patientSelector";
 import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/actions/employeeAction";
 import { employeeListStateSelector } from "../../../store/selectors/employeeSelector";
+//import PrintForm from "../../Document/PrintForm";
 import PrintForm from "./PrintForm";
+
 
 
 
@@ -44,10 +46,11 @@ let isEmployeeListDone = false;
 let isAllFetchDone = false;
 let mainGeneral = {};
 let mainDetails = [];
+
 let grandTotal = 0.0;
 let forStockUpdates = [];
 let originalSource = undefined;
-
+let multiPatients = [];
 const Distribution = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isPrintForm, setIsPrintForm] = useState(false);
@@ -87,12 +90,12 @@ const Distribution = (props) => {
         ...prod,
         orderQty: data.order_qty,
         productId: data.productId,
-        unitDistribution : data.unit_distribution || data.unitDistribution || data.unit_uom,
+        unitDistribution: data.unit_distribution || data.unitDistribution || data.unit_uom,
         distributionId: data.id
       }];
       setItem(data);
     } else {
-      
+
       setItem(data);
     }
 
@@ -236,8 +239,9 @@ const Distribution = (props) => {
   if (isCreateDistributionCollection && props.createDistributionState && props.createDistributionState.status === ACTION_STATUSES.SUCCEED) {
 
     setIsCreateDistributionCollection(false);
+    multiPatients = [];
     setIsPrintForm(true);
-    console.log('Update Stock',forStockUpdates);
+    console.log('Update Stock', forStockUpdates);
     props.updateStock(forStockUpdates);
     props.listDistributions({ from: dateFrom, to: dateTo });
 
@@ -251,13 +255,13 @@ const Distribution = (props) => {
   console.log('[isDeleteDistribution]', isDeleteDistributionCollection, props.deleteDistributionState);
   if (isDeleteDistributionCollection && props.deleteDistributionState && props.deleteDistributionState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteDistributionCollection(false);
-    console.log('[delete distribution stock]',forStockUpdates);
+    console.log('[delete distribution stock]', forStockUpdates);
     props.updateStock(forStockUpdates);
-  
+
     props.listDistributions({ from: dateFrom, to: dateTo });
 
   }
-  if ( props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
+  if (props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
     props.listStocks();
     props.resetUpdateStock();
   }
@@ -267,17 +271,17 @@ const Distribution = (props) => {
     props.listDistributions({ from: dates.from, to: dates.to });
   }
 
-  const deleteRecordItemHandler = (id,data) => {
+  const deleteRecordItemHandler = (id, data) => {
     forStockUpdates = [];
-    console.log('[delete Distribution id]', id,data);
+    console.log('[delete Distribution id]', id, data);
     const stock = stockList.find(s => s.productId === data.productId);
-    console.log('[delete distribution stock',stock);
-      forStockUpdates.push(
-        {
-          id : stock.id,
-          qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(data.order_qty, 10))
+    console.log('[delete distribution stock', stock);
+    forStockUpdates.push(
+      {
+        id: stock.id,
+        qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(data.order_qty, 10))
 
-        });
+      });
     props.deleteDistribution(id);
   }
 
@@ -310,7 +314,7 @@ const Distribution = (props) => {
         patient_id: general.patientId || 0,
         stock_status: payload.stockStatus,
         group_id: groupId,
-        unit_uom : payload.unitDistribution
+        unit_uom: payload.unitDistribution
 
       };
       if (mode === 'edit' && payload.distributionId) {
@@ -319,12 +323,12 @@ const Distribution = (props) => {
       const stock = stockList.find(s => s.productId === payload.productId);
       if (stock) {
         let qty = parseInt(payload.orderQty, 10);
-        if(mode === 'edit') {
+        if (mode === 'edit') {
           qty = parseInt(payload.adjustedQty, 10);
         }
         forStockUpdates.push(
           {
-            id : stock.id,
+            id: stock.id,
             qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10))
 
           });
@@ -427,14 +431,15 @@ const Distribution = (props) => {
   const closeChangeStatusMenuHandler = () => {
     setAnchorEl(null);
   }
+
   const updateStatusHandler = (status) => {
     const selectedData = dataSource.filter((r) => r.isChecked);
-    console.log('[selected Data Status]',selectedData,status);
+    console.log('[selected Data Status]', selectedData, status);
     const forUpdateStatus = [];
     selectedData.forEach(sel => {
       forUpdateStatus.push({
-        id : sel.id,
-        order_status : status
+        id: sel.id,
+        order_status: status
       });
     })
     props.updateDistribution(forUpdateStatus);
@@ -445,26 +450,26 @@ const Distribution = (props) => {
     console.log('[Selected Data]', selectedData);
     const generalData = {};
     const detailsData = [];
-    selectedData.forEach((ea,indx) => {
-      if(indx < 15) {
-      generalData.patient = patientList.find(p => p.id === ea.patient_id);
-      if (ea.requestor_id) {
-        generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
-      } else if (ea.requestor) {
-        generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
+    selectedData.forEach((ea, indx) => {
+      if (indx < 16) {
+        generalData.patient = patientList.find(p => p.id === ea.patient_id);
+        if (ea.requestor_id) {
+          generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
+        } else if (ea.requestor) {
+          generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
+        }
+        generalData.requestorName = ea.requestor;
+        const prod = productList.find(p => p.id === ea.productId);
+
+
+        detailsData.push({
+          search: { ...prod },
+          ...prod,
+          orderQty: ea.order_qty,
+          productId: ea.productId,
+          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+        });
       }
-      generalData.requestorName = ea.requestor;
-      const prod = productList.find(p => p.id === ea.productId);
-
-
-      detailsData.push({
-        search: { ...prod },
-        ...prod,
-        orderQty: ea.order_qty,
-        productId: ea.productId,
-        unitDistribution : prod.unit_distribution || prod.unitDistribution || ea.unit_uom
-      });
-    }
     });
     setGeneralForm(generalData);
     setDetailForm(detailsData);
@@ -475,174 +480,242 @@ const Distribution = (props) => {
   if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
   }
+  const printAllOrdersHandler = () => {
+    const selectedData = dataSource.filter((r) => r.isChecked);
+    console.log('[Selected Data]', selectedData);
+   
+    multiPatients = [];
+    let patientIds = selectedData.map(map => map.patient_id);
+    console.log('[patientIds]',patientIds);
+    patientIds = Array.from(new Set(patientIds));
+    console.log('[patientIds2]',patientIds);
+    for(const pId of patientIds) {
+    
+      const patientData = selectedData.filter(sel => sel.patient_id === pId);
+      const generalData = {};
+      const detailsData = [];
+      for(const ea of patientData) {
+      
+        generalData.patient = patientList.find(p => p.id === ea.patient_id);
+        generalData.patientName = generalData.patient ? generalData.patient.name : '';
+        generalData.facility = generalData.patient ? generalData.patient.place_of_service : '';
+        if (ea.requestor_id) {
+          generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
+        } else if (ea.requestor) {
+          generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
+        }
+        generalData.requestorName = ea.requestor;
+        const prod = productList.find(p => p.id === ea.productId);
+        detailsData.push({
+          search: { ...prod },
+          ...prod,
+          orderQty: ea.order_qty,
+          productId: ea.productId,
+          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+        });
+     
+      }
+      multiPatients.push({
+        general : generalData,
+        details : detailsData
+      })
+    } 
+    
+      
+      setIsPrintForm(true);
+    }
   return (
-    <React.Fragment>
-      {!isAllFetchDone ?
-        <div align="center" style={{ paddingTop: '100px' }}>
-          <br />
-          <CircularProgress />&nbsp;<span>Loading</span>...
-        </div>
-        :
-        <React.Fragment>
-          <Grid container>
-            <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
-              <div>
-                <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
-              </div>
-              <div>
-                <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler} />
-              </div>
-            </Grid>
-
+      <React.Fragment>
+        {!isAllFetchDone ?
+          <div align="center" style={{ paddingTop: '100px' }}>
+            <br />
+            <CircularProgress />&nbsp;<span>Loading</span>...
+          </div>
+          :
+          <React.Fragment>
             <Grid container>
-              <div style={{ display: 'inline-flex', gap: 10,paddingTop:10 }}>
-                <Button
-                  onClick={() => createFormHandler()}
-                  variant="contained"
-                  style={{
-                    border: 'solid 1px #2196f3',
-                    color: 'white',
-                    background: '#2196f3',
-                    fontFamily: "Roboto",
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    fontStretch: "normal",
-                    fontStyle: "normal",
-                    lineHeight: 1.71,
-                    letterSpacing: "0.4px",
-                    textAlign: "left",
-                    cursor: 'pointer'
-                  }}
-                  component="span"
-                  startIcon={<AddIcon />}
-                >
-                  ADD ORDER
-                </Button>
-                {isAddGroupButtons &&
-                  <div style={{ display: 'inline-flex', gap: 10 }}>
-                    <Button
-                      onClick={() => exportToExcelHandler()}
-                      variant="contained"
-                      style={{
-                        border: 'solid 1px blue',
-                        color: 'white',
-                        background: 'blue',
-                        fontFamily: "Roboto",
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        fontStretch: "normal",
-                        fontStyle: "normal",
-                        lineHeight: 1.71,
-                        letterSpacing: "0.4px",
-                        textAlign: "left",
-                        cursor: 'pointer'
-                      }}
-                      component="span"
-                     
-                    > Export Excel </Button>
-                    <Tooltip title={'Limit to 10 records'}>
-                    <Button
-                      onClick={() => createOrderHandler()}
-                      variant="contained"
-                      style={{
-                        border: 'solid 1px blue',
-                        color: 'white',
-                        background: 'blue',
-                        fontFamily: "Roboto",
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        fontStretch: "normal",
-                        fontStyle: "normal",
-                        lineHeight: 1.71,
-                        letterSpacing: "0.4px",
-                        textAlign: "left",
-                        cursor: 'pointer'
-                      }}
-                      component="span"
-                      
-                    > Create Order Template </Button>
-                    </Tooltip>
-                    <Button
-                      onClick={changeStatusHandler}
-                      variant="contained"
-                      color="primary"
-                      aria-controls="simple-menu" aria-haspopup="true"
-                      component="span"
-                      endIcon={<ArrowDownwardIcon />}
-                    >
+              <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
+                <div>
+                  <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
+                </div>
+                <div>
+                  <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler} />
+                </div>
+              </Grid>
 
-                      Change Status
-                    </Button>
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={closeChangeStatusMenuHandler}
-                    >
-                      {SUPPLY_STATUS.map(map => {
-                        return (
-                      <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
-                        )})}
-                    </Menu>
-                  </div>
-                }
-              </div>
+              <Grid container>
+                <div style={{ display: 'inline-flex', gap: 10, paddingTop: 10 }}>
+                  <Button
+                    onClick={() => createFormHandler()}
+                    variant="contained"
+                    style={{
+                      border: 'solid 1px #2196f3',
+                      color: 'white',
+                      background: '#2196f3',
+                      fontFamily: "Roboto",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      fontStretch: "normal",
+                      fontStyle: "normal",
+                      lineHeight: 1.71,
+                      letterSpacing: "0.4px",
+                      textAlign: "left",
+                      cursor: 'pointer'
+                    }}
+                    component="span"
+                    startIcon={<AddIcon />}
+                  >
+                    ADD ORDER
+                  </Button>
+                  {isAddGroupButtons &&
+                    <div style={{ display: 'inline-flex', gap: 10 }}>
+                      <Button
+                        onClick={() => exportToExcelHandler()}
+                        variant="contained"
+                        style={{
+                          border: 'solid 1px blue',
+                          color: 'white',
+                          background: 'blue',
+                          fontFamily: "Roboto",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          fontStretch: "normal",
+                          fontStyle: "normal",
+                          lineHeight: 1.71,
+                          letterSpacing: "0.4px",
+                          textAlign: "left",
+                          cursor: 'pointer'
+                        }}
+                        component="span"
+
+                      > Export Excel </Button>
+                      <Tooltip title={'Limit to 16 records'}>
+                        <Button
+                          onClick={() => createOrderHandler()}
+                          variant="contained"
+                          style={{
+                            border: 'solid 1px blue',
+                            color: 'white',
+                            background: 'blue',
+                            fontFamily: "Roboto",
+                            fontSize: "12px",
+                            fontWeight: 500,
+                            fontStretch: "normal",
+                            fontStyle: "normal",
+                            lineHeight: 1.71,
+                            letterSpacing: "0.4px",
+                            textAlign: "left",
+                            cursor: 'pointer'
+                          }}
+                          component="span"
+
+                        > Create Order Template </Button>
+                      </Tooltip>
+                      <Button
+                        onClick={changeStatusHandler}
+                        variant="contained"
+                        color="primary"
+                        aria-controls="simple-menu" aria-haspopup="true"
+                        component="span"
+                        endIcon={<ArrowDownwardIcon />}
+                      >
+
+                        Change Status
+                      </Button>
+                      <Tooltip title={'Reprint'}>
+                        <Button
+                          onClick={() => printAllOrdersHandler()}
+                          variant="contained"
+                          style={{
+                            border: 'solid 1px blue',
+                            color: 'white',
+                            background: 'blue',
+                            fontFamily: "Roboto",
+                            fontSize: "12px",
+                            fontWeight: 500,
+                            fontStretch: "normal",
+                            fontStyle: "normal",
+                            lineHeight: 1.71,
+                            letterSpacing: "0.4px",
+                            textAlign: "left",
+                            cursor: 'pointer'
+                          }}
+                          component="span"
+
+                        > PRINT ALL </Button>
+                      </Tooltip>
+
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={closeChangeStatusMenuHandler}
+                      >
+                        {SUPPLY_STATUS.map(map => {
+                          return (
+                            <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
+                          )
+                        })}
+                      </Menu>
+                    </div>
+                  }
+                </div>
+              </Grid>
+              <Grid item xs={12} align="right">
+                <Typography variant="h5">{`Grand Total : $${grandTotal}`}</Typography>
+              </Grid>
+              <Grid item xs={12} style={{ paddingTop: 10 }}>
+
+                <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
+              </Grid>
             </Grid>
-            <Grid item xs={12} align="right">
-              <Typography variant="h5">{`Grand Total : ${grandTotal}`}</Typography>
-            </Grid>
-            <Grid item xs={12} style={{ paddingTop: 10 }}>
+          </React.Fragment>
+        }
+        {isFormModal &&
+          <Form filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+        }
+        {isPrintForm &&
+          <PrintForm multiPatients={multiPatients} isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails} />
+        }
 
-              <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
-            </Grid>
-          </Grid>
-        </React.Fragment>
-      }
-      {isFormModal &&
-        <Form filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
-      }
-      {isPrintForm &&
-        <PrintForm isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails} />
-      }
-}
-    </React.Fragment>
-  )
-}
-const mapStateToProps = store => ({
-  products: productListStateSelector(store),
-  stocks: stockListStateSelector(store),
-  patients: patientListStateSelector(store),
-  employees: employeeListStateSelector(store),
-  distributions: distributionListStateSelector(store),
-  createDistributionState: distributionCreateStateSelector(store),
-  updateDistributionState: distributionUpdateStateSelector(store),
-  deleteDistributionState: distributionDeleteStateSelector(store),
-  updateStockState: stockUpdateStateSelector(store),
+      </React.Fragment>
+    )
+  }
+  const mapStateToProps = store => ({
+    products: productListStateSelector(store),
+    stocks: stockListStateSelector(store),
+    patients: patientListStateSelector(store),
+    employees: employeeListStateSelector(store),
+    distributions: distributionListStateSelector(store),
+    createDistributionState: distributionCreateStateSelector(store),
+    updateDistributionState: distributionUpdateStateSelector(store),
+    deleteDistributionState: distributionDeleteStateSelector(store),
+    updateStockState: stockUpdateStateSelector(store),
 
-});
+  });
 
-const mapDispatchToProps = dispatch => ({
-  listEmployees: (data) => dispatch(attemptToFetchEmployee(data)),
-  resetListEmployees: () => dispatch(resetFetchEmployeeState()),
-  listPatients: (data) => dispatch(attemptToFetchPatient(data)),
-  resetListPatients: () => dispatch(resetFetchPatientState()),
-  listProducts: (data) => dispatch(attemptToFetchProduct(data)),
-  resetListProducts: () => dispatch(resetFetchProductState()),
-  listStocks: (data) => dispatch(attemptToFetchStock(data)),
-  resetListStocks: () => dispatch(resetFetchStockState()),
-  listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
-  resetListDistributions: () => dispatch(resetFetchDistributionState()),
-  createDistribution: (data) => dispatch(attemptToCreateDistribution(data)),
-  resetCreateDistribution: () => dispatch(resetCreateDistributionState()),
-  updateDistribution: (data) => dispatch(attemptToUpdateDistribution(data)),
-  resetUpdateDistribution: () => dispatch(resetUpdateDistributionState()),
-  deleteDistribution: (data) => dispatch(attemptToDeleteDistribution(data)),
-  resetDeleteDistribution: () => dispatch(resetDeleteDistributionState()),
-  updateStock: (data) => dispatch(attemptToUpdateStock(data)),
-  resetUpdateStock: () => dispatch(resetUpdateStockState()),
+  const mapDispatchToProps = dispatch => ({
+    listEmployees: (data) => dispatch(attemptToFetchEmployee(data)),
+    resetListEmployees: () => dispatch(resetFetchEmployeeState()),
+    listPatients: (data) => dispatch(attemptToFetchPatient(data)),
+    resetListPatients: () => dispatch(resetFetchPatientState()),
+    listProducts: (data) => dispatch(attemptToFetchProduct(data)),
+    resetListProducts: () => dispatch(resetFetchProductState()),
+    listStocks: (data) => dispatch(attemptToFetchStock(data)),
+    resetListStocks: () => dispatch(resetFetchStockState()),
+    listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
+    resetListDistributions: () => dispatch(resetFetchDistributionState()),
+    createDistribution: (data) => dispatch(attemptToCreateDistribution(data)),
+    resetCreateDistribution: () => dispatch(resetCreateDistributionState()),
+    updateDistribution: (data) => dispatch(attemptToUpdateDistribution(data)),
+    resetUpdateDistribution: () => dispatch(resetUpdateDistributionState()),
+    deleteDistribution: (data) => dispatch(attemptToDeleteDistribution(data)),
+    resetDeleteDistribution: () => dispatch(resetDeleteDistributionState()),
+    updateStock: (data) => dispatch(attemptToUpdateStock(data)),
+    resetUpdateStock: () => dispatch(resetUpdateStockState()),
 
-});
+  });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Distribution);
+  export default connect(mapStateToProps, mapDispatchToProps)(Distribution);
 

@@ -3,7 +3,7 @@ import { Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typo
 import React, { useEffect, useState } from "react";
 
 import Hospice from '../../assets/images/logo/logo2.png';
-import styles from "./distribution.module.css";
+
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({

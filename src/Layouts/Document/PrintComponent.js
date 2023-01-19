@@ -17,7 +17,7 @@ export default function PrintComponent(props) {
           />
   
           {/* component to be printed */}
-          <ComponentToPrint ref={(el) => (componentRef = el)} details={props.details} general={props.general}/>
+          <ComponentToPrint ref={(el) => (componentRef = el)} multiPatients={props.multiPatients} details={props.details} general={props.general}/>
         </div>
       </>
     );
