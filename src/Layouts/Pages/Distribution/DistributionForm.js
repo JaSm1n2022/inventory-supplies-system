@@ -7,7 +7,7 @@ import { Avatar, Button, Grid, Tooltip, Typography, Divider} from "@mui/material
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { DIVINE_EMPLOYEES, DIVINE_PATIENT_LIST, HOSPICE_FACILITIES, QUANTITY_UOM,  SUPPLY_STATUS } from "../../../utils/constants";
+import { DIVINE_EMPLOYEES, DIVINE_PATIENT_LIST, HOSPICE_FACILITIES, LIMIT_ITEM_PRINT, QUANTITY_UOM,  SUPPLY_STATUS } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
@@ -573,7 +573,7 @@ function DistributionForm(props) {
                         )
                     })}
 
-                    {detailForm && detailForm.length && detailForm.length < 16 &&
+                    {detailForm && detailForm.length && detailForm.length < LIMIT_ITEM_PRINT &&
                     <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>

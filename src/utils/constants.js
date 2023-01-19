@@ -326,6 +326,7 @@ export const countries =
     'Bag'
     
   ]
+  export const LIMIT_ITEM_PRINT = 16;
   export const SUPPLY_VENDOR = [
     'Amazon',
     'Medline',
@@ -334,7 +335,7 @@ export const countries =
     'Sams',
     'Walmart',
     'Mckesson',
-    '99Only '
+    '99Only'
   ]
   export const SUPPLY_STATUS = [
     

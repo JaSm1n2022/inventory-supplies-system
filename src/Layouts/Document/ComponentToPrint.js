@@ -2,8 +2,6 @@
 import React from "react";
 import TemplateMultiplePrint from "./TemplateMultiplePrint";
 
-import TemplatePrint from "./TemplatePrint";
-
  
 class ComponentToPrint extends React.Component {
   
@@ -17,7 +15,7 @@ class ComponentToPrint extends React.Component {
                 {multiPatients && multiPatients.length ?  
                         <TemplateMultiplePrint multiPatients={multiPatients}/>         
                 :
-                <TemplatePrint general={general} details={details} />
+                <TemplateMultiplePrint multiPatients={[{general,details}]} />
             }
                 </React.Fragment>
         )

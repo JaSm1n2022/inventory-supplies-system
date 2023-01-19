@@ -6,7 +6,7 @@ import FilterTable from "./FilterTable";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { ACTION_STATUSES, SUPPLY_STATUS } from "../../../utils/constants";
+import { ACTION_STATUSES, LIMIT_ITEM_PRINT, SUPPLY_STATUS } from "../../../utils/constants";
 import { useState } from "react";
 import * as FileSaver from 'file-saver';
 import { v4 as uuidv4 } from 'uuid';
@@ -423,6 +423,9 @@ const Distribution = (props) => {
 
   }
   const closePrintFormHandler = () => {
+    dataSource.forEach(data => data.isChecked = false);
+    props.listDistributions({ from: dateFrom, to: dateTo });
+    setIsAddGroupButtons(false);
     setIsPrintForm(false);
   }
   const changeStatusHandler = (event) => {
@@ -492,10 +495,19 @@ const Distribution = (props) => {
     for(const pId of patientIds) {
     
       const patientData = selectedData.filter(sel => sel.patient_id === pId);
-      const generalData = {};
-      const detailsData = [];
+      let generalData = {};
+      let detailsData = [];
+      let maxCnt = 1;
       for(const ea of patientData) {
-      
+        if(maxCnt % (LIMIT_ITEM_PRINT + 1) === 0) {
+          
+          multiPatients.push({
+            general : generalData,
+            details : detailsData
+          })
+          generalData = {};
+          detailsData = [];
+        }
         generalData.patient = patientList.find(p => p.id === ea.patient_id);
         generalData.patientName = generalData.patient ? generalData.patient.name : '';
         generalData.facility = generalData.patient ? generalData.patient.place_of_service : '';
@@ -513,7 +525,7 @@ const Distribution = (props) => {
           productId: ea.productId,
           unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
         });
-     
+        maxCnt++;
       }
       multiPatients.push({
         general : generalData,

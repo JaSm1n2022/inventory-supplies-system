@@ -17,7 +17,7 @@ const useStyles = makeStyles({
         padding: "0px 16px"
     }
 });
-const items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,15];
+let items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,15];
 const TemplateMultiplePrint = (props) => {
     const [multiplePatients, setMultiplePatients] = useState([]);
     const [prepared, setPrepared] = useState('');
@@ -34,17 +34,29 @@ const TemplateMultiplePrint = (props) => {
         return `${qty} ${unit}`;
 
     }
-    const makeCategoryShortHandler = (item) => {
-        if (item && item.toLowerCase().startsWith('underwear')) {
+    const makeCategoryShortHandler = (category,product) => {
+        if (category && category.toLowerCase().startsWith('underwear')) {
             return 'Underwear';
-        } else if (item && item.toLowerCase() === 'perineal cleanser') {
+        } else if (category && category.toLowerCase().startsWith('pill crusher')) {
+                return 'Pill Crusher';
+        } else if (category && category.toLowerCase() === 'perineal cleanser') {
             return 'Cleanser';
-        } else if (item && item.toLowerCase() === 'condom catheter') {
+        } else if (category && category.toLowerCase() === 'abdominal pad') {
+            return 'Pad';
+        } else if (category && category.toLowerCase() === 'adhesive pad') {
+            return 'Pad';
+        } else if (category && category.toLowerCase() === 'blood oxygen monitor') {
+            return 'BO Monitor';
+        } else if (category && category.toLowerCase() === 'condom catheter') {
             return 'Catheter';
-        } else if (item && item.toLowerCase().endsWith('jelly')) {
+        } else if (category&& category.toLowerCase().endsWith('jelly')) {
             return 'Jelly';
+        } else if (category&& category.toLowerCase() === 'nutrition shake' && product.indexOf('Ensure') !== -1) {
+            return 'Nutrition';   
+        } else if (category&& category.toLowerCase() === 'nutrition shake' && product.indexOf('BOOST') !== -1) {
+            return 'Nutrition';   
         } else {
-            return item;
+            return category;
         }
     }
     const inputHandler = ({ target }) => {
@@ -57,7 +69,7 @@ const TemplateMultiplePrint = (props) => {
     console.log('[MultiplePatients]', multiplePatients);
     return (
         <React.Fragment>
-
+{multiplePatients && multiplePatients.length  ? 
             <Grid container style={{ width: '800px', height: '1000px', paddingLeft: 20 }}>
                 {multiplePatients && multiplePatients.length && multiplePatients.map((item, indx) => {
                     return (
@@ -258,7 +270,7 @@ const TemplateMultiplePrint = (props) => {
                                                                     <small>{map + 1}</small>
                                                                 </TableCell>
                                                                 <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                    <small>{item.details && item.details.length && item.details.length > map ? makeCategoryShortHandler(item.details[map].search.category) : ''}</small>
+                                                                    <small>{item.details && item.details.length && item.details.length > map ? makeCategoryShortHandler(item.details[map].search.category,item.details[map].search.short_description) : ''}</small>
                                                                 </TableCell>
                                                                 <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                                     <small>{item.details && item.details.length && item.details.length > map ? item.details[map].search.shortDescription || item.details[map].search.short_description : ''}</small>
@@ -338,7 +350,7 @@ const TemplateMultiplePrint = (props) => {
                     )
                 })}
             </Grid>
-
+: null}
 
         </React.Fragment>
     )
