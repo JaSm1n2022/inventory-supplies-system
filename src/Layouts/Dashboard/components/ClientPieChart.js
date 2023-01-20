@@ -17,7 +17,9 @@ useEffect(() => {
     setSeries([...props.series] || [0, 0, 0, 0, 0,0]);
 },[props.series]);
  return (
+   <React.Fragment>
           <Chart options={options} series={series} type="pie" width={400} height={420} />
+       </React.Fragment>
         )
  }
     

@@ -23,9 +23,12 @@ import { productListStateSelector } from '../../store/selectors/productSelector'
 import { attemptToFetchProduct, resetFetchProductState } from '../../store/actions/productAction';
 import { attemptToFetchStock, resetFetchStockState } from '../../store/actions/stockAction';
 import { stockListStateSelector } from '../../store/selectors/stockSelector';
-import BriefPlot from './components/BriefPlot';
+
 import SupplyPlot from './components/SupplyPlot';
 import CardTransaction from './components/CardTransaction';
+import PrintChart from './components/PrintChart';
+
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -880,9 +883,11 @@ const Dashboard = (props) => {
     const plotViewHandler = (event) => {
       setPlotView(event.target.value);
     }
+
+    
     numberActive = patientDashboard.filter(p => p.status === 'Active').length;
     numberInactive = patientDashboard.length - numberActive;
-    console.log('[Card Transaction]',cardTransaction);
+    
     return (
       <div className={classes.root}>
         {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
@@ -931,14 +936,7 @@ const Dashboard = (props) => {
                   </div>
 
                 </Grid>
-                <Grid container style={{ paddingBottom: 10 }}>
-                  <Grid item xs={12}>
-                  <Typography variant="h6">{`Number of Active Patients :${numberActive}`}</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                  <Typography variant="h6">{`Number of InActive/Discharge Patients :${numberInactive}`}</Typography>
-                  </Grid>
-                </Grid> 
+                
 
                 <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
                   <div style={{ display: 'flex', gap: 10 }}>
@@ -959,7 +957,6 @@ const Dashboard = (props) => {
                     </div>
                   </div>
                   
-                  <Typography variant="h5" style={{ border: '1px solid blue',paddingTop:4,paddingLeft:4,paddingRight:4,paddingBottom:4}}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
                 </Grid>
                 <Grid item xs={12} style={{ paddingBottom: 10 }}>
                   <Divider variant="fullWidth" style={{
@@ -969,29 +966,7 @@ const Dashboard = (props) => {
                   }} orientation="horizontal" flexItem />
                 </Grid>
                 <Grid container direction="row">
-                  {patientDashboard.length && patientDashboard.map((map,index) => {
-                    return (
-                      <Grid item xs={4}>
-                        <div align="center">
-                            <div style={{display:'inline-flex',gap:4}}>
-                              <Avatar sx={{ width: 24, height: 24 }}>{index + 1}</Avatar>
-                            {`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}
-                            </div>
-
-                          <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
-                          <Typography variant="body2" style={{ color: 'blue' }}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc), new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
-
-                          {map.cna &&
-                            <Typography variant="body2" style={{ color: 'green' }}>{`CNA : ${map.cna.toUpperCase()}`}</Typography>
-                          }
-                        </div>
-                        <div>
-                          <ClientPieChart series={map.series} />
-                        </div>
-                      </Grid>
-                    )
-                  })}
-
+                <PrintChart clientExpensesAmt={`$${parseFloat(patientGrandTotal || 0.0).toFixed(2)}`} patientDashboard={patientDashboard} numberActive={numberActive} numberInactive={numberInactive}/>
                 </Grid>
               </Grid>
             </TabPanel>
