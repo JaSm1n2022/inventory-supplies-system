@@ -18,6 +18,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 120, name: 'unit_price', header: 'Unit Price' },
       { defaultFlex: 1, minWidth: 120, name: 'price_per_pcs', header: 'Price Per Pcs' },
       { defaultFlex: 1, minWidth: 120, name: 'unit_distribution', header: 'Unit Distribution' },
+      { defaultFlex: 1, minWidth: 120, name: 'status', header: 'Status' },
       
      
     ]
@@ -26,6 +27,7 @@ class DataHandler {
     
     items.forEach(item => {
       item.created_at = moment(item.created_at).format('YYYY-MM-DD');
+      item.status = item.status ? 'Active' : 'Inactive';
     
     });
 

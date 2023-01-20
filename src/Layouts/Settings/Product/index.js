@@ -136,7 +136,8 @@ const Product = (props) => {
       vendor: payload.vendorName,
       count: payload.count,
       unit_distribution : payload.unit,
-      short_description : payload.shortDescription
+      short_description : payload.shortDescription,
+      status : payload.status === 'Active' ? true : false
 
     };
     if (mode === 'create') {

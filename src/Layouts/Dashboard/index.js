@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Avatar } from '@mui/material';
 import ClientPieChart from './components/ClientPieChart';
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
@@ -65,6 +65,12 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
 
   },
+  small: {
+   
+    color: 'black',
+    backgroundColor: 'white',
+    border: '1px solid black',
+  },
 }));
 
 let isDistributionListDone = false;
@@ -120,7 +126,8 @@ let estimatedSupplyGrandTotal = {
   underpad: parseFloat(0.0),
   underwear: parseFloat(0.0),
   glove: parseFloat(0.0),
-  wipe: parseFloat(0.0)
+  wipe: parseFloat(0.0),
+  ensure : parseFloat(0.0),
 };
 
 let plotSummary = {
@@ -128,7 +135,8 @@ let plotSummary = {
   underpad: [],
   underwear: [],
   glove: [],
-  wipe: []
+  wipe: [],
+  ensure: []
 };
 
 
@@ -137,7 +145,8 @@ let unusedPlotSummary = {
   underpad: [],
   underwear: [],
   glove: [],
-  wipe: []
+  wipe: [],
+  ensure: []
 };
 let transactionType = {
 
@@ -319,7 +328,8 @@ const Dashboard = (props) => {
     listTransactions({ from: _sfrom, to: _sTo });
 
   }
-  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves) => {
+  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves,ensures) => {
+    console.log('[Ensures]',ensures);
     const temp = {
       patientName: patient.name,
       brief: {
@@ -359,6 +369,14 @@ const Dashboard = (props) => {
         productId: gloves && gloves.length ? gloves[0].productId : '',
         product: gloves && gloves.length ? gloves[0].description : '',
         qty: gloves && gloves.length ? gloves[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      ensure: {
+        patientName: patient.name,
+        productId: ensures && ensures.length ? ensures[0].productId : '',
+        product: ensures && ensures.length ? ensures[0].description : '',
+        qty: ensures && ensures.length ? ensures[0].order_qty : 0,
         vendor: '',
         size: ''
       }
@@ -439,6 +457,20 @@ const Dashboard = (props) => {
         temp.glove.threshold = 2;
       }
     }
+    if (temp.ensure.productId && productList.find(p => p.id === temp.ensure.productId)) {
+      const item = productList.find(p => p.id === temp.ensure.productId);
+      temp.ensure.vendor = item.vendor;
+      temp.ensure.size = item.size;
+      temp.ensure.unitPrice = item.unit_price;
+      temp.ensure.cnt = item.count;
+      temp.ensure.unitDist = item.unit_distribution;
+      temp.ensure.threshold = 7;
+      const cna = ensures && ensures.length ? ensures[0] : [];
+      temp.ensure.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.ensure.threshold = 7;
+      }
+    }
 
 
 
@@ -501,15 +533,16 @@ const Dashboard = (props) => {
     patientSupplyPlot[source] = adjustment;
     uIds.forEach(u => {
       const sel = patientSupplyPlot[source].filter(n => n.productId === u);
-
+      console.log('[estimatedSupplyGrandTotal [sel]]',sel,source);
       let orders = 0;
       sel.forEach(e => {
         orders += parseInt(e.order || 0);
       });
       if (orders > 0) {
-        estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + parseFloat(parseInt(orders / sel[0].cnt) * sel[0].unitPrice);
-        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].briefCnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
-
+            console.log('[estimatedSupplyGrandTotal]',estimatedSupplyGrandTotal[source],source);
+        const cartonCnt = Math.ceil(parseFloat(orders / sel[0].cnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
+        estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + (parseInt(cartonCnt) * sel[0].unitPrice);
+  
         plotSummary[source].push({
           ...sel[0], total: orders, carton: cartonCnt, amt: parseInt(cartonCnt) * sel[0].unitPrice
         });
@@ -598,14 +631,16 @@ const Dashboard = (props) => {
       underpad: [],
       wipe: [],
       glove: [],
-      underwear: []
+      underwear: [],
+      ensure: []
     };
     estimatedSupplyGrandTotal = {
       brief: parseFloat(0.0),
       underpad: parseFloat(0.0),
       underwear: parseFloat(0.0),
       glove: parseFloat(0.0),
-      wipe: parseFloat(0.0)
+      wipe: parseFloat(0.0),
+      ensure: parseFloat(0.0)
     };
 
     plotSummary = {
@@ -613,7 +648,8 @@ const Dashboard = (props) => {
       underpad: [],
       underwear: [],
       glove: [],
-      wipe: []
+      wipe: [],
+      ensure : []
     };
 
 
@@ -622,7 +658,8 @@ const Dashboard = (props) => {
       underpad: [],
       underwear: [],
       glove: [],
-      wipe: []
+      wipe: [],
+      ensure : []
     };
     for (const patient of patientList) {
       let estimatedAmt = 0.0;
@@ -645,7 +682,10 @@ const Dashboard = (props) => {
 
       };
       const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
-      const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category))
+      const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category));
+     
+      const ensures = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1);
+      console.log('[Ensures]',ensures);
       const briefs = supplies.filter(supply => supply.category === 'Brief');
       const wipes = supplies.filter(supply => supply.category === 'Wipes');
       const gloves = supplies.filter(supply => supply.category === 'Gloves');
@@ -702,21 +742,23 @@ const Dashboard = (props) => {
 
       }
       if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) || patient.status.toLowerCase() !== 'inactive') {
-        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves);
+        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves,ensures);
       }
 
     }
-    console.log('[Plot Supply]', supplyPlot);
+    console.log('[Plot Supply]', patientSupplyPlot.ensure);
     plotHandler('brief');
     plotHandler('underpad');
     plotHandler('underwear');
     plotHandler('wipe');
     plotHandler('glove');
+    plotHandler('ensure');
     patientSupplyPlot.brief = sortByProductId(patientSupplyPlot.brief, 'productId');
     patientSupplyPlot.underpad = sortByProductId(patientSupplyPlot.underpad, 'productId');
     patientSupplyPlot.underwear = sortByProductId(patientSupplyPlot.underwear, 'productId');
     patientSupplyPlot.wipe = sortByProductId(patientSupplyPlot.wipe, 'productId');
     patientSupplyPlot.glove = sortByProductId(patientSupplyPlot.glove, 'productId');
+    patientSupplyPlot.ensure = sortByProductId(patientSupplyPlot.ensure, 'productId');
     patientOptions = [...patientDashboard];
 
 
@@ -838,6 +880,8 @@ const Dashboard = (props) => {
     const plotViewHandler = (event) => {
       setPlotView(event.target.value);
     }
+    numberActive = patientDashboard.filter(p => p.status === 'Active').length;
+    numberInactive = patientDashboard.length - numberActive;
     console.log('[Card Transaction]',cardTransaction);
     return (
       <div className={classes.root}>
@@ -888,8 +932,13 @@ const Dashboard = (props) => {
 
                 </Grid>
                 <Grid container style={{ paddingBottom: 10 }}>
-                  <Typography variant="h6">{`Number of Active Patients :${numberActive}   Number of Inactive Patients : ${numberInactive}`} </Typography>
-                </Grid>
+                  <Grid item xs={12}>
+                  <Typography variant="h6">{`Number of Active Patients :${numberActive}`}</Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                  <Typography variant="h6">{`Number of InActive/Discharge Patients :${numberInactive}`}</Typography>
+                  </Grid>
+                </Grid> 
 
                 <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
                   <div style={{ display: 'flex', gap: 10 }}>
@@ -909,7 +958,8 @@ const Dashboard = (props) => {
                       />
                     </div>
                   </div>
-                  <Typography variant="h5" style={{ border: '1px solid blue' }}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
+                  
+                  <Typography variant="h5" style={{ border: '1px solid blue',paddingTop:4,paddingLeft:4,paddingRight:4,paddingBottom:4}}>{`Total : $${parseFloat(patientGrandTotal || 0.0).toFixed(2)} `}</Typography>
                 </Grid>
                 <Grid item xs={12} style={{ paddingBottom: 10 }}>
                   <Divider variant="fullWidth" style={{
@@ -919,11 +969,15 @@ const Dashboard = (props) => {
                   }} orientation="horizontal" flexItem />
                 </Grid>
                 <Grid container direction="row">
-                  {patientDashboard.length && patientDashboard.map(map => {
+                  {patientDashboard.length && patientDashboard.map((map,index) => {
                     return (
                       <Grid item xs={4}>
                         <div align="center">
-                          <Typography variant="h6">{`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}</Typography>
+                            <div style={{display:'inline-flex',gap:4}}>
+                              <Avatar sx={{ width: 24, height: 24 }}>{index + 1}</Avatar>
+                            {`${map.name.toUpperCase()} - $${parseFloat(map.estimatedAmt).toFixed(2)}`}
+                            </div>
+
                           <Typography variant="body2">{map.status && map.status === 'Inactive' ? `(INACTIVE SINCE ${map.eoc})` : `(ACTIVE SINCE ${map.soc})`}</Typography>
                           <Typography variant="body2" style={{ color: 'blue' }}>{map.status && map.status === 'Inactive' ? `Days in Hospice : ${Helper.calculateDaysInStorage(new Date(map.soc), new Date(map.eoc))})` : `Days in Hospice  : ${Helper.calculateDaysInStorage(new Date(map.soc))}`}</Typography>
 
@@ -1021,6 +1075,13 @@ const Dashboard = (props) => {
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'B' }}
                     ></Radio>GLOVES
+                      <Radio
+                      checked={plotView === 'ensure'}
+                      onChange={plotViewHandler}
+                      value="ensure"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>ENSURE
                     {/*
       <RadioGroup style={{display:'inline-flex'}} aria-label="gender" name="gender1" value={plotView} onChange={plotViewHandler}>
         <FormControlLabel value="brief" control={<Radio />} label="Briefs" />
@@ -1049,6 +1110,8 @@ const Dashboard = (props) => {
                       <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
                       : plotView === 'glove' ?
                         <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
+                        : plotView === 'ensure' ?
+                        <SupplyPlot title={'ENSURE'} patientPlot={patientSupplyPlot.ensure} estimatedGrandTotal={estimatedSupplyGrandTotal.ensure} unusedSummary={unusedPlotSummary.ensure} summary={plotSummary.ensure} />
                         : null}
             </TabPanel>
           </React.Fragment>

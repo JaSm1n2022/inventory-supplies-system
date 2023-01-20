@@ -7,7 +7,7 @@ import ReactModal from "react-modal";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { QUANTITY_UOM, SUPPLY_CATEGORY,SUPPLY_VENDOR } from "../../../utils/constants";
+import { QUANTITY_UOM, STATUS_ACTIVE_OPTIONS, SUPPLY_CATEGORY,SUPPLY_VENDOR } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
 import { Grid } from "@mui/material";
@@ -17,6 +17,17 @@ let categoryList = [];
 let uoms = [];
 let units = [];
 let vendors = [];
+let status = [];
+STATUS_ACTIVE_OPTIONS.forEach((item, index) => {
+    status.push({
+        id: index,
+        name: item,
+        value: item,
+        label: item,
+        category: 'status'
+
+    })
+});
 QUANTITY_UOM.forEach((item, index) => {
     uoms.push({
         id: index,
@@ -200,6 +211,16 @@ function ProductForm(props) {
             disabled: props.mode && props.mode === 'view' ? true : false
             
         },
+        {
+            id: 'status',
+            component: 'singlecomplete',
+            placeholder: 'Status',
+            label: 'Status',
+            name: 'status',
+            options: [...status],
+            disabled: props.mode && props.mode === 'view' ? true : false
+            
+        },
         
 
 
@@ -211,6 +232,7 @@ function ProductForm(props) {
         const fm = {};
         fm.created_at = new Date();
         fm.pricePerPcs = 0.0;
+        fm.status = status.find(s => s.name === 'Active');
         setGeneralForm(fm);
       },[]);
     useEffect(() => {
@@ -219,7 +241,7 @@ function ProductForm(props) {
             
             const generalFm = {...props.item};
             console.log('[items]',generalFm.qty_uom,props.item,uoms,uoms.find(cat => cat.name === generalFm.qty_uom));
-           
+            generalFm.status = generalFm.status ? status.find(s => s.name === 'Active') : status.find(s => s.name === 'Inactive');
             generalFm.created_at = moment(new Date(generalFm.created_at)).utc().format('YYYY-MM-DD');
             generalFm.category = categoryList.find(cat => cat.name === generalFm.category);
             generalFm.qtyUom = uoms.find(cat => cat.name === generalFm.qty_uom);
@@ -269,6 +291,10 @@ function ProductForm(props) {
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
         console.log('[src]',src,item);
+        if (item.category === 'status') {
+            src.status = item;
+          
+        }
         if(item.category === 'category') {
          src['category'] = item;
          src['categoryName'] = item.name;

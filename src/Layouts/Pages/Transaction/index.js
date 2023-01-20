@@ -90,7 +90,7 @@ const Transaction = (props) => {
     props.listProducts();
     props.listTransactions({from : dates.from,to:dates.to});
   }, []);
-
+  console.log('[props.products[',props.products);
   if(props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
     productList = [];
     productList = [...props.products.data];
@@ -244,6 +244,8 @@ const Transaction = (props) => {
     const found = temp.filter( data => (data.description &&  data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     || (data.order_number && data.order_number.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     || (data.payment_info && data.payment_info.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
+    || (data.vendor && data.vendor.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
+    || (data.category && data.category.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     );
     console.log('[Keyword 2]',found);
     grandTotal = 0.0;
