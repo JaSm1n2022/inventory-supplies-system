@@ -686,11 +686,9 @@ const Distribution = (props) => {
                   <div style={{ display: 'inline-flex', gap: 10 }}>
                     <Button
                       onClick={() => exportToExcelHandler()}
-                      variant="contained"
+                      variant="outlined"
                       style={{
-                        border: 'solid 1px blue',
-                        color: 'white',
-                        background: '#2196f3',
+                       
                         fontFamily: "Roboto",
                         fontSize: "12px",
                         fontWeight: 500,
@@ -707,11 +705,9 @@ const Distribution = (props) => {
                     <Tooltip title={'Limit to 16 records'}>
                       <Button
                         onClick={() => createOrderHandler()}
-                        variant="contained"
+                        variant="outlined"
                         style={{
-                          border: 'solid 1px blue',
-                          color: 'white',
-                          background: '#2196f3',
+                      
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
@@ -728,7 +724,7 @@ const Distribution = (props) => {
                     </Tooltip>
                     <Button
                       onClick={changeStatusHandler}
-                      variant="contained"
+                      variant="outlined"
                       color="primary"
                       aria-controls="simple-menu" aria-haspopup="true"
                       component="span"
@@ -740,11 +736,11 @@ const Distribution = (props) => {
                     <Tooltip title={'Reprint'}>
                       <Button
                         onClick={() => printAllOrdersHandler()}
-                        variant="contained"
+                        variant="outlined"
                         style={{
-                          border: 'solid 1px blue',
-                          color: 'white',
-                          background: '#2196f3',
+                        
+                          
+                          
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
@@ -759,14 +755,13 @@ const Distribution = (props) => {
 
                       > PRINT ALL </Button>
                     </Tooltip>
-                    <Tooltip title={'Reprint'}>
+                    <Tooltip title={'Create same data'}>
                       <Button
                         onClick={() => copyAllHandler()}
-                        variant="contained"
+                        variant="outlined"
                         style={{
-                          border: 'solid 1px blue',
-                          color: 'white',
-                          background: '#2196f3',
+                          
+                         
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
