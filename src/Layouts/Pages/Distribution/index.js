@@ -419,6 +419,7 @@ const Distribution = (props) => {
       const temp = [...originalSource];
       const found = temp.filter(data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
         || data.patient_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+        || data.requestor.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
       );
       grandTotalHandler(found);
       setDataSource(found);
