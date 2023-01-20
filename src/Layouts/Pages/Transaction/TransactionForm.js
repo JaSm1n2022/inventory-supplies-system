@@ -9,7 +9,7 @@ import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
 import { DEFAULT_ITEM, QUANTITY_UOM, SUPPLY_CATEGORY, SUPPLY_PAYMENT_METHOD, SUPPLY_STATUS, SUPPLY_VENDOR } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
-import moment from "moment";
+
 
 let categoryList = [];
 let uoms = [];
@@ -451,7 +451,7 @@ function TransportationForm(props) {
                                 placeholder={'Search Item'}
                                 label={'Search Item'}
                                 name={'searchItem'}
-                                options={props.productList || []}
+                                options={[...props.productList]}
                                 disabled={props.mode && props.mode === 'view' ? true : false}
                                 value={searchItem || DEFAULT_ITEM}
                                 onSelectHandler={autoCompleteInputSearchHandler}

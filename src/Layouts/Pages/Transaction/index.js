@@ -93,12 +93,15 @@ const Transaction = (props) => {
   console.log('[props.products[',props.products);
   if(props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
     productList = [];
-    productList = [...props.products.data];
-    props.products.data.forEach(item => {
+    productList = props.products.data;
+    productList = productList.filter(p => p.status);
+    productList.forEach(item => {
+      
       item.name = item.description;
       item.value = item.description;
       item.label = item.description;
       item.categoryType = 'description'
+      
     });
 
     props.resetListProducts();
