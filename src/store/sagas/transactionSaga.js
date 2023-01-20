@@ -9,7 +9,7 @@ function* listTransaction(filter) {
     try {
       console.log('[Filter]',filter.payload);
       let { data, error, status } = yield supabaseClient
-        .from('transactions').select().gte('ordered_at', filter.payload.from).lt('ordered_at',filter.payload.to);
+        .from('transactions').select().gte('ordered_at', `${filter.payload.from} 00:00`).lt('ordered_at',`${filter.payload.to} 23:59`);
         
       if (error && status !== 406) {
         console.log(`error${error.toString()}`);
