@@ -8,6 +8,7 @@ import distributionSaga from './distributionSaga';
 import employeeSaga from './employeeSaga';
 import patientSaga from './patientSaga';
 import vendorSaga from './vendorSaga';
+import templateSaga from './templateSaga';
 export function* rootSaga() {
   yield all([
   authSaga(),
@@ -19,6 +20,7 @@ export function* rootSaga() {
   distributionSaga(),
   employeeSaga(),
   patientSaga(),
-  vendorSaga()
+  vendorSaga(),
+  templateSaga()
 ]);
 }

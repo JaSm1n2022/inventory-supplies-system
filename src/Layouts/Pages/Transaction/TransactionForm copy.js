@@ -1,18 +1,51 @@
 import React, { useEffect, useState } from "react";
 import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeader";
 import ModalFooter from "../../../Common/components/Modal/ModalFooter/ModalFooter";
-import styles from "./stock.module.css";
+import styles from "./transaction.module.css";
 import ReactModal from "react-modal";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { DEFAULT_ITEM, QUANTITY_UOM, SUPPLY_CATEGORY } from "../../../utils/constants";
+import { DEFAULT_ITEM, QUANTITY_UOM, SUPPLY_CATEGORY, SUPPLY_PAYMENT_METHOD, SUPPLY_STATUS, SUPPLY_VENDOR } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
-import TOAST from "../../../modules/toastManager";
+
 
 let categoryList = [];
 let uoms = [];
+let vendors = [];
+let statuses = [];
+let paymentMethods = [];
+SUPPLY_PAYMENT_METHOD.forEach((item, index) => {
+    paymentMethods.push({
+        id: index,
+        name: item,
+        value: item,
+        label: item,
+        category: 'payments'
+
+    })
+});
+SUPPLY_STATUS.forEach((item, index) => {
+    statuses.push({
+        id: index,
+        name: item,
+        value: item,
+        label: item,
+        category: 'supplyStatus'
+
+    })
+});
+SUPPLY_VENDOR.forEach((item, index) => {
+    vendors.push({
+        id: index,
+        name: item,
+        value: item,
+        label: item,
+        category: 'vendor'
+
+    })
+});
 QUANTITY_UOM.forEach((item, index) => {
     uoms.push({
         id: index,
@@ -33,40 +66,27 @@ SUPPLY_CATEGORY.forEach((item, index) => {
 
     })
 });
-function StockForm(props) {
+function TransportationForm(props) {
     const [generalForm, setGeneralForm] = useState({});
-    const [searchItem, setSearchItem] = useState(DEFAULT_ITEM);
-    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-    const [isExistingItem, setIsExistingItem] = useState(false);
+    const [searchItem, setSearchItem] = useState('');
     const { isOpen,
         onClose,
-
         isEdit } = props;
 
     const general = [
         {
-            id: 'category',
-            component: 'textfield',
-            placeholder: 'Category',
-            label: 'Category',
-            name: 'category',
-            //disabled: props.mode && props.mode === 'view' ? true : false,
-            disabled: true,
-            cols: 3
-
-
+            id: 'orderedDt',
+            component: 'datepicker',
+            placeholder: 'Date Order',
+            label: 'Date Order',
+            name: 'orderedDt',
         },
         {
-            id: 'item',
+            id: 'orderNumber',
             component: 'textfield',
-            placeholder: 'Item',
-            label: 'Item',
-            name: 'item',
-            //disabled: props.mode && props.mode === 'view' ? true : false,
-            disabled: true,
-            cols: 3
-
-
+            placeholder: 'Order Number',
+            label: 'Order Number',
+            name: 'orderNumber',
         },
         {
             id: 'description',
@@ -74,8 +94,22 @@ function StockForm(props) {
             placeholder: 'Description',
             label: 'Description',
             name: 'description',
-            disabled: true,
             cols: 6
+        },
+        {
+            id: 'category',
+            component: 'singlecomplete',
+            placeholder: 'Category',
+            label: 'Category',
+            name: 'category',
+            options: categoryList
+        },
+        {
+            id: 'item',
+            component: 'textfield',
+            placeholder: 'Item',
+            label: 'Item',
+            name: 'item',
         },
         {
             id: 'size',
@@ -83,10 +117,6 @@ function StockForm(props) {
             placeholder: 'Size',
             label: 'Size',
             name: 'size',
-
-            disabled: true,
-
-
         },
         {
             id: 'dimension',
@@ -94,81 +124,135 @@ function StockForm(props) {
             placeholder: 'Dimension',
             label: 'Dimension',
             name: 'dimension',
-
-            disabled: true,
-
+        },
+        {
+            id: 'qty',
+            component: 'textfield',
+            placeholder: 'Qty',
+            label: 'Qty',
+            name: 'qty',
+            type: 'number'
+        },
+        {
+            id: 'qtyUom',
+            component: 'singlecomplete',
+            placeholder: 'Qty Uom',
+            label: 'Qty Uom',
+            name: 'qtyUom',
+            options: uoms
 
         },
         {
-            id: 'info',
+            id: 'unitPiece',
             component: 'textfield',
-            placeholder: 'Additional Info',
-            label: 'Additional Info',
-            name: 'info',
+            placeholder: 'Unit Piece',
+            label: 'Unit Piece',
+            name: 'unitPiece',
+            type: 'number'
 
-            disabled: true,
+        },
+        {
+            id: 'totalPcs',
+            component: 'textfield',
+            placeholder: 'Total Pieces',
+            label: 'Total Pieces',
+            name: 'totalPcs',
+            type: 'number',
+            disabled:true
 
+        },
+        {
+            id: 'unitPrice',
+            component: 'textfield',
+            placeholder: 'Unit Price',
+            label: 'Unit Price',
+            name: 'unitPrice',
+            type: 'number',
+         
+
+        },
+        {
+            id: 'totalPrice',
+            component: 'textfield',
+            placeholder: 'Total Price',
+            label: 'Total Price',
+            name: 'totalPrice',
+            type: 'number',
+            disabled : true
+            
+
+        },
+        {
+            id: 'pricePerPcs',
+            component: 'textfield',
+            placeholder: 'Price Per Pcs',
+            label: 'Price Per Pcs',
+            name: 'pricePerPcs',
+            type: 'number',
+            disabled : true
 
         },
         {
             id: 'vendor',
-            component: 'textfield',
+            component: 'singlecomplete',
             placeholder: 'Vendor',
             label: 'Vendor',
             name: 'vendor',
-            disabled: true
+            options: vendors
 
         },
         {
-            id: 'qtyOnHand',
-            component: 'textfield',
-            placeholder: 'Quantity On Hand',
-            label: 'Qty on Hand',
-            name: 'qtyOnHand',
-            type: 'number',
-            disabled: props.mode && props.mode === 'view' ? true : false
-
-        },
-
-        {
-            id: 'incomingQty',
-            component: 'textfield',
-            placeholder: 'Incoming Qty',
-            label: 'Incoming Qty',
-            name: 'incomingQty',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            id: 'status',
+            component: 'singlecomplete',
+            placeholder: 'Status',
+            label: 'Status',
+            name: 'status',
+            options: statuses
 
         },
         {
-            id: 'projectedQty',
-            component: 'textfield',
-            placeholder: 'Projected Qty',
-            label: 'Projected Qty',
-            name: 'projectedQty',
-            disabled: props.mode && props.mode === 'view' ? true : false
-
-        },
-        {
-            id: 'projectedDate',
+            id: 'expectedDeliveryDt',
             component: 'datepicker',
-            placeholder: 'Projected Date',
-            label: 'Projected Date',
-            name: 'projectedDate',
-            disabled: props.mode && props.mode === 'view' ? true : false
+            placeholder: 'Expected Delivery Date',
+            label: 'Expected Delivery Date',
+            name: 'expectedDeliveryDt'
 
         },
-      
+        
         {
-            id: 'comments',
-            component: 'textfield',
-            placeholder: 'Comments',
-            label: 'Comments',
-            name: 'comments',
-            disabled: props.mode && props.mode === 'view' ? true : false,
-            cols: 9
+            id: 'paymentMethod',
+            component: 'singlecomplete',
+            placeholder: 'Payment Method',
+            label: 'Payment Method',
+            name: 'paymentMethod',
+            options: paymentMethods
 
         },
+        {
+            id: 'paymentInfo',
+            component: 'textfield',
+            placeholder: 'Payment Info',
+            label: 'Payment Info',
+            name: 'paymentInfo'
 
+        },
+        {
+            id: 'paymentDt',
+            component: 'datepicker',
+            placeholder: 'Paid On',
+            label: 'Paid On',
+            name: 'paymentDt'
+
+        },
+        {
+            id: 'grandTotal',
+            component: 'textfield',
+            placeholder: 'Grand Total',
+            label: 'Grand Total',
+            name: 'grandTotal',
+            type: 'number'
+
+        },
     ]
 
 
@@ -176,35 +260,51 @@ function StockForm(props) {
         console.log('[effects 1]');
         const fm = {};
         fm.created_at = new Date();
-        fm.item = '-';
+        fm.orderedDt = new Date();
+        fm.paymentDt = new Date();
+        fm.category = DEFAULT_ITEM;
         fm.description = '-';
         fm.size = '-';
-        fm.category = '-';
-        fm.dimension = '-';
-        fm.info = '-';
-        fm.vendor = '-';
+        fm.dimension='-';
+        fm.item = '-';
+        fm.expectedDeliveryDt = new Date();
+        fm.pricePerPcs = 0.00;
+        fm.unitPrice = 0.00;
+        fm.totalPrice = 0.0;
+        fm.totalPcs = 1;
+        fm.unitPiece = 1;
+        fm.qty = 1;
         setGeneralForm(fm);
     }, []);
     useEffect(() => {
         if (props.item) {
-            console.log('[effects 2]');
+            
             console.log('[items]', props.item);
-
-            const generalFm = { ...props.item };
-            generalFm.info = generalFm.additional_info;
-            generalFm.incomingQty = generalFm.incoming_qty;
-            generalFm.projectedQty = generalFm.projected_qty;
-            generalFm.qtyOnHand = generalFm.qty_on_hand;
-            generalFm.projectedDate = generalFm.incoming_order_at;
-            setIsSubmitDisabled(false);
-            setGeneralForm(generalFm);
+            const fm = { ...props.item };   
+            fm.expectedDeliveryDt = `${fm.expected_delivery_at}T00:00:00.000Z`;
+            fm.grandTotal = parseFloat(fm.grand_total||0.00).toFixed(2);
+            fm.orderNumber = fm.order_number;
+            fm.orderedDt  = `${fm.ordered_at}T00:00:00.000Z`;
+            fm.paymentInfo = fm.payment_info;
+            fm.paymentMethod = fm.payment_method ? paymentMethods.find(pm => pm.name === fm.payment_method) : DEFAULT_ITEM;
+            fm.paymentDt = `${fm.payment_transaction_at}T00:00:00.000Z`;
+            fm.pricePerPcs = parseFloat(fm.price_per_pcs || 0.00).toFixed(2);
+            fm.qtyUom = fm.qty_uom ? uoms.find(u => u.name === fm.qty_uom) : DEFAULT_ITEM;
+            fm.status = fm.status ? statuses.find(s => s.name === fm.status) : DEFAULT_ITEM;
+            fm.totalPcs = fm.total_pcs || 0;
+            fm.totalPrice = fm.total_price || 0.00;
+            fm.unitPiece =fm.unit_piece || 0;
+            fm.unitPrice = fm.unit_price || 0.00;
+            fm.vendor = fm.vendor ? vendors.find(v => v.name === fm.vendor) : DEFAULT_ITEM; 
+            fm.category = categoryList.find(cat => cat.name === fm.category);
+            setGeneralForm(fm);
 
 
 
         }
     }, [props.item]);
     const validateFormHandler = () => {
-        props.createStockHandler(generalForm, props.mode);
+        props.createTransactionHandler(generalForm, props.mode);
     }
     const footerActions = [
         {
@@ -224,41 +324,17 @@ function StockForm(props) {
             },
         },
     ];
-    const inputSearchHandler = (e) => {
-        if (!e.target.value) {
-            setSearchItem(DEFAULT_ITEM);
-        };
-    }
-    const autoCompleteInputSearchHandler = (item) => {
-        console.log('[Item]', item, props.dataSource, props.dataSource.find(data => data.productId === item.id));
-        if (props.dataSource.find(data => data.productId === item.id)) {
-            TOAST.error('Item already in existing record. Please use Edit function to update stock product information');
-            setIsSubmitDisabled(true);
-            setIsExistingItem(true);
-            return;
-        }
-        setIsExistingItem(false);
-
-        setIsSubmitDisabled(false);
-        setSearchItem(item);
-        const fm = { ...item };
-        fm.item = fm.item;
-        fm.description = fm.description;
-        fm.size = fm.size;
-        fm.dimension = fm.dimension;
-        fm.productId = fm.id;
-        fm.category = fm.category;
-        fm.productId = fm.id;
-        fm.vendor = fm.vendor;
-        fm.info = `${fm.qty} ${fm.qty_uom} is ${fm.count} each`
-
-        setGeneralForm(fm);
-        setIsSubmitDisabled(false);
-    }
+   
+   
     const inputGeneralHandler = ({ target }) => {
         console.log('[Target]', target, generalForm);
         const source = { ...generalForm };
         source[target.name] = target.value;
+        if(['qty','unitPiece','unitPrice'].includes(target.name)) {
+            source.totalPcs = parseInt(source.qty || 0,10) * parseInt(source.unitPiece || 0,10);
+            source.totalPrice = parseFloat(parseFloat(source.qty || 0) * parseFloat(source.unitPrice|| 0)).toFixed(2)
+            source.pricePerPcs = parseFloat(parseFloat(source.unitPrice || 0) / parseFloat(source.unitPiece|| 0)).toFixed(2)
+        }
         setGeneralForm(source);
 
     };
@@ -268,11 +344,19 @@ function StockForm(props) {
         if (item.category === 'category') {
             src['category'] = item;
             src['categoryName'] = item.name;
-        }
-        if (item.category === 'uom') {
-            src['qtyUom'] = item;
-            src['uom'] = item.name;
-        }
+        } else if (item.category === 'uom') {
+                src['qtyUom'] = item;
+                src['uom'] = item.name;
+        } else if (item.category === 'vendor') {
+                    src['vendor'] = item;
+                    src['vendorName'] = item.name;
+        } else if (item.category === 'supplyStatus') {
+                    src['status'] = item;
+                    src['statusName'] = item.name;
+        } else if (item.category === 'payments') {
+            src['paymentMethod'] = item;
+            src['payment'] = item.name;
+}
         setGeneralForm(src);
 
     }
@@ -285,19 +369,43 @@ function StockForm(props) {
     }
 
 
-    const dateInputHandler = (name, value) => {
+    const dateInputHandler = (name,value) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);
     }
     const titleHandler = () => {
         if (props.mode === 'view') {
-            return 'View Stock'
+            return 'View Transaction'
         } else if (props.mode === 'edit') {
-            return 'Edit Stock';
+            return 'Edit Transaction';
         } else {
-            return 'Create Stock';
+            return 'Create Transaction';
         }
+    }
+    const inputSearchHandler = (e) => {
+        if (!e.target.value) {
+            setSearchItem(DEFAULT_ITEM);
+        };
+    }
+    const autoCompleteInputSearchHandler = (item) => {
+        console.log('[Item]',item);
+       
+       const gen = {...generalForm};
+        gen.category = categoryList.find(cat => cat.name === item.category);
+        gen.description = item.description;
+        gen.size = item.size;
+        gen.dimension = item.dimension;
+        gen.item = item.item;
+        gen.vendor = vendors.find(v => v.name === item.vendor);
+        gen.qtyUom = uoms.find(u => u.name === item.qty_uom);
+        gen.pricePerPcs = item.price_per_pcs;      
+        gen.totalPrice = (item.price_per_pcs || 1) * (item.qty || 1);
+        gen.qty = item.qty;
+        gen.totalPcs = (item.count || 1) * (item.qty || 1);
+        gen.unitPiece = item.count;
+        setGeneralForm(gen);
+        
     }
     console.log('[general form]', generalForm);
     return (
@@ -337,23 +445,21 @@ function StockForm(props) {
                 <ModalHeader title={titleHandler()} onClose={onClose} />
                 <div className={styles.content}>
                     <Grid container spacing={1} direction="row">
-                        <Grid item xs={9}>
-                            <SingleWithClearAutoComplete
+
+                        <Grid item xs={12} style={{paddingBottom:12}}>
+                        <SingleWithClearAutoComplete
                                 placeholder={'Search Item'}
                                 label={'Search Item'}
                                 name={'searchItem'}
-                                options={props.productList || []}
+                                options={[...props.productList]}
                                 disabled={props.mode && props.mode === 'view' ? true : false}
                                 value={searchItem || DEFAULT_ITEM}
                                 onSelectHandler={autoCompleteInputSearchHandler}
                                 onChangeHandler={inputSearchHandler}
 
                             />
-                            {isExistingItem &&
-                                <Typography variant="body1" style={{ color: 'red' }}> ** Item already in existing record. Please use Edit function to update stock product information</Typography>
-                            }
+
                         </Grid>
-                        <Grid item xs={12}></Grid>
 
                         {general.map(item => {
                             return (
@@ -395,7 +501,7 @@ function StockForm(props) {
                 <br />
                 {props.mode && props.mode === 'view' ?
                     null :
-                    <ModalFooter actions={footerActions} isSubmitDisabled={isSubmitDisabled} />
+                    <ModalFooter actions={footerActions} />
                 }
             </div>
         </ReactModal >
@@ -406,4 +512,4 @@ function StockForm(props) {
 
 
 
-export default StockForm;
+export default TransportationForm;

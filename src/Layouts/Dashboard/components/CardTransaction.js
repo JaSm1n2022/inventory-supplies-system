@@ -30,10 +30,13 @@ const CardTransaction = (props) => {
         <React.Fragment>
             {details && details.length &&
                 <Grid container style={{ width: '800px', height: '1000px', paddingLeft: 20 }}>
-                    <Grid item xs={12}>
-                        <div style={{ display: 'inline-flex', gap: 4 }}>
-                            <div style={{ paddingTop: 20 }}>
-                                <Typography variant="h6">{`CARD PAYMENT HISTORY FOR ( ${props.dateFrom} to ${props.dateTo} )`}</Typography>
+                    <Grid item xs={12} align="center">
+                        <div>
+                            <div style={{ paddingTop: 100 }} >
+                                <Typography variant="h6">CARD PAYMENT HISTORY REPORT</Typography>
+                            </div>
+                            <div style={{paddingBottom:40}}>
+                                <Typography variant="bold" style={{color:'gray'}}>{`${props.dateFrom} to ${props.dateTo}`}</Typography>
                             </div>
                         </div>
                         <div  style={{ width: '800px', height: '1000px' }}>
@@ -64,7 +67,7 @@ const CardTransaction = (props) => {
                                                     <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">{`$${parseFloat(map.mckesson || 0.00).toFixed(2)}`}</TableCell>
                                                     <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">{`$${parseFloat(map.walmart || 0.00).toFixed(2)}`}</TableCell>
                                                     <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">{`$${parseFloat(map.others || 0.00).toFixed(2)}`}</TableCell>
-                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">{`$${parseFloat(map.grand || 0.00).toFixed(2)}`}</TableCell>
+                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black',color:'blue',fontWeight:'bold' }} component="th" scope="row">{`$${parseFloat(map.grand || 0.00).toFixed(2)}`}</TableCell>
                                                 </TableRow>
                                             )
                                         })}

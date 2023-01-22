@@ -35,16 +35,25 @@
     color: var(--common-black);
   }
   .invoiceForm {
-    min-height: 60%;
+    min-height: 90%;
     max-height: 75%;
-    min-width: 75%;
+    min-width: 98%;
     max-width: 100%;
   
     background: white;
     position: relative;
     padding: 0 0 25.6px;
   }
+  .invoiceEditForm {
+    min-height: 50%;
+    max-height: 75%;
+    min-width: 98%;
+    max-width: 100%;
   
+    background: white;
+    position: relative;
+    padding: 0 0 25.6px;
+  }
   .content {
     min-height: 775;
     max-height: 100%;

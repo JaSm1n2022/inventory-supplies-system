@@ -122,6 +122,35 @@ export type VendorState = {
 };
 
 
+export type TemplateState = {
+  templateList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  templateUpdate : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+ 
+  templateDelete : {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  templateCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
 export type PatientState = {
   patientList: {
     data: ?Object,

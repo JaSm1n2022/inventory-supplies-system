@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeader";
-import ComponentToPrint from "../../Document/ComponentToPrint";
+
 import PrintComponent from "../../Document/PrintComponent";
 import styles from "./distribution.module.css";
 function PrintForm(props) {

@@ -11,6 +11,7 @@ import { useState } from "react";
 import * as FileSaver from 'file-saver';
 import { v4 as uuidv4 } from 'uuid';
 import Form from "./DistributionForm";
+import TemplateForm from "./TemplateForm";
 import { connect } from "react-redux";
 import { distributionCreateStateSelector, distributionDeleteStateSelector, distributionListStateSelector, distributionUpdateStateSelector } from "../../../store/selectors/distributionSelector";
 
@@ -28,6 +29,8 @@ import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/
 import { employeeListStateSelector } from "../../../store/selectors/employeeSelector";
 //import PrintForm from "../../Document/PrintForm";
 import PrintForm from "./PrintForm";
+import { attemptToCreateTemplate, attemptToDeleteTemplate, attemptToFetchTemplate, attemptToUpdateTemplate, resetCreateTemplateState, resetDeleteTemplateState, resetFetchTemplateState, resetUpdateTemplateState } from "../../../store/actions/templateAction";
+import { templateCreateStateSelector, templateDeleteStateSelector, templateListStateSelector, templateUpdateStateSelector } from "../../../store/selectors/templateSelector";
 
 
 
@@ -36,13 +39,14 @@ let productList = [];
 let stockList = [];
 let patientList = [];
 let employeeList = [];
-
+let templateList = [];
 
 let isProductListDone = false;
 let isStockListDone = false;
 let isDistributionListDone = false;
 let isPatientListDone = false;
 let isEmployeeListDone = false;
+let isTemplateListDone = false;
 let isAllFetchDone = false;
 let mainGeneral = {};
 let mainDetails = [];
@@ -53,12 +57,16 @@ let originalSource = undefined;
 let multiPatients = [];
 const Distribution = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [templateAnchorEl, setTemplateAnchorEl] = React.useState(null);
   const [isPrintForm, setIsPrintForm] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState(DataHandler.columns());
   const [isFormModal, setIsFormModal] = useState(false);
+  const [isTemplateFormModal, setIsTemplateFormModal] = useState(false);
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
+  const [module, setModule] = useState('single');
+
   const [isAddGroupButtons, setIsAddGroupButtons] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -68,10 +76,14 @@ const Distribution = (props) => {
   const [isDeleteDistributionCollection, setIsDeleteDistributionCollection] = useState(true);
   const [generalForm, setGeneralForm] = useState(undefined);
   const [detailForm, setDetailForm] = useState([]);
+  const [isCreateTemplateCollection, setIsCreateTemplateCollection] = useState(true);
+  const [isUpdateTemplateCollection, setIsUpdateTemplateCollection] = useState(true);
+  const [isDeleteTemplateCollection, setIsDeleteTemplateCollection] = useState(true);
 
   const createFormHandler = (data, mode) => {
     console.log('[data]', data);
     setMode(mode || 'create');
+    setModule('single');
     if (mode === 'edit') {
       //setItem(data);
       data.distributionId = data.id;
@@ -106,7 +118,11 @@ const Distribution = (props) => {
 
     setIsFormModal(false);
   }
+  const closeTemplateFormModalHandler = () => {
 
+
+    setIsTemplateFormModal(false);
+  }
 
   useEffect(() => {
     console.log('list Distributions');
@@ -118,6 +134,7 @@ const Distribution = (props) => {
     props.listPatients();
     props.listDistributions({ from: dates.from, to: dates.to });
     props.listEmployees();
+    props.listTemplates();
   }, []);
 
 
@@ -148,7 +165,27 @@ const Distribution = (props) => {
       setIsDeleteDistributionCollection(true);
 
     }
-  }, [isDistributionsCollection, isCreateDistributionCollection, isUpdateDistributionCollection, isDeleteDistributionCollection]);
+    if (!isCreateTemplateCollection && props.createTemplateState && props.createTemplateState.status === ACTION_STATUSES.SUCCEED) {
+      props.resetCreateTemplate();
+
+      setIsCreateTemplateCollection(true);
+
+    }
+    if (!isUpdateTemplateCollection && props.updateTemplateState && props.updateTemplateState.status === ACTION_STATUSES.SUCCEED) {
+      props.resetUpdateTemplate();
+
+      setIsUpdateTemplateCollection(true);
+
+
+    }
+    if (!isDeleteTemplateCollection && props.deleteTemplateState && props.deleteTemplateState.status === ACTION_STATUSES.SUCCEED) {
+      console.log('[change me to true]');
+      props.resetDeleteTemplate();
+      setIsDeleteTemplateCollection(true);
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUpdateTemplateCollection, isCreateTemplateCollection, isDeleteTemplateCollection, isDistributionsCollection, isCreateDistributionCollection, isUpdateDistributionCollection, isDeleteDistributionCollection]);
 
   const grandTotalHandler = (data) => {
     grandTotal = 0.0;
@@ -169,8 +206,17 @@ const Distribution = (props) => {
     props.resetListPatients();
   }
 
-  console.log('[props.employees]', props.employees);
-
+  if (props.templates && props.templates.status === ACTION_STATUSES.SUCCEED) {
+    templateList = [...props.templates.data];
+    templateList.forEach(item => {
+      item.name = item.name.toUpperCase();
+      item.value = item.name.toUpperCase();
+      item.label = item.name.toUpperCase();
+      item.categoryType = 'template'
+    });
+    isTemplateListDone = true;
+    props.resetListTemplates();
+  }
   if (props.employees && props.employees.status === ACTION_STATUSES.SUCCEED) {
     employeeList = [...props.employees.data];
     employeeList.forEach(item => {
@@ -239,7 +285,7 @@ const Distribution = (props) => {
   if (isCreateDistributionCollection && props.createDistributionState && props.createDistributionState.status === ACTION_STATUSES.SUCCEED) {
 
     setIsCreateDistributionCollection(false);
-    
+
     setIsPrintForm(true);
     console.log('Update Stock', forStockUpdates);
     props.updateStock(forStockUpdates);
@@ -314,7 +360,7 @@ const Distribution = (props) => {
           unit_uom: payload.unitDistribution
 
         };
-     
+
         const stock = stockList.find(s => s.productId === payload.productId);
         if (stock) {
           let qty = parseInt(payload.orderQty, 10);
@@ -331,7 +377,7 @@ const Distribution = (props) => {
       }
     }
     dataSource.forEach(e => e.isChecked = false);
-    console.log('[final payload]', finalPayload,forStockUpdates);
+    console.log('[final payload]', finalPayload, forStockUpdates);
     props.createDistribution(finalPayload);
 
 
@@ -339,7 +385,28 @@ const Distribution = (props) => {
 
 
   }
+  const manageTemplateHandler = (general, details, mode) => {
+    if (details && details.length) {
 
+      const params = {
+        created_at: new Date(),
+        name: general.templateName,
+        details: {
+          products: [...details].map(map => ({ productId: map.productId, qty: parseInt(map.orderQty || 0, 10) }))
+        }
+      };
+      if (general.templateId) {
+        params.id = general.templateId;
+      }
+
+      console.log('[params[', params);
+      if (general.templateId) {
+        props.updateTemplate(params);
+      } else {
+        props.createTemplate(params);
+      }
+    }
+  }
   const createDistributionHandler = (general, details, mode) => {
     multiPatients = [];
     mainGeneral = general;
@@ -492,6 +559,13 @@ const Distribution = (props) => {
     setAnchorEl(null);
   }
 
+  const templateHandler = (event) => {
+    setTemplateAnchorEl(event.currentTarget);
+  }
+  const closeTemplateMenuHandler = () => {
+    setTemplateAnchorEl(null);
+  }
+
   const updateStatusHandler = (status) => {
     const selectedData = dataSource.filter((r) => r.isChecked);
     console.log('[selected Data Status]', selectedData, status);
@@ -505,31 +579,34 @@ const Distribution = (props) => {
     props.updateDistribution(forUpdateStatus);
     setAnchorEl(null);
   }
+  const deleteTemplateHandler = (id) => {
+    console.log('[Delete Template]', id);
+    props.deleteTemplate(id);
+  }
   const createOrderHandler = () => {
+    setModule('multiple');
     const selectedData = dataSource.filter((r) => r.isChecked);
     console.log('[Selected Data]', selectedData);
     const generalData = {};
     const detailsData = [];
     selectedData.forEach((ea, indx) => {
-      if (indx < 16) {
-        generalData.patient = patientList.find(p => p.id === ea.patient_id);
-        if (ea.requestor_id) {
-          generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
-        } else if (ea.requestor) {
-          generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
-        }
-        generalData.requestorName = ea.requestor;
-        const prod = productList.find(p => p.id === ea.productId);
-
-
-        detailsData.push({
-          search: { ...prod },
-          ...prod,
-          orderQty: ea.order_qty,
-          productId: ea.productId,
-          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
-        });
+      generalData.patient = patientList.find(p => p.id === ea.patient_id);
+      if (ea.requestor_id) {
+        generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
+      } else if (ea.requestor) {
+        generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
       }
+      generalData.requestorName = ea.requestor;
+      const prod = productList.find(p => p.id === ea.productId);
+
+
+      detailsData.push({
+        search: { ...prod },
+        ...prod,
+        orderQty: ea.order_qty,
+        productId: ea.productId,
+        unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+      });
     });
     setGeneralForm(generalData);
     setDetailForm(detailsData);
@@ -537,7 +614,7 @@ const Distribution = (props) => {
     setIsFormModal(true);
 
   }
-  if (isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
+  if (isTemplateListDone && isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
   }
   const printAllOrdersHandler = () => {
@@ -603,43 +680,96 @@ const Distribution = (props) => {
     patientIds = Array.from(new Set(patientIds));
     console.log('[patientIds2]', patientIds);
     for (const pId of patientIds) {
+      const patientStatus = patientList.find(patient => patient.id === pId);
+      if (patientStatus.status === 'Active') { // only active patient to be distributed
+        const patientData = selectedData.filter(sel => sel.patient_id === pId);
+        let generalData = {};
+        let detailsData = [];
 
-      const patientData = selectedData.filter(sel => sel.patient_id === pId);
-      let generalData = {};
-      let detailsData = [];
+        for (const ea of patientData) {
+          generalData.patient = patientList.find(p => p.id === ea.patient_id);
+          generalData.patientId = ea.patient_id;
+          generalData.patientName = generalData.patient ? generalData.patient.name : '';
+          generalData.facility = generalData.patient ? generalData.patient.place_of_service : '';
+          if (ea.requestor_id) {
+            generalData.requestorId = ea.requestor_id;
+            generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
+          } else if (ea.requestor) {
+            generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
+            generalData.requestorId = generalData.requestor.id;
+          }
+          generalData.orderDt = new Date();
+          generalData.requestorName = ea.requestor;
+          const prod = productList.find(p => p.id === ea.productId);
+          detailsData.push({
+            search: { ...prod },
+            ...prod,
+            orderQty: ea.order_qty,
+            productId: ea.productId,
+            unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+          });
 
-      for (const ea of patientData) {
-        generalData.patient = patientList.find(p => p.id === ea.patient_id);
-        generalData.patientId = ea.patient_id;
-        generalData.patientName = generalData.patient ? generalData.patient.name : '';
-        generalData.facility = generalData.patient ? generalData.patient.place_of_service : '';
-        if (ea.requestor_id) {
-          generalData.requestorId = ea.requestor_id;
-          generalData.requestor = employeeList.find(e => e.id === ea.requestor_id);
-        } else if (ea.requestor) {
-          generalData.requestor = employeeList.find(e => e.name && e.name.toUpperCase() === ea.requestor.toUpperCase());
-          generalData.requestorId = generalData.requestor.id;
         }
-        generalData.orderDt = new Date();
-        generalData.requestorName = ea.requestor;
-        const prod = productList.find(p => p.id === ea.productId);
-        detailsData.push({
-          search: { ...prod },
-          ...prod,
-          orderQty: ea.order_qty,
-          productId: ea.productId,
-          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
-        });
-
+        multiPatients.push({
+          general: generalData,
+          details: detailsData
+        })
       }
-      multiPatients.push({
-        general: generalData,
-        details: detailsData
-      })
     }
     createMultiDistributionHandler();
 
   }
+  const useTemplateHandler = (details) => {
+    console.log('[Use Template handler]', details);
+    setModule('multiple');
+    const generalData = {};
+    const detailsData = [];
+    details.forEach((ea) => {
+      generalData.patient = {
+        name: '-',
+        value: '-',
+        place_of_service: '-'
+      };
+      generalData.requestor = { title: '-', name: '-', position: '-' };
+      generalData.requestorName = '';
+      const prod = productList.find(p => p.id === ea.productId);
+
+
+      detailsData.push({
+        search: { ...prod },
+        ...prod,
+        orderQty: parseInt(ea.orderQty || 0, 10),
+        productId: ea.productId,
+        unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+      });
+    });
+    setGeneralForm(generalData);
+    setDetailForm(detailsData);
+    setMode('create');
+    setIsTemplateFormModal(false);
+    setIsFormModal(true);
+  }
+  const addEditTemplateHandler = () => {
+    setTemplateAnchorEl(undefined);
+    setIsTemplateFormModal(true);
+  }
+  if (isCreateTemplateCollection && props.createTemplateState && props.createTemplateState.status === ACTION_STATUSES.SUCCEED) {
+    isTemplateListDone = false;
+    setIsCreateTemplateCollection(false);
+    props.listTemplates();
+  }
+  if (isUpdateTemplateCollection && props.updateTemplateState && props.updateTemplateState.status === ACTION_STATUSES.SUCCEED) {
+    isTemplateListDone = false;
+    setIsUpdateTemplateCollection(false);
+    props.listTemplates();
+
+  }
+  if (isDeleteTemplateCollection && props.deleteTemplateState && props.deleteTemplateState.status === ACTION_STATUSES.SUCCEED) {
+    isTemplateListDone = false;
+    setIsDeleteTemplateCollection(false);
+    props.listTemplates();
+  }
+  console.log('[Create Template]', props.createTemplateState);
   return (
     <React.Fragment>
       {!isAllFetchDone ?
@@ -662,6 +792,17 @@ const Distribution = (props) => {
             <Grid container>
               <div style={{ display: 'inline-flex', gap: 10, paddingTop: 10 }}>
                 <Button
+                  onClick={addEditTemplateHandler}
+                  variant="outlined"
+                  color="primary"
+                  aria-controls="simple-menu" aria-haspopup="true"
+                  component="span"
+
+                >
+
+                  MANAGE TEMPLATE
+                </Button>
+                <Button
                   onClick={() => createFormHandler()}
                   variant="contained"
                   style={{
@@ -683,13 +824,24 @@ const Distribution = (props) => {
                 >
                   ADD ORDER
                 </Button>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={templateAnchorEl}
+                  keepMounted
+                  open={Boolean(templateAnchorEl)}
+                  onClose={closeTemplateMenuHandler}
+                >
+                  <MenuItem onClick={() => addEditTemplateHandler()}>Add/Edit Template</MenuItem>
+                  <MenuItem>Use Template</MenuItem>
+
+                </Menu>
                 {isAddGroupButtons &&
                   <div style={{ display: 'inline-flex', gap: 10 }}>
                     <Button
                       onClick={() => exportToExcelHandler()}
                       variant="outlined"
                       style={{
-                       
+
                         fontFamily: "Roboto",
                         fontSize: "12px",
                         fontWeight: 500,
@@ -708,7 +860,7 @@ const Distribution = (props) => {
                         onClick={() => createOrderHandler()}
                         variant="outlined"
                         style={{
-                      
+
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
@@ -721,7 +873,7 @@ const Distribution = (props) => {
                         }}
                         component="span"
 
-                      > Create Order Template </Button>
+                      > Add Multiple Orders </Button>
                     </Tooltip>
                     <Button
                       onClick={changeStatusHandler}
@@ -739,9 +891,9 @@ const Distribution = (props) => {
                         onClick={() => printAllOrdersHandler()}
                         variant="outlined"
                         style={{
-                        
-                          
-                          
+
+
+
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
@@ -761,8 +913,8 @@ const Distribution = (props) => {
                         onClick={() => copyAllHandler()}
                         variant="outlined"
                         style={{
-                          
-                         
+
+
                           fontFamily: "Roboto",
                           fontSize: "12px",
                           fontWeight: 500,
@@ -791,6 +943,7 @@ const Distribution = (props) => {
                         )
                       })}
                     </Menu>
+
                   </div>
                 }
               </div>
@@ -806,7 +959,10 @@ const Distribution = (props) => {
         </React.Fragment>
       }
       {isFormModal &&
-        <Form filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+        <Form module={module} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+      }
+      {isTemplateFormModal &&
+        <TemplateForm useTemplateHandler={useTemplateHandler} deleteTemplateHandler={deleteTemplateHandler} templateList={templateList} manageTemplateHandler={manageTemplateHandler} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isTemplateFormModal} isEdit={false} item={item} onClose={closeTemplateFormModalHandler} />
       }
       {isPrintForm &&
         <PrintForm multiPatients={multiPatients} isOpen={isPrintForm} generalForm={mainGeneral} closePrintForm={closePrintFormHandler} detailForm={mainDetails} />
@@ -820,11 +976,16 @@ const mapStateToProps = store => ({
   stocks: stockListStateSelector(store),
   patients: patientListStateSelector(store),
   employees: employeeListStateSelector(store),
+  templates: templateListStateSelector(store),
   distributions: distributionListStateSelector(store),
   createDistributionState: distributionCreateStateSelector(store),
   updateDistributionState: distributionUpdateStateSelector(store),
+  updateTemplateState: templateUpdateStateSelector(store),
   deleteDistributionState: distributionDeleteStateSelector(store),
   updateStockState: stockUpdateStateSelector(store),
+  createTemplateState: templateCreateStateSelector(store),
+  deleteTemplateState: templateDeleteStateSelector(store),
+
 
 });
 
@@ -847,7 +1008,14 @@ const mapDispatchToProps = dispatch => ({
   resetDeleteDistribution: () => dispatch(resetDeleteDistributionState()),
   updateStock: (data) => dispatch(attemptToUpdateStock(data)),
   resetUpdateStock: () => dispatch(resetUpdateStockState()),
-
+  createTemplate: (data) => dispatch(attemptToCreateTemplate(data)),
+  resetCreateTemplate: () => dispatch(resetCreateTemplateState()),
+  listTemplates: (data) => dispatch(attemptToFetchTemplate(data)),
+  resetListTemplates: () => dispatch(resetFetchTemplateState()),
+  updateTemplate: (data) => dispatch(attemptToUpdateTemplate(data)),
+  resetUpdateTemplate: () => dispatch(resetUpdateTemplateState()),
+  deleteTemplate: (data) => dispatch(attemptToDeleteTemplate(data)),
+  resetDeleteTemplate: () => dispatch(resetDeleteTemplateState()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Distribution);

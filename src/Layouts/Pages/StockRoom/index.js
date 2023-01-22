@@ -219,7 +219,8 @@ const Stock = (props) => {
       setDataSource([...originalSource]);
     } else {
     const temp = [...originalSource];
-    let found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1);
+    console.log('[Tempt]',temp);
+    let found = temp.filter( data => data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1 || (data.vendor &&data.vendor.toLowerCase().indexOf(keyword.toLowerCase()) !== -1));
     grandTotal = 0.0;
       const grands = found.map(map => map.worth);
       grands.forEach(g => {

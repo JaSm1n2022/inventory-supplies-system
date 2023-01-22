@@ -11,7 +11,7 @@ export default function PrintComponent(props) {
       <>
         <div>
           {/* button to trigger printing of target component */}
-          <ReactToPrint
+      <ReactToPrint
             trigger={() => <Button variant="contained" color="primary">Print</Button>}
             content={() => componentRef}
           />

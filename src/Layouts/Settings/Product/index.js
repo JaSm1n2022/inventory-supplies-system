@@ -1,5 +1,5 @@
 
-import { Button,Grid, Typography } from "@mui/material";
+import { Button,CircularProgress,Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import DataHandler from "./DataHandler";
 import FilterTable from "./FilterTable";
@@ -18,10 +18,13 @@ import { attemptToCreateProduct, attemptToDeleteProduct, attemptToFetchProduct, 
 import Helper from "../../../utils/helper";
 import InventoryTable from "../../../Common/components/inventorySystem/InventoryTable";
 import ActionsFunction from "../../../Common/components/inventorySystem/ActionsFunction";
+import { attemptToCreateStock, resetCreateStockState } from "../../../store/actions/stockAction";
+import { stockCreateStateSelector } from "../../../store/selectors/stockSelector";
 
 let originalSource = [];
-
+let forCreateStock = undefined;
 let grandTotal = 0;
+let isListDone = false;
 function payloadHandler() {
   /*
   const payload = {
@@ -88,6 +91,7 @@ const Product = (props) => {
   console.log('[props.Products]', props.products);
   if (isProductsCollection && props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
     grandTotal = 0.0;
+    isListDone = true;
     let source = props.products.data;
     if (source && source.length) {
       source = DataHandler.mapData(source);
@@ -141,6 +145,23 @@ const Product = (props) => {
 
     };
     if (mode === 'create') {
+
+      forCreateStock = {
+        created_at: new Date(),
+        item: payload.item,
+        dimension: payload.dimension,
+        size: payload.size,
+        description: payload.description,
+        qty_on_hand: 0,
+        incoming_qty: 0,
+        projected_qty: 0,
+        incoming_order_at: new Date(),
+        category: payload.categoryName,
+        additional_info: '',
+        comments: '',
+        vendor: payload.vendorName
+  
+      };
       props.createProduct(params);
 
     } else if (mode === 'edit') {
@@ -154,7 +175,12 @@ const Product = (props) => {
 
   }
   console.log('[Is Create Product Collection]', props.createProductState);
+  if(props.createStockState && props.createStockState.status === ACTION_STATUSES.SUCCEED) {
+    props.resetCreateStock();
+  }
+  
   if (isCreateProductCollection && props.createProductState && props.createProductState.status === ACTION_STATUSES.SUCCEED) {
+    console.log('[Product Id]',props.createProductState.data,forCreateStock);
     setIsCreateProductCollection(false);
     props.listProducts();
 
@@ -166,6 +192,7 @@ const Product = (props) => {
   }
   if (isDeleteProductCollection && props.deleteProductState && props.deleteProductState.status === ACTION_STATUSES.SUCCEED) {
     setIsDeleteProductCollection(false);
+    isListDone = false;
     props.listProducts();
 
   }
@@ -179,6 +206,7 @@ const Product = (props) => {
     const found = temp.filter( data => (data.description && data.description.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     || (data.item && data.item.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     || (data.category && data.category.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
+    || (data.vendor && data.vendor.toLowerCase().indexOf(keyword.toLowerCase()) !== -1)
     );
     console.log('[Keyword 2]',found);
    
@@ -243,7 +271,10 @@ const Product = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container style={{paddingTop:12}}>
+      {!isListDone &&
+      <div><CircularProgress size={20}>Loading...</CircularProgress></div>
+      }
+      <Grid container style={{paddingTop:12,display:isListDone ? '': 'none'}}>
         <Grid container justifyContent="space-between">
           <div>
             <Typography variant="h6">PRODUCT MANAGEMENT</Typography>
@@ -308,9 +339,11 @@ const Product = (props) => {
           <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
         </Grid>
       </Grid>
+      
       {isFormModal &&
         <ProductForm createProductHandler={createProductHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
+      
     </React.Fragment>
   )
 }
@@ -318,8 +351,8 @@ const mapStateToProps = store => ({
   products: productListStateSelector(store),
   createProductState: productCreateStateSelector(store),
   updateProductState: productUpdateStateSelector(store),
-  deleteProductState: productDeleteStateSelector(store)
-
+  deleteProductState: productDeleteStateSelector(store),
+  createStockState: stockCreateStateSelector(store)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -330,7 +363,9 @@ const mapDispatchToProps = dispatch => ({
   updateProduct: (data) => dispatch(attemptToUpdateProduct(data)),
   resetUpdateProduct: () => dispatch(resetUpdateProductState()),
   deleteProduct: (data) => dispatch(attemptToDeleteProduct(data)),
-  resetDeleteProduct: () => dispatch(resetDeleteProductState())
+  resetDeleteProduct: () => dispatch(resetDeleteProductState()),
+  createStock: (data) => dispatch(attemptToCreateStock(data)),
+  resetCreateStock: () => dispatch(resetCreateStockState()),
 
 });
 

@@ -174,8 +174,16 @@ function DistributionForm(props) {
             component: 'textfield',
             placeholder: 'Description',
             label: 'Description',
-            name: 'description',
-            disabled : true
+            name: 'description'
+            
+        },
+        {
+            id: 'size',
+            component: 'textfield',
+            placeholder: 'Size',
+            label: 'Size',
+            name: 'size'
+            
         },
         {
             id: 'orderQty',
@@ -216,7 +224,7 @@ function DistributionForm(props) {
     }, []);
     useEffect(() => {
         console.log('[Props Distribution]',props);
-        if(props.generalInfo) {
+        if(props.generalInfo && props.module === 'multiple') {
             console.log('[Props Distribution2]',props.generalInfo);
             const gen = {...props.generalInfo};
             gen.patientName = gen.patient?.name;
@@ -227,8 +235,7 @@ function DistributionForm(props) {
             gen.orderDt = new Date();
             setGeneralForm(gen);
             setDetailForm(props.detailInfo);
-        } else 
-        if (props.item) {
+        } else if (props.item) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
             generalFm.orderDt = `${generalFm.order_at} 00:00`;
@@ -321,15 +328,17 @@ function DistributionForm(props) {
             }
             console.log('[source input val2]',val);
             const qtyOnHand = props.stockList.find(stock => stock.productId === source.productId).qty_on_hand;
-            const calc = parseInt(qtyOnHand,10) - parseInt(val,10);
+            const calc = parseInt(qtyOnHand|| 0,10) - parseInt(val,10);
             source.adjustedQty = val;
-            source.qtyOnHand = qtyOnHand;
+            source.qtyOnHand = qtyOnHand || 0;
+            if(val > 0) {
             if(calc > 0) {
                 
-                source.stockStatus = `Qty On Hand : ${qtyOnHand} ( In Stock )`;
+                source.stockStatus = `Qty On Hand : ${qtyOnHand||0} ( In Stock )`;
             } else {
-                source.stockStatus = `Qty On Hand: ${qtyOnHand}  ( Out of Stock)`;
+                source.stockStatus = `Qty On Hand: ${qtyOnHand || 0}  ( Out of Stock)`;
             }
+        }
         }
         setIsRefresh(!isRefresh);
 
@@ -370,6 +379,7 @@ function DistributionForm(props) {
         source.vendor = item.vendor || '-';
         const productInfo = props.productList.find(product => product.id === item.productId);
         if(productInfo) {
+        source.size= productInfo.size;
         source.unitDistribution = productInfo.unit_distribution;
         source.price_per_pcs = productInfo.price_per_pcs;
         source.search.shortDescription = productInfo.short_description;
@@ -474,7 +484,7 @@ function DistributionForm(props) {
                     <Grid container spacing={1} direction="row">
                         {general.map(item => {
                             return (
-                                <Grid item xs={4}>
+                                <Grid item xs={3}>
                                     {item.component === 'textfield' ?
                                         <React.Fragment>
                                             <RegularTextField {...item} value={generalForm[item.name]} onChange={inputGeneralHandler} />
@@ -532,7 +542,7 @@ function DistributionForm(props) {
                                     
                                     </div>
                                  
-                                        <div style={{width:1000}}>
+                                        <div style={{width:300}}>
                                         <SingleWithClearAutoComplete
                                             disabled={props.mode && props.mode === 'view' ? true : false}
                                             source={item}
@@ -543,24 +553,27 @@ function DistributionForm(props) {
                                             options={[...props.stockList]}
                                         />
                                         </div>
-                                       
-
+                                        <div style={{width:400}}>
+                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'description')} value={item['description']||'-'} onChange={inputDetailHandler} />
+                                        </div>
+                                        <div style={{width:120}}>
+                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'size')} value={item['size']||'-'} onChange={inputDetailHandler} />
+                                        </div>
+                                        <div style={{width:120}}>
+                                        <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
+                                        </div>
+                                        <div style={{width:120}}>
+                                        <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']}/>
+                                        </div>
+                                        <div style={{width:120}}>
+                                        <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
+                                        </div>
                                     </div>
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'description')} value={item['description']||'-'} onChange={inputDetailHandler} />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']}/>
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
-                                </Grid>
-                                {item.stockStatus &&
+                              
+                               
+                                {item.stockStatus && item.orderQty > 0 &&
                                 <Grid item xs={12} >
                                 <div id="in-stock" style={{borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8,paddingBottom:2 }}>
 					

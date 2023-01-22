@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 */
 
 export default function RegularTextField(props) {
-  const { tooltiptext, tooltipPlacement,id, source, onChange, variant, label, isError, type, value, errorMsg, readonly, name, placeholder, border, background, disabled, size, height } = props;
+  const { tooltiptext, tooltipPlacement,id, source, onChange, variant, label, isError, type, value, errorMsg, readonly, name, placeholder, border, background, disabled, size } = props;
   const classes = useStyles(props);
   let colorBkg = background || '';
   colorBkg = disabled ? '#e9ecef' : colorBkg;
@@ -53,6 +53,7 @@ export default function RegularTextField(props) {
     <TextField
       error={isError || false}
       id={id || 'txt-fld'}
+      
       disabled={disabled || false}
       type={type || "text"}
       label={isError ? 'Error' : topLabel ? <label hmtlfor="" style={{ fontSize: '10pt' }}>{topLabel}</label> : ''}
@@ -76,6 +77,7 @@ export default function RegularTextField(props) {
           marginLeft: '0',
           marginRight: '0',
           height:'38px',
+
 
           background: colorBkg
 

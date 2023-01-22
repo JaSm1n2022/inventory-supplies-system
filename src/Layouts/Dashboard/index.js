@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab, AppBar, CircularProgress, Divider, Paper, Table, TableHead, TableRow, TableContainer, TableCell, TableBody, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Avatar } from '@mui/material';
-import ClientPieChart from './components/ClientPieChart';
+import { Grid, Box, Typography, Tabs, Tab,  CircularProgress, Divider,   FormControl, FormLabel,Radio, } from '@mui/material';
+
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
 import { attemptToFetchPatient, resetFetchPatientState } from '../../store/actions/patientAction';
@@ -26,7 +26,7 @@ import { stockListStateSelector } from '../../store/selectors/stockSelector';
 
 import SupplyPlot from './components/SupplyPlot';
 import CardTransaction from './components/CardTransaction';
-import PrintChart from './components/PrintChart';
+import PrintReport from './components/PrintReport';
 
 
 
@@ -921,23 +921,14 @@ const Dashboard = (props) => {
                 wrapped
                 {...a11yProps('one')}
               />
-              <Tab value="two" style={{ fontSize: 14 }} label="TOTAL EXPENSES VS BUDGET" {...a11yProps('two')} />
+              <Tab value="two" style={{ fontSize: 14 }} label="SUPPLIES TRANSACTION PAYMENTS" {...a11yProps('two')} />
               <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
               <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
             </Tabs>
 
+            {/* Client Expenses Report */}
             <TabPanel value={value} index="one">
               <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
-                <Grid container style={{ paddingBottom: 20 }}>
-                  <Typography variant="h5">Client's Estimated Expenses Report</Typography>
-                  &nbsp;
-                  <div style={{ paddingTop: 4 }}>
-                    <Typography variant="body1">(excluding tax & shipping)</Typography>
-                  </div>
-
-                </Grid>
-                
-
                 <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
                   <div style={{ display: 'flex', gap: 10 }}>
 
@@ -966,46 +957,22 @@ const Dashboard = (props) => {
                   }} orientation="horizontal" flexItem />
                 </Grid>
                 <Grid container direction="row">
-                <PrintChart clientExpensesAmt={`$${parseFloat(patientGrandTotal || 0.0).toFixed(2)}`} patientDashboard={patientDashboard} numberActive={numberActive} numberInactive={numberInactive}/>
+                <PrintReport source={'clientExpensesReport'} clientExpensesAmt={`$${parseFloat(patientGrandTotal || 0.0).toFixed(2)}`} patientDashboard={patientDashboard} numberActive={numberActive} numberInactive={numberInactive} dateFrom={dateFrom} dateTo={dateTo}/>
                 </Grid>
               </Grid>
             </TabPanel>
+
+
             <TabPanel value={value} index="two">
               <Grid container direction="row">
-                <Grid item xs={12}>
-                  <Typography variant="h4">{`Total Expenses : $${parseFloat(providerDashboard.expenses).toFixed(2)}`}</Typography>
-
-                </Grid>
-                <Grid item xs={6} style={{ paddingTop: 20 }}>
-                  <div>
-                    <Typography variant="h5">Distribution By Category</Typography>
-
-                    <Typography variant="h6">{`Office Supply Expenses - $${parseFloat(transactionDashboard.office).toFixed(2)}`}</Typography>
-                    <Typography variant="h6">{`Client Supply Expenses - $${parseFloat(transactionDashboard.client).toFixed(2)}`}</Typography>
-
-                  </div>
-                  <div>
-                    <GeneralChart labels={['OFFICE', 'PATIENTS']} series={transactionDashboard.series} />
-                  </div>
-                </Grid>
-                <Grid item xs={6} style={{ paddingTop: 20 }}>
-                  <div>
-                    <Typography variant="h5">Distribution By Provider/Seller</Typography>
-
-                    <Typography variant="h6">{`Amazon Expenses - $${parseFloat(providerDashboard.amazon).toFixed(2)}`}</Typography>
-                    <Typography variant="h6">{`Medline Expenses - $${parseFloat(providerDashboard.medline).toFixed(2)}`}</Typography>
-                    <Typography variant="h6">{`Mckesson Expenses - $${parseFloat(providerDashboard.mckesson).toFixed(2)}`}</Typography>
-                    <Typography variant="h6">{`Other Provider Expenses - $${parseFloat(providerDashboard.other).toFixed(2)}`}</Typography>
-                  </div>
-                  <div>
-                    <GeneralChart labels={['AMAZON', 'MEDLINE', 'MCKESSON', 'OTHER']} series={providerDashboard.series} />
-                  </div>
-                </Grid>
+              <PrintReport source={'supplyExpensesReport'} transactionDashboard={transactionDashboard}  providerDashboard={providerDashboard} dateFrom={dateFrom} dateTo={dateTo}/>
+               
               </Grid>
             </TabPanel>
+
+            {/* Card History Report */}
             <TabPanel value={value} index="three">
-              
-              <CardTransaction details={cardTransaction} dateFrom={dateFrom} dateTo={dateTo}/>
+                <PrintReport source={'cardHistoryReport'} details={cardTransaction} dateFrom={dateFrom} dateTo={dateTo}/>
             </TabPanel>
             <TabPanel value={value} index="four">
               <FormControl component="fieldset">

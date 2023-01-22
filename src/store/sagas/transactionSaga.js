@@ -30,7 +30,7 @@ function* listTransaction(filter) {
 function* CreateTransaction(rqst) {
   try {
     console.log('[CreateTransactions]',rqst.payload);
-    let { error } = yield supabaseClient.from('transactions').insert([rqst.payload], {
+    let { error } = yield supabaseClient.from('transactions').insert(rqst.payload, {
       returning: 'minimal' // Don't return the value after inserting
     });
 
@@ -39,6 +39,7 @@ function* CreateTransaction(rqst) {
       yield put(setCreateTransactionFailure(`[create Transaction] : ${error.toString()}`));
       throw error;
     } 
+    TOAST.ok('Transaction Successfully Saved.');
     yield put(setCreateTransactionSucceed({success : true}));
     
   } catch (error) {
@@ -60,6 +61,7 @@ function* UpdateTransaction(rqst) {
       yield put(setUpdateTransactionFailure(`[update Transaction] : ${error.toString()}`));
       throw error;
     } 
+    TOAST.ok('Transaction Successfully Updated.');
     yield put(setUpdateTransactionSucceed({success : true}));
     
   } catch (error) {
@@ -81,6 +83,7 @@ function* DeleteTransaction(rqst) {
       yield put(setDeleteTransactionFailure(`[delete Transaction] : ${error.toString()}`));
       throw error;
     } 
+    TOAST.ok('Transaction Successfully Deleted.');
     yield put(setDeleteTransactionSucceed({success : true}));
     
   } catch (error) {

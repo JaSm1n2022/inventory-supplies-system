@@ -58,7 +58,7 @@ const FilterTable = (props) => {
 			setIsDateCustom(item.value === 'custom' || item.dateRange ? true : false);
 			setDateSelected(item);
             if(item.value !== 'custom') {
-            props.filterByDateHandler({from : data.from,to:data.to});
+           props.filterByDateHandler({from : data.from,to:data.to});
             }
     }
 

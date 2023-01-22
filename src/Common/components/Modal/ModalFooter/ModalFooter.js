@@ -7,7 +7,7 @@ import styles from "./ModalFooter.module.css";
 // the bottom of a modal.
 
 const ModalFooter = (props) => {
-  const {actions,isSubmitDisabled} = props;
+  const {actions,isSubmitDisabled,templateType} = props;
   const renderActions = () => {
     if (actions !== null && actions.length > 0) {
       return actions.map((action,i) => {
@@ -25,7 +25,10 @@ const ModalFooter = (props) => {
             disabled={action.event === 'submit' && isSubmitDisabled ? true : false}
             variant="contained"
           >
-            {action.title}
+            {templateType && templateType === 'edit'  && action.event === 'submit' ? 
+            'Update' : 
+            action.title
+          }
           </Button>
         );
       });

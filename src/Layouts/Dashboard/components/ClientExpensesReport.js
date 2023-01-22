@@ -6,10 +6,10 @@ import ClientPieChart from "./ClientPieChart";
 
 
  
-class ComponentToPrint extends React.Component {
-  
+class ClientExpensesReport extends React.Component {
+
     render() {
-        const {patientDashboard,numberActive,numberInactive,clientExpensesAmt} = this.props;
+        const {patientDashboard,numberActive,numberInactive,clientExpensesAmt,dateFrom,dateTo} = this.props;
         
         
         console.log('[Details]',patientDashboard);
@@ -17,16 +17,16 @@ class ComponentToPrint extends React.Component {
             <React.Fragment>
                  <Grid container style={{ width: '1200px', height: '800px', paddingLeft: 20 }}>
                      <Grid item xs={12} align="center" style={{paddingTop:40}}>
-                     <Typography variant="h5">Client Expenses report from 2012-23-10 to 2012-14-10</Typography>
+                     <Typography variant="h5">{`Client Expenses Report From ${dateFrom} To ${dateTo}`}</Typography>
                      </Grid>
                      <Grid item xs={12} align="center">
                          <div style={{display:'inline-flex',gap:30}}>
-                     <Typography variant="body">Active : {numberActive}</Typography>
-                     <Typography variant="body" style={{color:'red',fontWeight:'bold'}}>InActive : {numberInactive}</Typography>
+                     <Typography variant="body">Active Patients: {numberActive}</Typography>
+                     <Typography variant="body" style={{color:'red',fontWeight:'bold'}}>InActive Patients: {numberInactive}</Typography>
                      </div>
                      </Grid>
                      <Grid item xs={12} align="center" style={{paddingBottom:60}}>
-                     <Typography variant="h6" style={{color:'blue',fontWeight:'bold'}}>Grand Total : {clientExpensesAmt}</Typography>
+                     <Typography variant="h6" style={{color:'blue',fontWeight:'bold'}}>Grand Total : {clientExpensesAmt} <Typography variant="bold2" style={{color:'gray',fontWeight:'bold'}}>&nbsp;(excluding tax & shipping)</Typography></Typography>
                      </Grid>
                      
             {patientDashboard.length && patientDashboard.map((map,index) => {
@@ -63,4 +63,4 @@ class ComponentToPrint extends React.Component {
         )
     }
 }
-export default ComponentToPrint;
+export default ClientExpensesReport;

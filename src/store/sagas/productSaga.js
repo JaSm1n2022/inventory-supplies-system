@@ -30,15 +30,17 @@ function* listProduct(filter) {
 function* createProduct(rqst) {
   try {
     console.log('[createProducts]',rqst.payload);
-    let { error } = yield supabaseClient.from('products').insert([rqst.payload], {
+    let result = yield supabaseClient.from('products').insert([rqst.payload], {
       returning: 'minimal' // Don't return the value after inserting
     });
-
+    console.log('{final return}',result);
+    const {error} = result;
     if (error) {
       console.log(`[create Product] : ${error.toString()}`)
       yield put(setCreateProductFailure(`[create Product] : ${error.toString()}`));
       throw error;
     } 
+    TOAST.ok('Product Successfully Saved.');
     yield put(setCreateProductSucceed({success : true}));
     
   } catch (error) {
