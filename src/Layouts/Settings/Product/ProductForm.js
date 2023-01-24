@@ -153,8 +153,8 @@ function ProductForm(props) {
         {
             id: 'flavor',
             component: 'textfield',
-            placeholder: 'Flavor',
-            label: 'Flavor',
+            placeholder: 'Flavor/Color',
+            label: 'Flavor/Color',
             name: 'flavor',
             disabled: props.mode && props.mode === 'view' ? true : false
             

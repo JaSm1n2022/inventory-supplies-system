@@ -188,8 +188,8 @@ function DistributionForm(props) {
         {
             id: 'flavor',
             component: 'textfield',
-            placeholder: 'Flavor',
-            label: 'Flavor',
+            placeholder: 'Flavor/Color',
+            label: 'Flavor/Color',
             name: 'flavor'
             
         },
