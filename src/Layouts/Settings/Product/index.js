@@ -132,6 +132,7 @@ const Product = (props) => {
       qty_uom: payload.uom,
       qty: payload.qty,
       size: payload.size,
+      flavor: payload.flavor,
       dimension: payload.dimension,
       item: payload.item,
       description: payload.description,
@@ -141,7 +142,7 @@ const Product = (props) => {
       count: payload.count,
       unit_distribution : payload.unit,
       short_description : payload.shortDescription,
-      status : payload.status === 'Active' ? true : false
+      status : payload.status && payload.status.name === 'Active' ? true : false
 
     };
     if (mode === 'create') {

@@ -14,6 +14,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 100, name: 'qty_uom', header: 'Qty Uom' },
       { defaultFlex: 1, minWidth: 100, name: 'count', header: 'Pcs/Qty Uom' },
       { defaultFlex: 1, minWidth: 100, name: 'size', header: 'Size' },
+      { defaultFlex: 1, minWidth: 100, name: 'flavor', header: 'Flavor' },
       { defaultFlex: 1, minWidth: 120, name: 'dimension', header: 'Dimension' },
       { defaultFlex: 1, minWidth: 120, name: 'unit_price', header: 'Unit Price' },
       { defaultFlex: 1, minWidth: 120, name: 'price_per_pcs', header: 'Price Per Pcs' },

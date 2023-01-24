@@ -427,7 +427,8 @@ export const countries =
     'Bed Pan',
     'Condom Catheter',
     'Injection',
-    'Bed Alarm'
+    'Bed Alarm',
+    'Covid-19 Test'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

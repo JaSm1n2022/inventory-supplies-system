@@ -151,6 +151,15 @@ function ProductForm(props) {
             
         },
         {
+            id: 'flavor',
+            component: 'textfield',
+            placeholder: 'Flavor',
+            label: 'Flavor',
+            name: 'flavor',
+            disabled: props.mode && props.mode === 'view' ? true : false
+            
+        },
+        {
             id: 'dimension',
             component: 'textfield',
             placeholder: 'Dimension',

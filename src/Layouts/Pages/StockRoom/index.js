@@ -94,6 +94,7 @@ const Stock = (props) => {
 
   if (isProductCollection && props.products && props.products.status === ACTION_STATUSES.SUCCEED) {
     productList = [...props.products.data];
+    productList = productList.filter(f => f.status === true);
     productList.forEach(item => {
       item.name = item.description;
       item.value = item.description;

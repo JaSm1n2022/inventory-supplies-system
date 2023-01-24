@@ -251,9 +251,18 @@ const Distribution = (props) => {
     isStockListDone = true;
     props.resetListStocks();
   }
-  console.log('[props.distributions]', props.distribution);
-  if (isDistributionsCollection && props.distributions && props.distributions.status === ACTION_STATUSES.SUCCEED) {
+  console.log('[props.distributions]', props.distributions,isProductListDone,productList);
+  if (isProductListDone && isDistributionsCollection && props.distributions && props.distributions.status === ACTION_STATUSES.SUCCEED) {
     let source = props.distributions.data;
+    for(const src of source) {
+      const prodDetails = productList.find(pr => pr.id === src.productId);
+      if(prodDetails) {
+        src.shortDescription = prodDetails.short_description;
+        src.size = prodDetails.size;
+        src.flavor = prodDetails.flavor;
+      
+      }
+    }
     if (source && source.length) {
       source = DataHandler.mapData(source);
 
@@ -772,14 +781,14 @@ const Distribution = (props) => {
   console.log('[Create Template]', props.createTemplateState);
   return (
     <React.Fragment>
-      {!isAllFetchDone ?
+      {!isAllFetchDone  &&
         <div align="center" style={{ paddingTop: '100px' }}>
           <br />
           <CircularProgress />&nbsp;<span>Loading</span>...
         </div>
-        :
+}
         <React.Fragment>
-          <Grid container>
+          <Grid container style={{display:isAllFetchDone  ? '' :'none'}}>
             <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
               <div>
                 <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
@@ -957,7 +966,7 @@ const Distribution = (props) => {
             </Grid>
           </Grid>
         </React.Fragment>
-      }
+      
       {isFormModal &&
         <Form module={module} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }

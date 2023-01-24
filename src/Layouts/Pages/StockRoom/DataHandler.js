@@ -27,11 +27,11 @@ class DataHandler {
     
     items.forEach(item => {
       item.created_at = moment(item.created_at).format('YYYY-MM-DD');
-
+      console.log('[item.productId]',item.productId,products);
       const productInfo = products.find(p => p.id === item.productId);
-     
+      if(productInfo) {
       item.worth = parseFloat(productInfo.price_per_pcs * item.qty_on_hand).toFixed(2);
-     
+      }
     });
 
   return items;
