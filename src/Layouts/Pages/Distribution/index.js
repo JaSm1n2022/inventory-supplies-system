@@ -468,6 +468,12 @@ const Distribution = (props) => {
       console.log('[params]', params);
       finalPayload.push(params);
     }
+
+
+    singlePrintProcessHandler(general,details);
+
+
+
     console.log('[For Stock Updates]', forStockUpdates);
     if (mode === 'create') {
       console.log('[final payload]', finalPayload);
@@ -625,6 +631,46 @@ const Distribution = (props) => {
   }
   if (isTemplateListDone && isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
+  }
+  const singlePrintProcessHandler =  (general,details) => {
+    multiPatients = [];
+    let generalData = {};
+      let detailsData = [];
+      let maxCnt = 1;
+      for (const ea of details) {
+         if (maxCnt % (LIMIT_ITEM_PRINT + 1) === 0) {
+          multiPatients.push({
+            general: generalData,
+            details: detailsData
+          });
+          generalData = {};
+          detailsData = [];
+          }
+          generalData.patient = general.patient;
+          generalData.patientName = general.patientName;
+          generalData.facility = general.patient? general.patient.place_of_service : '';
+          generalData.requestor = general.requestor;
+          generalData.requestorName = ea.requestorName;
+          const prod = productList.find(p => p.id === ea.productId);
+          detailsData.push({
+            search: { ...prod },
+            ...prod,
+          orderQty: ea.order_qty,
+          productId: ea.productId,
+          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
+          });
+        maxCnt++;
+      }
+      multiPatients.push({
+        general: generalData,
+        details: detailsData
+      });
+  }
+  const printPatientOrdersHandler = (general, details) => {
+   
+    singlePrintProcessHandler();
+    setIsFormModal(false);
+    setIsPrintForm(true);
   }
   const printAllOrdersHandler = () => {
     const selectedData = dataSource.filter((r) => r.isChecked);
@@ -968,7 +1014,7 @@ const Distribution = (props) => {
         </React.Fragment>
       
       {isFormModal &&
-        <Form module={module} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+        <Form module={module} printPatientOrdersHandler={printPatientOrdersHandler} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
       {isTemplateFormModal &&
         <TemplateForm useTemplateHandler={useTemplateHandler} deleteTemplateHandler={deleteTemplateHandler} templateList={templateList} manageTemplateHandler={manageTemplateHandler} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isTemplateFormModal} isEdit={false} item={item} onClose={closeTemplateFormModalHandler} />

@@ -268,7 +268,8 @@ function DistributionForm(props) {
         }
     }, [props.item,props.generalInfo]);
     const printHandler = () => {
-        setIsPrintFrom(true);
+        props.printPatientOrdersHandler(generalForm,detailForm);
+
         console.log('[Print Handler]',generalForm,detailForm);
     }
     const validateFormHandler = () => {
@@ -598,12 +599,10 @@ function DistributionForm(props) {
                         )
                     })}
 
-                    {detailForm && detailForm.length && detailForm.length < LIMIT_ITEM_PRINT &&
                     <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>
                     
-                    }
 
                 </div>
                 <br />
