@@ -6,10 +6,11 @@ class DataHandler {
       { width: 220, name: 'actions', header: 'Actions' },
       { defaultFlex: 1, minWidth: 120, name: 'order_at', header: 'Order Date' },
       { defaultFlex: 1, minWidth: 220, name: 'patient_name', header: 'Patient Name' },
-      { defaultFlex: 1, minWidth: 320, name: 'shortDescription', header: 'Short Description' },
+      { defaultFlex: 1, minWidth: 280, name: 'shortDescription', header: 'Short Description' },
    
       { defaultFlex: 1, minWidth: 100, name: 'size', header: 'Size' },
       { defaultFlex: 1, minWidth: 100, name: 'flavor', header: 'Flavor' },
+      { defaultFlex: 1, minWidth: 160, name: 'order_qty', header: 'Ordered Qty' },
      { defaultFlex: 1, minWidth: 240, name: 'description', header: 'Description' },
       { defaultFlex: 1, minWidth: 200, name: 'category', header: 'Category' },
       { defaultFlex: 1, minWidth: 160, name: 'order_qty', header: 'Ordered Qty' },

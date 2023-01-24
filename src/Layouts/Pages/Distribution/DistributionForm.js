@@ -186,6 +186,14 @@ function DistributionForm(props) {
             
         },
         {
+            id: 'flavor',
+            component: 'textfield',
+            placeholder: 'Flavor',
+            label: 'Flavor',
+            name: 'flavor'
+            
+        },
+        {
             id: 'orderQty',
             component: 'textfield',
             placeholder: 'Order Qty in Pcs',
@@ -380,6 +388,7 @@ function DistributionForm(props) {
         const productInfo = props.productList.find(product => product.id === item.productId);
         if(productInfo) {
         source.size= productInfo.size;
+        source.flavor=productInfo.flavor;
         source.unitDistribution = productInfo.unit_distribution;
         source.price_per_pcs = productInfo.price_per_pcs;
         source.search.shortDescription = productInfo.short_description;
@@ -556,13 +565,16 @@ function DistributionForm(props) {
                                         <div style={{width:400}}>
                                         <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'description')} value={item['description']||'-'} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:120}}>
+                                        <div style={{width:60}}>
                                         <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'size')} value={item['size']||'-'} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:120}}>
+                                        <div style={{width:140}}>
+                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'flavor')} value={item['flavor']||'-'} onChange={inputDetailHandler} />
+                                        </div>
+                                        <div style={{width:100}}>
                                         <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:120}}>
+                                        <div style={{width:60}}>
                                         <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']}/>
                                         </div>
                                         <div style={{width:120}}>
