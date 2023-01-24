@@ -354,6 +354,7 @@ export const countries =
     'Thermometer',
     'Bandages', 
     'Gloves',
+    'Hydration Drink',
     'Shampoo',
     'Jelly',
     'Food Thickener',
@@ -425,7 +426,8 @@ export const countries =
     'Urine Drainage Bag',
     'Bed Pan',
     'Condom Catheter',
-    'Injection'
+    'Injection',
+    'Bed Alarm'
   ]
 
   export const SUPPLY_PAYMENT_METHOD = [

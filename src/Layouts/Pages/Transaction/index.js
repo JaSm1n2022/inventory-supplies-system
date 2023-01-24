@@ -64,7 +64,7 @@ const Transaction = (props) => {
   }
 
   useEffect(() => {
-  
+
     if (!isTransactionsCollection && props.transactions && props.transactions.status === ACTION_STATUSES.SUCCEED) {
       props.resetlistTransactions();
 
@@ -105,7 +105,7 @@ const Transaction = (props) => {
     isProductDone = true;
     productList = [];
     productList = props.products.data;
-    productList = productList.filter(p => p.status);
+    //productList = productList.filter(p => p.status);
     productList.forEach(item => {
 
       item.name = item.description;
@@ -121,13 +121,13 @@ const Transaction = (props) => {
   const filterByDateHandler = (dates) => {
     setDateTo(dates.to);
     setDateFrom(dates.from);
-  isTransactionDone = false;
+    isTransactionDone = false;
     props.listTransactions({ from: dates.from, to: dates.to });
   }
   console.log('[props.transactions]', props.transactions);
   if (props.stocks && props.stocks.status === ACTION_STATUSES.SUCCEED) {
-    if(props.stocks.data && props.stocks.data.length) {
-    stockList = [...props.stocks.data];
+    if (props.stocks.data && props.stocks.data.length) {
+      stockList = [...props.stocks.data];
     }
     isStockDone = true;
     props.resetListStocks();
@@ -229,20 +229,21 @@ const Transaction = (props) => {
     console.log('[selected Data Status]', selectedData, stat);
     const forUpdateStatus = [];
     const forStockUpdates = [];
-   
+
 
     selectedData.forEach(sel => {
-      if(stockList && stockList.length && sel.product_id && stat.toLowerCase() === 'delivered' && stat !== sel.status) {
-      const stock = stockList.find(s => s.productId === sel.product_id);
-      console.log('[stocks]',stock);
-      let qty = parseInt(sel.qty, 10);
+      if (stockList && stockList.length && sel.product_id && stat.toLowerCase() === 'delivered' && stat !== sel.status) {
+        console.log('[selMe]', sel);
+        const stock = stockList.find(s => s.productId === sel.product_id);
+        console.log('[stocks]', stock);
+        let qty = parseInt(sel.qty, 10);
 
-      forStockUpdates.push(
-        {
-          id: stock.id,
-          qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(qty, 10))
+        forStockUpdates.push(
+          {
+            id: stock.id,
+            qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(qty, 10))
 
-        });
+          });
       }
       forUpdateStatus.push({
         id: sel.id,
@@ -251,7 +252,7 @@ const Transaction = (props) => {
     })
     setAnchorEl(null);
     console.log('[forUpdateStatus]', forUpdateStatus);
-    if(forStockUpdates.length) {
+    if (forStockUpdates.length) {
       isUpdateStockDone = false;
       props.updateStock(forStockUpdates);
     }
@@ -280,7 +281,7 @@ const Transaction = (props) => {
     props.listTransactions({ from: dateFrom, to: dateTo });
 
   }
-  if(props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
+  if (props.updateStockState && props.updateStockState.status === ACTION_STATUSES.SUCCEED) {
     isUpdateStockDone = true;
     props.resetUpdateStock();
   }
@@ -366,19 +367,19 @@ const Transaction = (props) => {
 
   }
 
- if(!isTransactionDone || !isProductDone || !isStockDone || !isUpdateStockDone || !isUpdateTransactionDone) {
-   isFetchAllDone = false;
- } else {
-   isFetchAllDone = true;
- }
+  if (!isTransactionDone || !isProductDone || !isStockDone || !isUpdateStockDone || !isUpdateTransactionDone) {
+    isFetchAllDone = false;
+  } else {
+    isFetchAllDone = true;
+  }
 
   return (
     <React.Fragment>
       {!isFetchAllDone &&
-      <div><CircularProgress size={20} />Loading...</div>
-}
+        <div><CircularProgress size={20} />Loading...</div>
+      }
 
-      <Grid  container style={{ display:isFetchAllDone ? '': 'none',paddingLeft: 10, paddingRight: 10 }}>
+      <Grid container style={{ display: isFetchAllDone ? '' : 'none', paddingLeft: 10, paddingRight: 10 }}>
         <Grid container justifyContent="space-between">
           <div>
             <Typography variant="h6">Supply Order Transaction</Typography>
@@ -474,7 +475,7 @@ const Transaction = (props) => {
       
     
     }
-    {isFormModal &&
+      {isFormModal &&
         <TransactionForm productList={productList} createTransactionHandler={createTransactionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
     </React.Fragment>
