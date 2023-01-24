@@ -668,7 +668,7 @@ const Distribution = (props) => {
   }
   const printPatientOrdersHandler = (general, details) => {
    
-    singlePrintProcessHandler();
+    singlePrintProcessHandler(general,details);
     setIsFormModal(false);
     setIsPrintForm(true);
   }
