@@ -11,13 +11,13 @@ const useStyles = makeStyles({
         height: 32
     },
     tableRow2: {
-        height: 42
+        height: 32
     },
     tableCell: {
         padding: "0px 16px"
     }
 });
-let items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+let items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const TemplateMultiplePrint = (props) => {
     const [multiplePatients, setMultiplePatients] = useState([]);
     const [prepared, setPrepared] = useState('');

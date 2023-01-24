@@ -326,7 +326,7 @@ export const countries =
     'Bag'
     
   ]
-  export const LIMIT_ITEM_PRINT = 16;
+  export const LIMIT_ITEM_PRINT = 10;
   export const SUPPLY_VENDOR = [
     'Amazon',
     'Medline',
