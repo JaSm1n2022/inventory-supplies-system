@@ -260,7 +260,7 @@ const Distribution = (props) => {
         src.shortDescription = prodDetails.short_description;
         src.size = prodDetails.size;
         src.flavor = prodDetails.flavor;
-      
+        src.vendor = prodDetails.vendor;
       }
     }
     if (source && source.length) {
@@ -330,6 +330,7 @@ const Distribution = (props) => {
     forStockUpdates = [];
     console.log('[delete Distribution id]', id, data);
     const stock = stockList.find(s => s.productId === data.productId);
+    if(stock) {
     console.log('[delete distribution stock', stock);
     forStockUpdates.push(
       {
@@ -337,6 +338,7 @@ const Distribution = (props) => {
         qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(data.order_qty, 10))
 
       });
+    }
     props.deleteDistribution(id);
   }
 

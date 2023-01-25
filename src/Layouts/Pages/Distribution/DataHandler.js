@@ -11,6 +11,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 100, name: 'size', header: 'Size' },
       { defaultFlex: 1, minWidth: 100, name: 'flavor', header: 'Flavor/Color' },
       { defaultFlex: 1, minWidth: 160, name: 'order_qty', header: 'Ordered Qty' },
+      { defaultFlex: 1, minWidth: 160, name: 'vendor', header: 'Vendor' },
      { defaultFlex: 1, minWidth: 240, name: 'description', header: 'Description' },
       { defaultFlex: 1, minWidth: 200, name: 'category', header: 'Category' },
       { defaultFlex: 1, minWidth: 160, name: 'order_qty', header: 'Ordered Qty' },
@@ -22,7 +23,7 @@ class DataHandler {
       { defaultFlex: 1, minWidth: 200, name: 'requestor', header: 'Requested By' },
       { defaultFlex: 1, minWidth: 120, name: 'group_id', header: 'Group ID' }
       
-   
+      
       
     ]
   }

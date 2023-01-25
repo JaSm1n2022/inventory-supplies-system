@@ -8,16 +8,16 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
     tableRow: {
-        height: 24
+        height: 32
     },
     tableRow2: {
-        height: 24
+        height: 32
     },
     tableCell: {
         padding: "0"
     }
 });
-let items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+let items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9   ];
 const TemplateMultiplePrint = (props) => {
     const [multiplePatients, setMultiplePatients] = useState([]);
     const [prepared, setPrepared] = useState('');
@@ -32,6 +32,13 @@ const TemplateMultiplePrint = (props) => {
             return `${qty} Pc`;
         }
         return `${qty} ${unit}`;
+
+    }
+    const pcsHandler = (qty, unit) => {
+        if (unit && unit === 'Pcs' && qty < 2) {
+            return `Pc`;
+        }
+        return unit;
 
     }
     const makeCategoryShortHandler = (category, product) => {
@@ -128,7 +135,7 @@ const TemplateMultiplePrint = (props) => {
 
                                                         <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
                                                         <TableCell className={classes.tableCell} style={{ width: '75%', height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ width:'15%',height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
 
                                                     </TableRow>
                                                 </TableHead>
@@ -143,11 +150,11 @@ const TemplateMultiplePrint = (props) => {
                                                                     <TableCell className={classes.tableCell} style={{ fontSize:10,height: 12, border: 'solid 1px black' }} component="th" scope="row">
                                                                         {map + 1}
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:12,width:'75%',height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                                     {item.details && item.details.length && item.details.length > map ? item.details[map].search.shortDescription || item.details[map].search.short_description : ''}
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                       <small>{item.details && item.details.length && item.details.length > map ? unitDistributionHandler(item.details[map].orderQty, item.details[map].search.unitDistribution || item.details[map].search.unit_distribution || item.details[map].unit_distribution) : ''}</small> 
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:12,width:'15%',height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                       {item.details && item.details.length && item.details.length > map ? unitDistributionHandler(item.details[map].orderQty, item.details[map].search.unitDistribution || item.details[map].search.unit_distribution || item.details[map].unit_distribution) : ''}
                                                                     </TableCell>
 
                                                                 </TableRow>
@@ -251,12 +258,12 @@ const TemplateMultiplePrint = (props) => {
                                                 <TableHead>
                                                     <TableRow className={classes.tableRow}>
 
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Category</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ width: '60%', height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Size</TableCell>
-                                                        <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Vendor</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ fontSize:8,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">#</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Category</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ fontSize:11,width: '70%', height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Description</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ width: '10%',fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Units</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Size</TableCell>
+                                                        <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">Vendor</TableCell>
 
                                                     </TableRow>
                                                 </TableHead>
@@ -266,23 +273,23 @@ const TemplateMultiplePrint = (props) => {
                                                             <React.Fragment>
 
                                                                 <TableRow className={classes.tableRow}>
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                        <small>{map + 1}</small>
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:8,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                        {map + 1}
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                        <small>{item.details && item.details.length && item.details.length > map ? makeCategoryShortHandler(item.details[map].search.category, item.details[map].search.short_description) : ''}</small>
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                        {item.details && item.details.length && item.details.length > map ? makeCategoryShortHandler(item.details[map].search.category, item.details[map].search.short_description) : ''}
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                        <small>{item.details && item.details.length && item.details.length > map ? item.details[map].search.shortDescription || item.details[map].search.short_description : ''}</small>
+                                                                    <TableCell className={classes.tableCell} style={{ width: '70%',fontSize:11,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                        {item.details && item.details.length && item.details.length > map ? item.details[map].search.shortDescription || item.details[map].search.short_description : ''}
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
-                                                                        <small>{item.details && item.details.length && item.details.length > map ? unitDistributionHandler(item.details[map].orderQty, item.details[map].search.unitDistribution || '') : ''}</small>
+                                                                    <TableCell className={classes.tableCell} style={{width: '10%',height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                    <span>{item.details && item.details.length && item.details.length > map ? <span>{item.details[map].orderQty}<small style={{fontSize:8}}> {pcsHandler(item.details[map].orderQty,item.details[map].search.unitDistribution || item.details[map].search.unit_distribution || item.details[map].unit_distribution)}</small></span>: null}</span>
                                                                     </TableCell>
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                                         <small>{item.details && item.details.length && item.details.length > map ? item.details[map].search.size || '' : ''}</small>
                                                                     </TableCell>
 
-                                                                    <TableCell className={classes.tableCell} style={{ height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
+                                                                    <TableCell className={classes.tableCell} style={{ fontSize:10,height: 'auto !important', border: 'solid 1px black' }} component="th" scope="row">
                                                                         <small>{item.details && item.details.length && item.details.length > map ? item.details[map].search.vendor : ''}</small>
                                                                     </TableCell>
 
