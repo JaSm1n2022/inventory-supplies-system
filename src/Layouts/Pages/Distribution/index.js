@@ -635,6 +635,7 @@ const Distribution = (props) => {
     isAllFetchDone = true;
   }
   const singlePrintProcessHandler =  (general,details) => {
+    console.log('[Single Print]',general,details);
     multiPatients = [];
     let generalData = {};
       let detailsData = [];
@@ -657,7 +658,7 @@ const Distribution = (props) => {
           detailsData.push({
             search: { ...prod },
             ...prod,
-          orderQty: ea.order_qty,
+          orderQty: ea.orderQty || ea.order_qty,
           productId: ea.productId,
           unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
           });
