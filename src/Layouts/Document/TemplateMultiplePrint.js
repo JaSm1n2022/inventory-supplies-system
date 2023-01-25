@@ -166,7 +166,7 @@ const TemplateMultiplePrint = (props) => {
                                     </div>
                                 </Grid>
 
-                                <Grid key={`p3-${indx}`} item xs={12} spacing={2}>
+                                <Grid key={`p2-${indx}`} item xs={12} spacing={2}>
                                     <div style={{ display: 'inline-flex', gap: 10 }}>
                                         <img src={Hospice} alt="" style={{ height: '80px', width: '80px' }} />
                                         <div style={{ paddingTop: 20 }}>

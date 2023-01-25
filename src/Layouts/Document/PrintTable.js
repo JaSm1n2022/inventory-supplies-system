@@ -72,7 +72,7 @@ const PrintTable = props => {
             <ReactDataGrid
               idProperty="id"
               columns={columns}
-              style={{height:760}}
+              style={{height:640}}
               dataSource={dataSource}
             />
       

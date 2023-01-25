@@ -19,12 +19,12 @@ class DocumentHandler {
     }
     static adminColumns() {
         return [
-          {  width: 60, name: 'cnt', header: '#' },
-          { width: 80,  name: 'category', header: 'Category' },
-          { defaultFlex:1,  name: 'description', header: 'Description' },
-          {  width:80,name: 'units', header: 'Units' },
-          {  width:80,name: 'size', header: 'Size' },
-          {  width:80,name: 'vendor', header: 'Vendor' },
+          {  defaultFlex : 1, name: 'cnt', header: '#' },
+          { defaultFlex : 1,  name: 'category', header: 'Category' },
+          { defaultFlex : 1 ,name: 'description', header: 'Description' },
+          {  defaultFlex : 1,name: 'units', header: 'Units' },
+          {  defaultFlex : 1,name: 'size', header: 'Size' },
+          { defaultFlex : 1,name: 'vendor', header: 'Vendor' },
 
           
         ]
