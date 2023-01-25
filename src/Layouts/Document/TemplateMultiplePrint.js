@@ -127,7 +127,7 @@ const TemplateMultiplePrint = (props) => {
 
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
-                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={DocumentHandler.productItems(item.details)} />
+                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={[...DocumentHandler.productItems(item.details)]} />
                                         </div>
                                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
 
@@ -166,7 +166,7 @@ const TemplateMultiplePrint = (props) => {
                                     </div>
                                 </Grid>
 
-                                <Grid key={`p2-${indx}`} item xs={12} spacing={2}>
+                                <Grid key={`p3-${indx}`} item xs={12} spacing={2}>
                                     <div style={{ display: 'inline-flex', gap: 10 }}>
                                         <img src={Hospice} alt="" style={{ height: '80px', width: '80px' }} />
                                         <div style={{ paddingTop: 20 }}>
@@ -213,7 +213,7 @@ const TemplateMultiplePrint = (props) => {
 
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
-                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.adminColumns()} dataSource={DocumentHandler.productItems(item.details)} />
+                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.adminColumns()} dataSource={[...DocumentHandler.productItems(item.details)]} />
                                         </div>
                                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
 

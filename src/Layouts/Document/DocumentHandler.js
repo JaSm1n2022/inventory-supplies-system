@@ -9,6 +9,21 @@ class DocumentHandler {
         return `${qty} ${unit}`;
 
     }
+    static vendorHandler(vendor)  {
+        if(vendor && vendor.toLowerCase() === 'amazon') {
+            return 'AMZ';
+        } else if (vendor && vendor.toLowerCase() === 'medline') {
+            return 'MDL';
+        } else if (vendor && vendor.toLowerCase() === 'mckesson') {
+            return 'MKS';
+        } else if (vendor && vendor.toLowerCase() === 'walmart') {
+            return 'WLM';
+        } else {
+            return 'OTH';
+        }
+       
+
+    }
     static cnaColumns() {
       return [
         {  width: 60, name: 'cnt', header: '#' },
@@ -19,12 +34,12 @@ class DocumentHandler {
     }
     static adminColumns() {
         return [
-          {  defaultFlex : 1, name: 'cnt', header: '#' },
-          { defaultFlex : 1,  name: 'category', header: 'Category' },
-          { defaultFlex : 1 ,name: 'description', header: 'Description' },
-          {  defaultFlex : 1,name: 'units', header: 'Units' },
-          {  defaultFlex : 1,name: 'size', header: 'Size' },
-          { defaultFlex : 1,name: 'vendor', header: 'Vendor' },
+          { width:40, name: 'cnt', header: '#' },
+          {  width: 80,name: 'category', header: 'Category' },
+          { width:380,name: 'description', header: 'Description' },
+          {  width:100,name: 'units', header: 'Units' },
+          {  width:80,name: 'size', header: 'Size' },
+          { width:100,name: 'vendor', header: 'Vendor' },
 
           
         ]
@@ -40,7 +55,7 @@ finalData.push({
     description : details[item] && details[item].search ? details[item].search.shortDescription || details[item].search.short_description : '',
     units : details[item] ? this.unitDistributionHandler(details[item].orderQty, details[item].search.unitDistribution || details[item].search.unit_distribution || details[item].unit_distribution) : '',
     size : details[item] && details[item].search ? details[item].search.size || details[item].search.size : '',
-    vendor : details[item] && details[item].vendor ? details[item].search.vendor || details[item].search.vendor : '',    
+    vendor : details[item] && details[item].vendor ? this.vendorHandler(details[item].search.vendor || details[item].search.vendor) : '',    
 });
 }
     return finalData;
