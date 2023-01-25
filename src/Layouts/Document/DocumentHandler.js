@@ -34,9 +34,9 @@ class DocumentHandler {
     }
     static adminColumns() {
         return [
-          { width:40, name: 'cnt', header: '#' },
-          {  width: 80,name: 'category', header: 'Category' },
-          { width:380,name: 'description', header: 'Description' },
+          { width:60, name: 'cnt', header: '#' },
+          {  width: 100,name: 'category', header: 'Category' },
+          { width:340,name: 'description', header: 'Description' },
           {  width:100,name: 'units', header: 'Units' },
           {  width:80,name: 'size', header: 'Size' },
           { width:100,name: 'vendor', header: 'Vendor' },
