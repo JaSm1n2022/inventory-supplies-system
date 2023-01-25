@@ -136,7 +136,7 @@ const TemplateMultiplePrint = (props) => {
 
                                                     <TableRow style={{ border: 0 }} className={classes.tableRow}>
                                                         <TableCell style={{ height: 24, border: 0 }}>
-                                                            <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
+                                                            <div>{item.general.requestor ? item.general.requestor.name : ''} {item.general.requestor && item.general.requestor.position ? `(${item.general.requestor.position})` : ''}</div>
                                                             <div>_________________________________________</div>
                                                             <div>Name and Title (DCH)</div>
                                                         </TableCell>
@@ -223,7 +223,7 @@ const TemplateMultiplePrint = (props) => {
 
                                                     <TableRow style={{ border: 0 }} className={classes.tableRow}>
                                                         <TableCell style={{ height: 24, border: 0 }}>
-                                                            <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
+                                                        <div>{item.general.requestor ? item.general.requestor.name : ''} {item.general.requestor && item.general.requestor.position ? `(${item.general.requestor.position})` : ''}</div>
                                                             <div>_________________________________________</div>
                                                             <div>Name and Title (DCH)</div>
                                                         </TableCell>
