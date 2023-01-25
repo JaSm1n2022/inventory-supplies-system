@@ -127,41 +127,42 @@ const TemplateMultiplePrint = (props) => {
 
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
-                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={[...DocumentHandler.productItems(item.details)]} />
+                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={DocumentHandler.productItems(item.details)} />
                                         </div>
-                                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                        <div style={{ paddingLeft: 10, paddingRight: 50 }}>
+                                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
 
-                                            <TableBody>
+                                                <TableBody>
 
-                                                <TableRow style={{ border: 0 }} className={classes.tableRow}>
-                                                    <TableCell style={{ height: 24, border: 0 }}>
-                                                        <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
-                                                        <div>_________________________________________</div>
-                                                        <div>Name and Title (DCH)</div>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Name of Patient/Caregiver</div></TableCell>
+                                                    <TableRow style={{ border: 0 }} className={classes.tableRow}>
+                                                        <TableCell style={{ height: 24, border: 0 }}>
+                                                            <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
+                                                            <div>_________________________________________</div>
+                                                            <div>Name and Title (DCH)</div>
+                                                        </TableCell>
+                                                        <TableCell align="right" style={{ border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Name of Patient/Caregiver</div></TableCell>
 
-                                                </TableRow>
-                                                <TableRow style={{ border: 0 }} className={classes.tableRow}
+                                                    </TableRow>
+                                                    <TableRow style={{ border: 0 }} className={classes.tableRow}
 
-                                                >
-                                                    <TableCell style={{ height: 24, border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Signature</div>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Signature</div></TableCell>
+                                                    >
+                                                        <TableCell style={{ height: 24, border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Signature</div>
+                                                        </TableCell>
+                                                        <TableCell align="right" style={{ border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Signature</div></TableCell>
 
-                                                </TableRow>
+                                                    </TableRow>
 
-                                            </TableBody>
-                                        </Table>
-                                        <div style={{ align: 'right' }}>
-                                            <Typography>&nbsp;</Typography>
+                                                </TableBody>
+                                            </Table>
+                                            <div align="right"><small>CNA Copy</small></div>
                                         </div>
+
 
                                     </div>
                                 </Grid>
@@ -215,40 +216,40 @@ const TemplateMultiplePrint = (props) => {
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
                                             <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.adminColumns()} dataSource={[...DocumentHandler.productItems(item.details)]} />
                                         </div>
-                                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                        <div style={{ paddingLeft: 10, paddingRight: 50 }}>
+                                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
 
-                                            <TableBody>
+                                                <TableBody>
 
-                                                <TableRow style={{ border: 0 }} className={classes.tableRow}>
-                                                    <TableCell style={{ height: 24, border: 0 }}>
-                                                        <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
-                                                        <div>_________________________________________</div>
-                                                        <div>Name and Title (DCH)</div>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Name of Patient/Caregiver</div></TableCell>
+                                                    <TableRow style={{ border: 0 }} className={classes.tableRow}>
+                                                        <TableCell style={{ height: 24, border: 0 }}>
+                                                            <div>{item.general.requestorName} {item.general.position ? `(${item.general.position})` : ''}</div>
+                                                            <div>_________________________________________</div>
+                                                            <div>Name and Title (DCH)</div>
+                                                        </TableCell>
+                                                        <TableCell align="right" style={{ border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Name of Patient/Caregiver</div></TableCell>
 
-                                                </TableRow>
-                                                <TableRow style={{ border: 0 }} className={classes.tableRow}
+                                                    </TableRow>
+                                                    <TableRow style={{ border: 0 }} className={classes.tableRow}
 
-                                                >
-                                                    <TableCell style={{ height: 24, border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Signature</div>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ border: 0 }}>
-                                                        <div>_________________________________________</div>
-                                                        <div>Signature</div></TableCell>
+                                                    >
+                                                        <TableCell style={{ height: 24, border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Signature</div>
+                                                        </TableCell>
+                                                        <TableCell align="right" style={{ border: 0 }}>
+                                                            <div>_________________________________________</div>
+                                                            <div>Signature</div></TableCell>
 
-                                                </TableRow>
+                                                    </TableRow>
 
-                                            </TableBody>
-                                        </Table>
-                                        <div style={{ align: 'right' }}>
-                                            <Typography>&nbsp;</Typography>
+                                                </TableBody>
+                                            </Table>
+                                            <div align="right"><small>Admin Copy</small></div>
+
                                         </div>
-
                                     </div>
                                 </Grid>
 
