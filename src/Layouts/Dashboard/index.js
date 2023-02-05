@@ -748,9 +748,9 @@ const Dashboard = (props) => {
       const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
       const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category));
      
-      const ensureVanillas = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Vanilla') !== -1);
-      const ensureChocolates = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Chocolate') !== -1);
-      const ensureStrawberries = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Strawberry') !== -1);
+      const ensureVanillas = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Vanilla') !== -1);
+      const ensureChocolates = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Chocolate') !== -1);
+      const ensureStrawberries = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category)  && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Strawberry') !== -1);
       
       const briefs = supplies.filter(supply => supply.category === 'Brief');
       const wipes = supplies.filter(supply => supply.category === 'Wipes');
