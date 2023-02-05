@@ -130,7 +130,9 @@ let estimatedSupplyGrandTotal = {
   underwear: parseFloat(0.0),
   glove: parseFloat(0.0),
   wipe: parseFloat(0.0),
-  ensure : parseFloat(0.0),
+  ensureVanilla : parseFloat(0.0),
+  ensureChocolate : parseFloat(0.0),
+  ensureStrawberry : parseFloat(0.0)
 };
 
 let plotSummary = {
@@ -139,7 +141,9 @@ let plotSummary = {
   underwear: [],
   glove: [],
   wipe: [],
-  ensure: []
+  ensureVanilla: [],
+  ensureChocolate: [],
+  ensureStrawberry : []
 };
 
 
@@ -149,7 +153,9 @@ let unusedPlotSummary = {
   underwear: [],
   glove: [],
   wipe: [],
-  ensure: []
+  ensureVanilla: [],
+  ensureChocolate: [],
+  ensureStrawberry : []
 };
 let transactionType = {
 
@@ -331,8 +337,8 @@ const Dashboard = (props) => {
     listTransactions({ from: _sfrom, to: _sTo });
 
   }
-  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves,ensures) => {
-    console.log('[Ensures]',ensures);
+  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves,ensureVanillas,ensureChocolates,ensureStrawberries) => {
+    
     const temp = {
       patientName: patient.name,
       brief: {
@@ -375,11 +381,27 @@ const Dashboard = (props) => {
         vendor: '',
         size: ''
       },
-      ensure: {
+      ensureVanilla: {
         patientName: patient.name,
-        productId: ensures && ensures.length ? ensures[0].productId : '',
-        product: ensures && ensures.length ? ensures[0].description : '',
-        qty: ensures && ensures.length ? ensures[0].order_qty : 0,
+        productId: ensureVanillas && ensureVanillas.length ? ensureVanillas[0].productId : '',
+        product: ensureVanillas && ensureVanillas.length ? ensureVanillas[0].description : '',
+        qty: ensureVanillas && ensureVanillas.length ? ensureVanillas[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      ensureChocolate: {
+        patientName: patient.name,
+        productId: ensureChocolates && ensureChocolates.length ? ensureChocolates[0].productId : '',
+        product: ensureChocolates && ensureChocolates.length ? ensureChocolates[0].description : '',
+        qty: ensureChocolates && ensureChocolates.length ? ensureChocolates[0].order_qty : 0,
+        vendor: '',
+        size: ''
+      },
+      ensureStrawberry: {
+        patientName: patient.name,
+        productId: ensureStrawberries && ensureStrawberries.length ? ensureStrawberries[0].productId : '',
+        product: ensureStrawberries && ensureStrawberries.length ? ensureStrawberries[0].description : '',
+        qty: ensureStrawberries && ensureStrawberries.length ? ensureStrawberries[0].order_qty : 0,
         vendor: '',
         size: ''
       }
@@ -460,21 +482,50 @@ const Dashboard = (props) => {
         temp.glove.threshold = 2;
       }
     }
-    if (temp.ensure.productId && productList.find(p => p.id === temp.ensure.productId)) {
-      const item = productList.find(p => p.id === temp.ensure.productId);
-      temp.ensure.vendor = item.vendor;
-      temp.ensure.size = item.size;
-      temp.ensure.unitPrice = item.unit_price;
-      temp.ensure.cnt = item.count;
-      temp.ensure.unitDist = item.unit_distribution;
-      temp.ensure.threshold = 7;
-      const cna = ensures && ensures.length ? ensures[0] : [];
-      temp.ensure.requestor = cna.requestor;
+    if (temp.ensureVanilla.productId && productList.find(p => p.id === temp.ensureVanilla.productId)) {
+      const item = productList.find(p => p.id === temp.ensureVanilla.productId);
+      temp.ensureVanilla.vendor = item.vendor;
+      temp.ensureVanilla.size = item.size;
+      temp.ensureVanilla.unitPrice = item.unit_price;
+      temp.ensureVanilla.cnt = item.count;
+      temp.ensureVanilla.unitDist = item.unit_distribution;
+      temp.ensureVanilla.threshold = 7;
+      const cna = ensureVanillas && ensureVanillas.length ? ensureVanillas[0] : [];
+      temp.ensureVanilla.requestor = cna.requestor;
       if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
-        temp.ensure.threshold = 7;
+        temp.ensureVanilla.threshold = 7;
       }
     }
 
+    if (temp.ensureChocolate.productId && productList.find(p => p.id === temp.ensureChocolate.productId)) {
+      const item = productList.find(p => p.id === temp.ensureChocolate.productId);
+      temp.ensureChocolate.vendor = item.vendor;
+      temp.ensureChocolate.size = item.size;
+      temp.ensureChocolate.unitPrice = item.unit_price;
+      temp.ensureChocolate.cnt = item.count;
+      temp.ensureChocolate.unitDist = item.unit_distribution;
+      temp.ensureChocolate.threshold = 7;
+      const cna = ensureChocolates && ensureChocolates.length ? ensureChocolates[0] : [];
+      temp.ensureChocolate.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.ensureChocolate.threshold = 7;
+      }
+    }
+
+    if (temp.ensureStrawberry.productId && productList.find(p => p.id === temp.ensureStrawberry.productId)) {
+      const item = productList.find(p => p.id === temp.ensureStrawberry.productId);
+      temp.ensureStrawberry.vendor = item.vendor;
+      temp.ensureStrawberry.size = item.size;
+      temp.ensureStrawberry.unitPrice = item.unit_price;
+      temp.ensureStrawberry.cnt = item.count;
+      temp.ensureStrawberry.unitDist = item.unit_distribution;
+      temp.ensureStrawberry.threshold = 7;
+      const cna = ensureStrawberries && ensureStrawberries.length ? ensureStrawberries[0] : [];
+      temp.ensureStrawberry.requestor = cna.requestor;
+      if (cna && cna.requestor && requestorDaily.includes(cna.requestor.toLowerCase())) {
+        temp.ensureStrawberry.threshold = 7;
+      }
+    }
 
 
     supplyPlot.push(temp);
@@ -637,7 +688,9 @@ const Dashboard = (props) => {
       wipe: [],
       glove: [],
       underwear: [],
-      ensure: []
+      ensureVanilla: [],
+      ensureChocolate: [],
+      ensureStrawberry: [],
     };
     estimatedSupplyGrandTotal = {
       brief: parseFloat(0.0),
@@ -645,7 +698,9 @@ const Dashboard = (props) => {
       underwear: parseFloat(0.0),
       glove: parseFloat(0.0),
       wipe: parseFloat(0.0),
-      ensure: parseFloat(0.0)
+      ensureVanilla: parseFloat(0.0),
+      ensureChocolate: parseFloat(0.0),
+      ensureStrawberry: parseFloat(0.0)
     };
 
     plotSummary = {
@@ -654,7 +709,9 @@ const Dashboard = (props) => {
       underwear: [],
       glove: [],
       wipe: [],
-      ensure : []
+      ensureVanilla : [],
+      ensureChocolate : [],
+      ensureStrawberry : []
     };
 
 
@@ -664,7 +721,9 @@ const Dashboard = (props) => {
       underwear: [],
       glove: [],
       wipe: [],
-      ensure : []
+      ensureVanilla : [],
+      ensureChocolate : [],
+      ensureStrawberry : [],
     };
     for (const patient of patientList) {
       let estimatedAmt = 0.0;
@@ -689,8 +748,10 @@ const Dashboard = (props) => {
       const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
       const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category));
      
-      const ensures = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1);
-      console.log('[Ensures]',ensures);
+      const ensureVanillas = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Vanilla') !== -1);
+      const ensureChocolates = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Chocolate') !== -1);
+      const ensureStrawberries = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Strawberry') !== -1);
+      
       const briefs = supplies.filter(supply => supply.category === 'Brief');
       const wipes = supplies.filter(supply => supply.category === 'Wipes');
       const gloves = supplies.filter(supply => supply.category === 'Gloves');
@@ -747,7 +808,7 @@ const Dashboard = (props) => {
 
       }
       if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) || patient.status.toLowerCase() !== 'inactive') {
-        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves,ensures);
+        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves,ensureVanillas,ensureChocolates,ensureStrawberries);
       }
 
     }
@@ -757,13 +818,17 @@ const Dashboard = (props) => {
     plotHandler('underwear');
     plotHandler('wipe');
     plotHandler('glove');
-    plotHandler('ensure');
+    plotHandler('ensureVanilla');
+    plotHandler('ensureChocolate');
+    plotHandler('ensureStrawberry');
     patientSupplyPlot.brief = sortByProductId(patientSupplyPlot.brief, 'productId');
     patientSupplyPlot.underpad = sortByProductId(patientSupplyPlot.underpad, 'productId');
     patientSupplyPlot.underwear = sortByProductId(patientSupplyPlot.underwear, 'productId');
     patientSupplyPlot.wipe = sortByProductId(patientSupplyPlot.wipe, 'productId');
     patientSupplyPlot.glove = sortByProductId(patientSupplyPlot.glove, 'productId');
-    patientSupplyPlot.ensure = sortByProductId(patientSupplyPlot.ensure, 'productId');
+    patientSupplyPlot.ensureVanilla = sortByProductId(patientSupplyPlot.ensureVanilla, 'productId');
+    patientSupplyPlot.ensureChocolate = sortByProductId(patientSupplyPlot.ensureChocolate, 'productId');
+    patientSupplyPlot.ensureStrawberry = sortByProductId(patientSupplyPlot.ensureStrawberry, 'productId');
     patientOptions = [...patientDashboard];
 
 
@@ -1021,14 +1086,27 @@ const Dashboard = (props) => {
                       inputProps={{ 'aria-label': 'B' }}
                     ></Radio>GLOVES
                       <Radio
-                      checked={plotView === 'ensure'}
+                      checked={plotView === 'ensureVanilla'}
                       onChange={plotViewHandler}
-                      value="ensure"
+                      value="ensureVanilla"
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>ENSURE
+                    ></Radio>ENSURE VANILLA
               
-              
+              <Radio
+                      checked={plotView === 'ensureChocolate'}
+                      onChange={plotViewHandler}
+                      value="ensureChocolate"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>ENSURE CHOCOLATE
+                    <Radio
+                      checked={plotView === 'ensureStrawberry'}
+                      onChange={plotViewHandler}
+                      value="ensureStrawberry"
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    ></Radio>ENSURE STRAWBERRY
                   </div>
                 </div>
               </FormControl>
@@ -1048,8 +1126,12 @@ const Dashboard = (props) => {
                       <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
                       : plotView === 'glove' ?
                         <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
-                        : plotView === 'ensure' ?
-                        <SupplyPlot title={'ENSURE'} patientPlot={patientSupplyPlot.ensure} estimatedGrandTotal={estimatedSupplyGrandTotal.ensure} unusedSummary={unusedPlotSummary.ensure} summary={plotSummary.ensure} />
+                        : plotView === 'ensureVanilla' ?
+                        <SupplyPlot title={'ENSURE VANILLA'} patientPlot={patientSupplyPlot.ensureVanilla} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureVanilla} unusedSummary={unusedPlotSummary.ensureVanilla} summary={plotSummary.ensureVanilla} />
+                        : plotView === 'ensureChocolate' ?
+                        <SupplyPlot title={'ENSURE CHOCOLATE'} patientPlot={patientSupplyPlot.ensureChocolate} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureChocolate} unusedSummary={unusedPlotSummary.ensureChocolate} summary={plotSummary.ensureChocolate} />
+                        : plotView === 'ensureStrawberry' ?
+                        <SupplyPlot title={'ENSURE STRAWBERRY'} patientPlot={patientSupplyPlot.ensureStrawberry} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureStrawberry} unusedSummary={unusedPlotSummary.ensureStrawberry} summary={plotSummary.ensureStrawberry} />
                         : null}
             </TabPanel>
           </React.Fragment>
