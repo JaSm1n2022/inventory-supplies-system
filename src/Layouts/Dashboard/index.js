@@ -501,6 +501,8 @@ const Dashboard = (props) => {
             }
           }
 
+        } else {
+          plot.order = plot.threshold;
         }
         newPlot.push(plot);
       }
@@ -1025,15 +1027,8 @@ const Dashboard = (props) => {
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'B' }}
                     ></Radio>ENSURE
-                    {/*
-      <RadioGroup style={{display:'inline-flex'}} aria-label="gender" name="gender1" value={plotView} onChange={plotViewHandler}>
-        <FormControlLabel value="brief" control={<Radio />} label="Briefs" />
-        <FormControlLabel value="underpad" control={<Radio />} label="Underpads" />
-        <FormControlLabel value="underwear" control={<Radio />} label="UnderWears" />
-        <FormControlLabel value="wipe" control={<Radio />} label="Wipes" />
-        <FormControlLabel value="glove" control={<Radio />} label="Gloves" />
-      </RadioGroup>
-              */}
+              
+              
                   </div>
                 </div>
               </FormControl>
