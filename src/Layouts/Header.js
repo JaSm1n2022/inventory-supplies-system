@@ -14,6 +14,7 @@ function Header({
 }) {
   const { addToast } = useToasts();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
   
   const open = Boolean(anchorEl);
   //    inboxCnt = Object.keys(messageState.data).length;
@@ -33,8 +34,16 @@ function Header({
     setAnchorEl(event.currentTarget);
   };
 
+  const handleClick2 = (event) => {
+    
+    setAnchorEl2(event.currentTarget);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleClose2 = () => {
+    setAnchorEl2(null);
   };
 
   const vendorSettingHandler = () => {
@@ -62,7 +71,7 @@ function Header({
     redirectLink('product');
   }
   const medExpensesHandler = () => {
-    setAnchorEl(null);
+    setAnchorEl2(null);
     redirectLink('clientexpense');
   }
   const officeExpensesHandler = () => {
@@ -131,17 +140,17 @@ function Header({
         variant="contained"
         disableElevation
         endIcon={<SettingsIcon />}
-        onClick={handleClick}>
+        onClick={handleClick2}>
           
 
                 Reports
               </Button>
               <Menu
                 id="simple-menu"
-                anchorEl={anchorEl}
+                anchorEl={anchorEl2}
                 keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
+                open={Boolean(anchorEl2)}
+                onClose={handleClose2}
               >
                 <MenuItem onClick={medExpensesHandler}>Medical/Incontinence Expenses</MenuItem>
                 <MenuItem onClick={officeExpensesHandler}>Office Expenses</MenuItem>
