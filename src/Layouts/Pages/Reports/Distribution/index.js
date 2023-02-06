@@ -1,4 +1,5 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import SingleWithClearAutoComplete from "../../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
@@ -12,9 +13,11 @@ let isDoneYear = false;
 let numberOfMonth = 0;
 let numberOfProcess = 1;
 let data = [];
+let grandTotal = 0.0;
 const ClientDistribution = (props) => {
 
     const [isProcessCollection, setIsProcessCollection] = useState(true);
+    const [summary,setSummary] = useState([]);
     useEffect(() => {
         data = [];
         numberOfProcess = 0;
@@ -39,6 +42,25 @@ const ClientDistribution = (props) => {
                 props.listDistributions({ from: DCH_YEARS[numberOfProcess].from, to: DCH_YEARS[numberOfProcess].to });
             } else {
                 console.log('[Final Data]',data);
+                grandTotal = 0.0;
+                const recs = [];
+                for(const d of data) {
+                    const amts = d.data.map(map => map.estimated_total_amt);
+                    let patients = d.data.map(map => map.patient_id);
+                    patients =  Array.from(new Set(patients));
+                    let grand = 0.0;
+                    amts.forEach(a => {
+                        grand += parseFloat(a || 0.0);
+                    })
+                    grandTotal += grand;
+                    recs.push({
+                        range : `${d.query.from} to ${d.query.to}`,
+                        cnt : d.data.length,
+                        patientCnt : patients.length,
+                        total : parseFloat(grand | 0.0).toFixed(2)
+                    })
+                }
+                setSummary(recs);
             }
 
         }
@@ -55,7 +77,39 @@ const ClientDistribution = (props) => {
     console.log('[report data]', data);
     return (
         <React.Fragment>
-            <Typography>Under Construction</Typography>
+            <Grid justifyContent="space-between" container style={{padding:10}}>
+                <Typography variant="h5">Patients Distribution Report</Typography>
+                <Typography variant="h5" color="primary">{`$${parseFloat(grandTotal).toFixed(2)}`}</Typography>
+            </Grid>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Date Range</TableCell>
+                        <TableCell>Number Of Records</TableCell>
+                        <TableCell>Number Of Patients</TableCell>
+                        <TableCell>Total Amount</TableCell>
+                       
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    
+            {summary && summary.length && summary.map(m => {
+                return (
+                          <TableRow key={m.range}>
+                            <TableCell component="th" scope="row">
+                              {m.range}
+                            </TableCell>
+                            <TableCell>{m.cnt}</TableCell>
+                            <TableCell>{m.patientCnt}</TableCell>
+                            <TableCell>{`$${m.total}`}</TableCell>
+                            
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                
+        
         </React.Fragment>
     )
 }
