@@ -513,3 +513,14 @@ export const PATIENT_DASHBOARD_CATEGORY = [
     'Ensure/Glucerna/BOOST',
     'Other'
 ]
+export const YEARS = [
+  {name: '2022',value:'2022',label:'2022',id:'2022'},
+  {name: '2023',value:'2023',label:'2023',id:'2023'}
+]
+export const DCH_YEARS = [
+  {from : '2022-10-01', to : '2022-10-31'},
+  {from : '2022-11-01', to : '2022-11-30'},
+  {from : '2022-12-01', to : '2022-12-31'},
+  {from : '2023-01-01', to : '2023-01-31'},
+  {from : '2023-02-01', to : '2023-02-28'}
+]

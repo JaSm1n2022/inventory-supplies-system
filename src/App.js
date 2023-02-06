@@ -15,6 +15,7 @@ import Location from './Layouts/Settings/Location';
 import Patient from './Layouts/Settings/Patient';
 import Employee from './Layouts/Settings/Employee';
 import Dashboard from './Layouts/Dashboard';
+import ClientDistribution from './Layouts/Pages/Reports/Distribution'
 import ComponentToPrint from './Layouts/Document/PrintComponent';
 import { supabaseClient } from "./config/SupabaseClient";
 
@@ -27,6 +28,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 // or for Moment.js
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';	
 import { LocalizationProvider } from "@mui/x-date-pickers";
+
 const App = (props) => {
 	const [session, setSession] = useState(null)
 	const [signedIn, setSignedIn] = useState(true);
@@ -83,6 +85,7 @@ const App = (props) => {
 						<Route exact path="/product" component={withRouter(Product)} />
 						<Route exact path="/document" component={withRouter(ComponentToPrint)} />
 						<Route exact path="/dashboard" component={withRouter(Dashboard)} />
+						<Route exact path="/clientexpense" component={withRouter(ClientDistribution)} />
 						<Route exact path="/login" component={withRouter(Login)} />
 						<Route exact path="/" component={withRouter(Invoice)} />
 						

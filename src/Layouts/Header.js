@@ -60,8 +60,19 @@ function Header({
   const productSettingHandler = () => {
     setAnchorEl(null);
     redirectLink('product');
-
   }
+  const medExpensesHandler = () => {
+    setAnchorEl(null);
+    redirectLink('clientexpense');
+  }
+  const officeExpensesHandler = () => {
+    
+  }
+
+  const suppliesExpensesHandler = () => {
+    
+  }
+
   return (
     <React.Fragment>
       <Grid container justifyContent="space-between">
@@ -111,6 +122,31 @@ function Header({
                 <MenuItem onClick={vendorSettingHandler}>Vendors</MenuItem>
                 <MenuItem onClick={productSettingHandler}>Products</MenuItem>
 
+              </Menu>
+              <Button
+        id="demo-customized-button"
+        aria-controls={open ? 'demo-customized-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        variant="contained"
+        disableElevation
+        endIcon={<SettingsIcon />}
+        onClick={handleClick}>
+          
+
+                Reports
+              </Button>
+              <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={medExpensesHandler}>Medical/Incontinence Expenses</MenuItem>
+                <MenuItem onClick={officeExpensesHandler}>Office Expenses</MenuItem>
+                <MenuItem onClick={suppliesExpensesHandler}>Supplies Transactions</MenuItem>
+             
               </Menu>
 
             </div>
