@@ -15,7 +15,7 @@ function Header({
   const { addToast } = useToasts();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
-  
+
   const open = Boolean(anchorEl);
   //    inboxCnt = Object.keys(messageState.data).length;
 
@@ -30,12 +30,12 @@ function Header({
   }
 
   const handleClick = (event) => {
-    
+
     setAnchorEl(event.currentTarget);
   };
 
   const handleClick2 = (event) => {
-    
+
     setAnchorEl2(event.currentTarget);
   };
 
@@ -70,96 +70,104 @@ function Header({
     setAnchorEl(null);
     redirectLink('product');
   }
-  const medExpensesHandler = () => {
+  const distributionExpensesHandler = () => {
     setAnchorEl2(null);
-    redirectLink('clientexpense');
+    redirectLink('clientexpensereport');
   }
   const officeExpensesHandler = () => {
-    
+    setAnchorEl2(null);
+    redirectLink('officeexpensereport');
+  }
+  const medicalExpensesHandler = () => {
+    setAnchorEl2(null);
+    redirectLink('medicalexpensereport');
   }
 
-  const suppliesExpensesHandler = () => {
-    
+
+  const invoiceExpensesHandler = () => {
+    setAnchorEl2(null);
+    redirectLink('invoiceexpensereport');
   }
 
   return (
     <React.Fragment>
       <Grid container justifyContent="space-between">
-     
-          <Grid container justifyContent="space-between">
-              <img src={Hospice} alt="" style={{ height: '50px', width: '400px' }}/>
-              <div style={{paddingRight:'25px'}}>
-              <Typography variant="h5"><strong>SUPPLIES INVENTORY SYSTEM</strong></Typography>
-              </div>
-          </Grid>
-          <Grid>
-            <div style={{
-              display: 'flex',
-              align: 'right',
-              gap: '10px',
-              paddingBottom: 10,
-              paddingTop:4
-            }}>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('transaction')}>Supply Order Transaction</Button>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('stockroom')}>Stock Room Inventory</Button>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('distribution')}>Supplies Delivery Record</Button>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('invoice')}>Invoice Statement</Button>
-              <Button variant="contained" color="primary" onClick={() => redirectLink('dashboard')}>Dashboard</Button>
-              <Button
-        id="demo-customized-button"
-        aria-controls={open ? 'demo-customized-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        variant="contained"
-        disableElevation
-        endIcon={<SettingsIcon />}
-        onClick={handleClick}>
-          
 
-                Settings
-              </Button>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={patientSettingHandler}>Patients</MenuItem>
-                <MenuItem onClick={facilitySettingHandler}>Location</MenuItem>
-                <MenuItem onClick={employeeSettingHandler}>Employees</MenuItem>
-                <MenuItem onClick={vendorSettingHandler}>Vendors</MenuItem>
-                <MenuItem onClick={productSettingHandler}>Products</MenuItem>
+        <Grid container justifyContent="space-between">
+          <img src={Hospice} alt="" style={{ height: '50px', width: '400px' }} />
+          <div style={{ paddingRight: '25px' }}>
+            <Typography variant="h5"><strong>SUPPLIES INVENTORY SYSTEM</strong></Typography>
+          </div>
+        </Grid>
+        <Grid>
+          <div style={{
+            display: 'flex',
+            align: 'right',
+            gap: '10px',
+            paddingBottom: 10,
+            paddingTop: 4
+          }}>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('transaction')}>Supply Order Transaction</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('stockroom')}>Stock Room Inventory</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('distribution')}>Supplies Delivery Record</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('invoice')}>Invoice Statement</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('dashboard')}>Dashboard</Button>
+            <Button
+              id="demo-customized-button"
+              aria-controls={open ? 'demo-customized-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              variant="contained"
+              disableElevation
+              endIcon={<SettingsIcon />}
+              onClick={handleClick}>
 
-              </Menu>
-              <Button
-        id="demo-customized-button"
-        aria-controls={open ? 'demo-customized-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        variant="contained"
-        disableElevation
-        endIcon={<SettingsIcon />}
-        onClick={handleClick2}>
-          
 
-                Reports
-              </Button>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl2}
-                keepMounted
-                open={Boolean(anchorEl2)}
-                onClose={handleClose2}
-              >
-                <MenuItem onClick={medExpensesHandler}>Medical/Incontinence Expenses</MenuItem>
-                <MenuItem onClick={officeExpensesHandler}>Office Expenses</MenuItem>
-                <MenuItem onClick={suppliesExpensesHandler}>Supplies Transactions</MenuItem>
-             
-              </Menu>
+              Settings
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={patientSettingHandler}>Patients</MenuItem>
+              <MenuItem onClick={facilitySettingHandler}>Location</MenuItem>
+              <MenuItem onClick={employeeSettingHandler}>Employees</MenuItem>
+              <MenuItem onClick={vendorSettingHandler}>Vendors</MenuItem>
+              <MenuItem onClick={productSettingHandler}>Products</MenuItem>
 
-            </div>
-         
+            </Menu>
+            <Button
+              id="demo-customized-button"
+              aria-controls={open ? 'demo-customized-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              variant="contained"
+              disableElevation
+              endIcon={<SettingsIcon />}
+              onClick={handleClick2}>
+
+
+              Reports
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl2}
+              keepMounted
+              open={Boolean(anchorEl2)}
+              onClose={handleClose2}
+            >
+              <MenuItem onClick={distributionExpensesHandler}>Distribution Expenses Report</MenuItem>
+              <MenuItem onClick={invoiceExpensesHandler}>Supplies Purchased Report</MenuItem>
+              <MenuItem onClick={officeExpensesHandler}>Office Purchased Report</MenuItem>
+              <MenuItem onClick={medicalExpensesHandler}>Medical/Incontinence Purchased Report</MenuItem>
+
+            </Menu>
+
+          </div>
+
         </Grid>
         <Grid item xs={12}>
           <Divider variant="fullWidth" style={{

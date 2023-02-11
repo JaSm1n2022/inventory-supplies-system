@@ -7,15 +7,15 @@ class Helper {
    * @param {Boolean} withDay -
    * @returns {String} -  Aug 6, 2007
    */
-  
-   static calculateDaysInStorage(soc,eoc)  {
+
+  static calculateDaysInStorage(soc, eoc) {
     const start = moment(soc);
     const end = eoc ? moment(eoc) : moment();
     const diff = moment.duration(end.diff(start));
-  
+
     return Math.floor(diff.asDays(), 10);
   };
-   static getCurrentDateInYYYYMMDD() {
+  static getCurrentDateInYYYYMMDD() {
     const currentDate = new Date();
     let day = currentDate.getDate();
     let month = currentDate.getMonth() + 1;
@@ -29,10 +29,10 @@ class Helper {
     }
     return `${year}-${month}-${day}`;
   }
-   static formatDateRangeByCriteriaV2(selectedMenu) {
+  static formatDateRangeByCriteriaV2(selectedMenu) {
     let dateFrom = this.getCurrentDateInYYYYMMDD();
     let dateTo = this.getCurrentDateInYYYYMMDD();
-    
+
     dateFrom = moment(`${dateFrom}T00:00:00.000Z`);
     dateTo = moment(`${dateTo}T00:00:00.000Z`);
     const fmt = "YYYY-MM-DD"; // do not change as backend accepts this format
@@ -57,28 +57,28 @@ class Helper {
         break;
       case "This week":
       case "thisWeek":
-        date1 = dateFrom.startOf("week").add(1,"days").format(fmt);
-        
-        date2 = dateTo.endOf("week").add(1,"days").format(fmt);
+        date1 = dateFrom.startOf("week").add(1, "days").format(fmt);
+
+        date2 = dateTo.endOf("week").add(1, "days").format(fmt);
         break;
       case "Last week":
       case "lastWeek":
         date1 = dateFrom
           .subtract(1, "week")
-          .startOf("week").add(1,"days")
+          .startOf("week").add(1, "days")
           .format(fmt);
         date2 = dateTo
           .subtract(1, "week")
-          .endOf("week").add(1,"days")
+          .endOf("week").add(1, "days")
           .format(fmt);
         break;
       case "Last month":
       case "lastMonth":
         date1 = dateFrom
-        
-        .subtract(1, "month")
-        .startOf("month")
-        .format(fmt);
+
+          .subtract(1, "month")
+          .startOf("month")
+          .format(fmt);
         date2 = dateTo.utc().format(fmt);
         break;
       case "This month":
@@ -86,11 +86,11 @@ class Helper {
         date1 = dateFrom.startOf("month").format(fmt);
         date2 = dateTo.endOf("month").format(fmt);
         break;
-        case "ytd":
-          case "YTD":
-          date1 = dateFrom.startOf("year").format(fmt);
-          date2 = dateTo.utc().format(fmt);
-          break;  
+      case "ytd":
+      case "YTD":
+        date1 = dateFrom.startOf("year").format(fmt);
+        date2 = dateTo.utc().format(fmt);
+        break;
       case "Last 90 days":
       case "last90Days":
         date1 = dateFrom.subtract(90, "days").utc().format(fmt);
@@ -134,19 +134,62 @@ class Helper {
   }
 
 
-static formatExcelReport(availableCols, data) {
+  static formatExcelReport(availableCols, data) {
 
-  let results = [];
-  for (const rec of data) {
-    const jsonObj = {};
-    for (const col of availableCols) {
-      if (col.header && (!['actions'].includes(col.name))) {
-        jsonObj[col.header] = rec[col.name];
+    let results = [];
+    for (const rec of data) {
+      const jsonObj = {};
+      for (const col of availableCols) {
+        if (col.header && (!['actions'].includes(col.name))) {
+          jsonObj[col.header] = rec[col.name];
+        }
       }
+      results.push(jsonObj);//
     }
-    results.push(jsonObj);//
+    return results;
   }
-  return results;
+
+  static formatReportDateAxisCategory(value) {
+    const [y, m, d] = value.split('-');
+    if (m === '01') {
+      return `Jan ${y}`;
+    }
+    if (m === '02') {
+      return `Feb ${y}`;
+    }
+    if (m === '03') {
+      return `Mar ${y}`;
+    }
+    if (m === '04') {
+      return `Apr ${y}`;
+    }
+    if (m === '05') {
+      return `May ${y}`;
+    }
+    if (m === '06') {
+      return `Jun ${y}`;
+    }
+    if (m === '07') {
+      return `Jul ${y}`;
+    }
+    if (m === '08') {
+      return `Aug ${y}`;
+    }
+    if (m === '09') {
+      return `Sep ${y}`;
+    }
+    if (m === '10') {
+      return `Oct ${y}`;
+    }
+    if (m === '11') {
+      return `Nov ${y}`;
+    }
+    if (m === '12') {
+      return `Dec ${y}`;
+    }
+    return value;
+  }
+
 }
-}
+
 export default Helper;
