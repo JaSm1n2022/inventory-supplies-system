@@ -3,11 +3,11 @@ import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeade
 import ModalFooter from "../../../Common/components/Modal/ModalFooter/ModalFooter";
 import styles from "./distribution.module.css";
 import ReactModal from "react-modal";
-import { Avatar, Button, Grid, Tooltip, Typography, Divider} from "@mui/material";
+import { Avatar, Button, Grid, Tooltip, Typography, Divider } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { DIVINE_EMPLOYEES, DIVINE_PATIENT_LIST, HOSPICE_FACILITIES, LIMIT_ITEM_PRINT, QUANTITY_UOM,  SUPPLY_STATUS } from "../../../utils/constants";
+import { DIVINE_EMPLOYEES, DIVINE_PATIENT_LIST, HOSPICE_FACILITIES, LIMIT_ITEM_PRINT, QUANTITY_UOM, SUPPLY_STATUS } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
@@ -81,12 +81,12 @@ function DistributionForm(props) {
     const [generalForm, setGeneralForm] = useState({});
     const [detailForm, setDetailForm] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
-    const [isPrintForm,setIsPrintFrom] = useState(false);
-    
+    const [isPrintForm, setIsPrintFrom] = useState(false);
+
     const { isOpen,
         onClose,
 
-       } = props;
+    } = props;
 
     const general = [
         {
@@ -114,7 +114,7 @@ function DistributionForm(props) {
             label: 'Facility/POS',
             name: 'facility',
             disabled: true,
-            value : '-'
+            value: '-'
 
         },
 
@@ -167,7 +167,7 @@ function DistributionForm(props) {
             placeholder: 'Search Item',
             label: 'Search Item',
             name: 'search',
-            options : [...props.productList]
+            options: [...props.productList]
         },
         {
             id: 'description',
@@ -175,7 +175,7 @@ function DistributionForm(props) {
             placeholder: 'Description',
             label: 'Description',
             name: 'description'
-            
+
         },
         {
             id: 'size',
@@ -183,7 +183,7 @@ function DistributionForm(props) {
             placeholder: 'Size',
             label: 'Size',
             name: 'size'
-            
+
         },
         {
             id: 'flavor',
@@ -191,7 +191,7 @@ function DistributionForm(props) {
             placeholder: 'Flavor/Color',
             label: 'Flavor/Color',
             name: 'flavor'
-            
+
         },
         {
             id: 'orderQty',
@@ -207,7 +207,7 @@ function DistributionForm(props) {
             placeholder: 'Unit',
             label: 'Unit',
             name: 'unitDistribution',
-           
+
         },
         {
             id: 'vendor',
@@ -216,14 +216,14 @@ function DistributionForm(props) {
             label: 'Vendor',
             name: 'vendor',
             type: 'test',
-            value :'-'
+            value: '-'
         },
-       
-       
-     
+
+
+
     ]
     useEffect(() => {
-        console.log('[props distribution form]',props);
+        console.log('[props distribution form]', props);
         const fm = {};
         fm.orderDt = new Date();
         fm.position = '-';
@@ -231,10 +231,10 @@ function DistributionForm(props) {
         setGeneralForm(fm);
     }, []);
     useEffect(() => {
-        console.log('[Props Distribution]',props);
-        if(props.generalInfo && props.module === 'multiple') {
-            console.log('[Props Distribution2]',props.generalInfo);
-            const gen = {...props.generalInfo};
+        console.log('[Props Distribution]', props);
+        if (props.generalInfo && props.module === 'multiple') {
+            console.log('[Props Distribution2]', props.generalInfo);
+            const gen = { ...props.generalInfo };
             gen.patientName = gen.patient?.name;
             gen.patientId = gen.patient?.id;
             gen.requestorName = gen.requestor.name;
@@ -247,7 +247,7 @@ function DistributionForm(props) {
             console.log('[items]', props.item);
             const generalFm = { ...props.item };
             generalFm.orderDt = `${generalFm.order_at} 00:00`;
-            if(props.mode === 'edit') {
+            if (props.mode === 'edit') {
                 originalOrderQty = generalFm.order_qty;
             }
             generalFm.patientName = generalFm.patient?.name;
@@ -255,41 +255,41 @@ function DistributionForm(props) {
             generalFm.requestorName = generalFm.requestor.name;
             generalFm.facility = generalFm.patient?.place_of_service;
             generalFm.position = generalFm.requestor?.position;
-            const detailFm = generalFm.details ? generalFm.details : [generalFm] ;
+            const detailFm = generalFm.details ? generalFm.details : [generalFm];
             detailFm.forEach(e => {
                 e.unitDistribution = e.unit_uom ? e.unit_uom : e.search.unitDistribution || e.search.unit_distribution;
 
             });
-            console.log('[Detail]',detailFm);
+            console.log('[Detail]', detailFm);
             setGeneralForm(generalFm);
             setDetailForm(detailFm);
 
 
         }
-    }, [props.item,props.generalInfo]);
+    }, [props.item, props.generalInfo]);
     const printHandler = () => {
-        props.printPatientOrdersHandler(generalForm,detailForm);
+        props.printPatientOrdersHandler(generalForm, detailForm);
 
-        console.log('[Print Handler]',generalForm,detailForm);
+        console.log('[Print Handler]', generalForm, detailForm);
     }
     const validateFormHandler = () => {
-        if(!generalForm.patientName) {
+        if (!generalForm.patientName) {
             TOAST.error('Patient Name is required');
             return;
         }
-        if(!generalForm.requestorName) {
+        if (!generalForm.requestorName) {
             TOAST.error('Requestor is required');
             return;
         }
-        if(!generalForm.facility) {
+        if (!generalForm.facility) {
             TOAST.error('location is required');
             return;
         }
-        
-        console.log('[Print Handler]',generalForm,detailForm);
-     props.createDistributionHandler(generalForm,detailForm,props.mode);
-      
-        
+
+        console.log('[Print Handler]', generalForm, detailForm);
+        props.createDistributionHandler(generalForm, detailForm, props.mode);
+
+
     }
     const footerActions = [
         {
@@ -327,27 +327,27 @@ function DistributionForm(props) {
 
     };
     const inputDetailHandler = ({ target }, source) => {
-        console.log('[source input val]',originalOrderQty,target,source,props.stockList);
+        console.log('[source input val]', originalOrderQty, target, source, props.stockList);
         source[target.name] = target.value;
-       
-        if(target.name === 'orderQty') {
-            let val = parseInt(target.value|| 0,10)
-            if(props.mode === 'edit') {
+
+        if (target.name === 'orderQty') {
+            let val = parseInt(target.value || 0, 10)
+            if (props.mode === 'edit') {
                 val = val - originalOrderQty;
             }
-            console.log('[source input val2]',val);
+            console.log('[source input val2]', val);
             const qtyOnHand = props.stockList.find(stock => stock.productId === source.productId).qty_on_hand;
-            const calc = parseInt(qtyOnHand|| 0,10) - parseInt(val,10);
+            const calc = parseInt(qtyOnHand || 0, 10) - parseInt(val, 10);
             source.adjustedQty = val;
             source.qtyOnHand = qtyOnHand || 0;
-            if(val > 0) {
-            if(calc > 0) {
-                
-                source.stockStatus = `Qty On Hand : ${qtyOnHand||0} ( In Stock )`;
-            } else {
-                source.stockStatus = `Qty On Hand: ${qtyOnHand || 0}  ( Out of Stock)`;
+            if (val > 0) {
+                if (calc >= 0) {
+
+                    source.stockStatus = `Qty On Hand : ${qtyOnHand || 0} ( In Stock )`;
+                } else {
+                    source.stockStatus = `Qty On Hand: ${qtyOnHand || 0}  ( Out of Stock)`;
+                }
             }
-        }
         }
         setIsRefresh(!isRefresh);
 
@@ -355,20 +355,20 @@ function DistributionForm(props) {
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
         console.log('[src]', src, item);
-        
+
         if (item.categoryType === 'employee') {
             src['requestor'] = item;
-            
+
             src['position'] = item.position;
             src['requestorName'] = item.name;
             src['requestorId'] = item.id;
-        
+
         } else if (item.categoryType === 'patient') {
-            src['patient'] = item;  
+            src['patient'] = item;
             src['patientName'] = item.name;
             src['patientId'] = item.id;
             src['facility'] = item.place_of_service;
-            
+
         } else if (item.category === 'status') {
             src['status'] = item;
             src['statusName'] = item.name;
@@ -377,26 +377,26 @@ function DistributionForm(props) {
         setGeneralForm(src);
 
     }
-   
+
     const autoCompleteDetailInputHander = (item, source) => {
-        
+
         source.search = item;
-        console.log('[item]',item);
+        console.log('[item]', item);
         source.description = `${item.description} / ${item.comments} / ${item.additional_info}`;
         source.productId = item.productId;
         source.category = item.category;
         source.vendor = item.vendor || '-';
         const productInfo = props.productList.find(product => product.id === item.productId);
-        if(productInfo) {
-        source.size= productInfo.size;
-        source.flavor=productInfo.flavor;
-        source.unitDistribution = productInfo.unit_distribution;
-        source.price_per_pcs = productInfo.price_per_pcs;
-        source.search.shortDescription = productInfo.short_description;
-        source.search.unitDistribution = productInfo.unit_distribution;
-        source.search.category = productInfo.category;
-        source.search.vendor = productInfo.vendor;
-        source.search.size = productInfo.size;
+        if (productInfo) {
+            source.size = productInfo.size;
+            source.flavor = productInfo.flavor;
+            source.unitDistribution = productInfo.unit_distribution;
+            source.price_per_pcs = productInfo.price_per_pcs;
+            source.search.shortDescription = productInfo.short_description;
+            source.search.unitDistribution = productInfo.unit_distribution;
+            source.search.category = productInfo.category;
+            source.search.vendor = productInfo.vendor;
+            source.search.size = productInfo.size;
         }
         setIsRefresh(!isRefresh);
 
@@ -421,9 +421,9 @@ function DistributionForm(props) {
             description: '-',
             orderQty: 0,
             stockQty: 0,
-            unitDistribution : '-',
+            unitDistribution: '-',
             status: '',
-            productId : ''
+            productId: ''
         });
         setDetailForm(records);
     }
@@ -432,8 +432,8 @@ function DistributionForm(props) {
     }
     const deleteItemHandler = (indx) => {
         const fm = [...detailForm];
-        fm.splice(indx,1);
-       
+        fm.splice(indx, 1);
+
         setDetailForm(fm);
     }
     const dateInputHandler = (name, value) => {
@@ -500,8 +500,8 @@ function DistributionForm(props) {
                                             <RegularTextField {...item} value={generalForm[item.name]} onChange={inputGeneralHandler} />
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
-                                         
-                                                <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
+
+                                            <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
                                             : item.component === 'singlecomplete' ?
                                                 <React.Fragment>
                                                     <SingleWithClearAutoComplete
@@ -529,80 +529,80 @@ function DistributionForm(props) {
                     <br />
                     <Typography variant="h6">Supplies</Typography>
                     <Grid container>
-            <Grid item xs={12} style={{paddingBottom:10}}>
-              <Divider variant="fullWidth" style={{
-                
-                height: '.02em',
-                border: 'solid 1px rgba(0, 0, 0, 0.12)'
-              }} orientation="horizontal" flexItem />
-            </Grid>
-            <br />
-          </Grid>
-                    {detailForm.map((item,index) => {
+                        <Grid item xs={12} style={{ paddingBottom: 10 }}>
+                            <Divider variant="fullWidth" style={{
+
+                                height: '.02em',
+                                border: 'solid 1px rgba(0, 0, 0, 0.12)'
+                            }} orientation="horizontal" flexItem />
+                        </Grid>
+                        <br />
+                    </Grid>
+                    {detailForm.map((item, index) => {
                         return (
-                            <Grid container spacing={1} direction="row" style={{paddingBottom:12}} key={`contr-${index}`}>
+                            <Grid container spacing={1} direction="row" style={{ paddingBottom: 12 }} key={`contr-${index}`}>
 
                                 <Grid item xs={12}>
                                     <div style={{ display: 'inline-flex', gap: 10 }}>
-                                    <Avatar  style={{color:'black',background:'white',border: '1px solid black'}}>{index+1}</Avatar>
-                                    <div style={{paddingTop:4}}>
-                                        <Tooltip title={'Delete Item'}>
-                                    <DeleteIcon style={{color: '#F62100',fontSize:'24px',cursor:'pointer'}} onClick={() =>deleteItemHandler(index)}/>
-                                    </Tooltip>
-                                    
-                                    </div>
-                                 
-                                        <div style={{width:300}}>
-                                        <SingleWithClearAutoComplete
-                                            disabled={props.mode && props.mode === 'view' ? true : false}
-                                            source={item}
-                                            {...details.find(d => d.id === 'search')}
-                                            value={item['search']}
-                                            onSelectHandler={autoCompleteDetailInputHander}
-                                            onChangeHandler={onChangeDetailInputHandler}
-                                            options={[...props.stockList]}
-                                        />
+                                        <Avatar style={{ color: 'black', background: 'white', border: '1px solid black' }}>{index + 1}</Avatar>
+                                        <div style={{ paddingTop: 4 }}>
+                                            <Tooltip title={'Delete Item'}>
+                                                <DeleteIcon style={{ color: '#F62100', fontSize: '24px', cursor: 'pointer' }} onClick={() => deleteItemHandler(index)} />
+                                            </Tooltip>
+
                                         </div>
-                                        <div style={{width:400}}>
-                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'description')} value={item['description']||'-'} onChange={inputDetailHandler} />
+
+                                        <div style={{ width: 300 }}>
+                                            <SingleWithClearAutoComplete
+                                                disabled={props.mode && props.mode === 'view' ? true : false}
+                                                source={item}
+                                                {...details.find(d => d.id === 'search')}
+                                                value={item['search']}
+                                                onSelectHandler={autoCompleteDetailInputHander}
+                                                onChangeHandler={onChangeDetailInputHandler}
+                                                options={[...props.stockList]}
+                                            />
                                         </div>
-                                        <div style={{width:60}}>
-                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'size')} value={item['size']||'-'} onChange={inputDetailHandler} />
+                                        <div style={{ width: 400 }}>
+                                            <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'description')} value={item['description'] || '-'} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:140}}>
-                                        <RegularTextField disabled={true}  source={item}  {...details.find(d => d.id === 'flavor')} value={item['flavor']||'-'} onChange={inputDetailHandler} />
+                                        <div style={{ width: 60 }}>
+                                            <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'size')} value={item['size'] || '-'} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:100}}>
-                                        <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
+                                        <div style={{ width: 140 }}>
+                                            <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'flavor')} value={item['flavor'] || '-'} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:60}}>
-                                        <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']}/>
+                                        <div style={{ width: 100 }}>
+                                            <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'orderQty')} value={item['orderQty']} onChange={inputDetailHandler} />
                                         </div>
-                                        <div style={{width:120}}>
-                                        <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'}/>
+                                        <div style={{ width: 60 }}>
+                                            <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'unitDistribution')} value={item['unitDistribution']} />
+                                        </div>
+                                        <div style={{ width: 120 }}>
+                                            <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'} />
                                         </div>
                                     </div>
                                 </Grid>
 
-                              
-                               
+
+
                                 {item.stockStatus && item.orderQty > 0 &&
-                                <Grid item xs={12} >
-                                <div id="in-stock" style={{borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8,paddingBottom:2 }}>
-					
-                                    <Typography variant="h6" style={{color:item.stockStatus.indexOf('In Stock') !== -1 ? 'blue':'red'}}>{item.stockStatus}</Typography>
-                                    </div>
-                                </Grid>
-                    }
-                             
+                                    <Grid item xs={12} >
+                                        <div id="in-stock" style={{ borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8, paddingBottom: 2 }}>
+
+                                            <Typography variant="h6" style={{ color: item.stockStatus.indexOf('In Stock') !== -1 ? 'blue' : 'red' }}>{item.stockStatus}</Typography>
+                                        </div>
+                                    </Grid>
+                                }
+
                             </Grid>
                         )
                     })}
 
-                    <div style={{paddingTop:4,display : props.mode && props.mode === 'edit' ? 'none' : ''}}>
+                    <div style={{ paddingTop: 4, display: props.mode && props.mode === 'edit' ? 'none' : '' }}>
                         <Button disabled={props.mode && props.mode === 'view' ? true : false} variant="outlined" color="primary" style={{ fontSize: 14 }} onClick={() => addItemHandler()}>Add Item</Button>
                     </div>
-                    
+
 
                 </div>
                 <br />
@@ -611,9 +611,9 @@ function DistributionForm(props) {
                     <ModalFooter actions={footerActions} />
                 }
             </div>
-            {isPrintForm && 
-            <PrintForm isOpen={isPrintForm} generalForm={generalForm} closePrintForm={closePrintFormHandler} detailForm={detailForm}/>
-}
+            {isPrintForm &&
+                <PrintForm isOpen={isPrintForm} generalForm={generalForm} closePrintForm={closePrintFormHandler} detailForm={detailForm} />
+            }
         </ReactModal >
 
     );

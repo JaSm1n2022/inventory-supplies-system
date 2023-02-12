@@ -62,7 +62,7 @@ const ReportChart = (props) => {
         options={options.options}
         series={series.series}
         type="bar"
-        width="800"
+        width="500"
       />
 
     </React.Fragment>

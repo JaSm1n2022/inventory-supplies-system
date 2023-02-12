@@ -251,12 +251,12 @@ const Distribution = (props) => {
     isStockListDone = true;
     props.resetListStocks();
   }
-  console.log('[props.distributions]', props.distributions,isProductListDone,productList);
+  console.log('[props.distributions]', props.distributions, isProductListDone, productList);
   if (isProductListDone && isDistributionsCollection && props.distributions && props.distributions.status === ACTION_STATUSES.SUCCEED) {
     let source = props.distributions.data;
-    for(const src of source) {
+    for (const src of source) {
       const prodDetails = productList.find(pr => pr.id === src.productId);
-      if(prodDetails) {
+      if (prodDetails) {
         src.shortDescription = prodDetails.short_description;
         src.size = prodDetails.size;
         src.flavor = prodDetails.flavor;
@@ -330,14 +330,15 @@ const Distribution = (props) => {
     forStockUpdates = [];
     console.log('[delete Distribution id]', id, data);
     const stock = stockList.find(s => s.productId === data.productId);
-    if(stock) {
-    console.log('[delete distribution stock', stock);
-    forStockUpdates.push(
-      {
-        id: stock.id,
-        qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(data.order_qty, 10))
+    if (stock) {
+      console.log('[delete distribution stock', stock);
 
-      });
+      forStockUpdates.push(
+        {
+          id: stock.id,
+          qty_on_hand: Math.abs(parseInt(stock.qty_on_hand || 0, 10) + parseInt(data.order_qty, 10))
+
+        });
     }
     props.deleteDistribution(id);
   }
@@ -375,13 +376,14 @@ const Distribution = (props) => {
         const stock = stockList.find(s => s.productId === payload.productId);
         if (stock) {
           let qty = parseInt(payload.orderQty, 10);
-
+          const balance = parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10);
           forStockUpdates.push(
             {
               id: stock.id,
-              qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10))
+              qty_on_hand: balance < 1 ? 0 : balance
 
             });
+
         }
         console.log('[params]', params);
         finalPayload.push(params);
@@ -460,10 +462,11 @@ const Distribution = (props) => {
         if (mode === 'edit') {
           qty = parseInt(payload.adjustedQty, 10);
         }
+        const balance = parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10);
         forStockUpdates.push(
           {
             id: stock.id,
-            qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) - parseInt(qty, 10))
+            qty_on_hand: balance < 1 ? 0 : balance
 
           });
       }
@@ -472,7 +475,7 @@ const Distribution = (props) => {
     }
 
 
-    singlePrintProcessHandler(general,details);
+    singlePrintProcessHandler(general, details);
 
 
 
@@ -634,44 +637,44 @@ const Distribution = (props) => {
   if (isTemplateListDone && isEmployeeListDone && isStockListDone && isPatientListDone && isProductListDone && isDistributionListDone) {
     isAllFetchDone = true;
   }
-  const singlePrintProcessHandler =  (general,details) => {
-    console.log('[Single Print]',general,details);
+  const singlePrintProcessHandler = (general, details) => {
+    console.log('[Single Print]', general, details);
     multiPatients = [];
     let generalData = {};
-      let detailsData = [];
-      let maxCnt = 1;
-      for (const ea of details) {
-         if (maxCnt % (LIMIT_ITEM_PRINT + 1) === 0) {
-          multiPatients.push({
-            general: generalData,
-            details: detailsData
-          });
-          generalData = {};
-          detailsData = [];
-          }
-          generalData.patient = general.patient;
-          generalData.patientName = general.patientName;
-          generalData.facility = general.patient? general.patient.place_of_service : '';
-          generalData.requestor = general.requestor;
-          generalData.requestorName = ea.requestorName;
-          const prod = productList.find(p => p.id === ea.productId);
-          detailsData.push({
-            search: { ...prod },
-            ...prod,
-          orderQty: ea.orderQty || ea.order_qty,
-          productId: ea.productId,
-          unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
-          });
-        maxCnt++;
+    let detailsData = [];
+    let maxCnt = 1;
+    for (const ea of details) {
+      if (maxCnt % (LIMIT_ITEM_PRINT + 1) === 0) {
+        multiPatients.push({
+          general: generalData,
+          details: detailsData
+        });
+        generalData = {};
+        detailsData = [];
       }
-      multiPatients.push({
-        general: generalData,
-        details: detailsData
+      generalData.patient = general.patient;
+      generalData.patientName = general.patientName;
+      generalData.facility = general.patient ? general.patient.place_of_service : '';
+      generalData.requestor = general.requestor;
+      generalData.requestorName = ea.requestorName;
+      const prod = productList.find(p => p.id === ea.productId);
+      detailsData.push({
+        search: { ...prod },
+        ...prod,
+        orderQty: ea.orderQty || ea.order_qty,
+        productId: ea.productId,
+        unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
       });
+      maxCnt++;
+    }
+    multiPatients.push({
+      general: generalData,
+      details: detailsData
+    });
   }
   const printPatientOrdersHandler = (general, details) => {
-   
-    singlePrintProcessHandler(general,details);
+
+    singlePrintProcessHandler(general, details);
     setIsFormModal(false);
     setIsPrintForm(true);
   }
@@ -830,73 +833,92 @@ const Distribution = (props) => {
   console.log('[Create Template]', props.createTemplateState);
   return (
     <React.Fragment>
-      {!isAllFetchDone  &&
+      {!isAllFetchDone &&
         <div align="center" style={{ paddingTop: '100px' }}>
           <br />
           <CircularProgress />&nbsp;<span>Loading</span>...
         </div>
-}
-        <React.Fragment>
-          <Grid container style={{display:isAllFetchDone  ? '' :'none'}}>
-            <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
-              <div>
-                <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
-              </div>
-              <div>
-                <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler} />
-              </div>
-            </Grid>
+      }
+      <React.Fragment>
+        <Grid container style={{ display: isAllFetchDone ? '' : 'none' }}>
+          <Grid container justifyContent="space-between" style={{ paddingTop: 10 }}>
+            <div>
+              <Typography variant="h6">DISTRIBUTION MANAGEMENT</Typography>
+            </div>
+            <div>
+              <FilterTable filterRecordHandler={filterRecordHandler} filterByDateHandler={filterByDateHandler} />
+            </div>
+          </Grid>
 
-            <Grid container>
-              <div style={{ display: 'inline-flex', gap: 10, paddingTop: 10 }}>
-                <Button
-                  onClick={addEditTemplateHandler}
-                  variant="outlined"
-                  color="primary"
-                  aria-controls="simple-menu" aria-haspopup="true"
-                  component="span"
+          <Grid container>
+            <div style={{ display: 'inline-flex', gap: 10, paddingTop: 10 }}>
+              <Button
+                onClick={addEditTemplateHandler}
+                variant="outlined"
+                color="primary"
+                aria-controls="simple-menu" aria-haspopup="true"
+                component="span"
 
-                >
+              >
 
-                  MANAGE TEMPLATE
-                </Button>
-                <Button
-                  onClick={() => createFormHandler()}
-                  variant="contained"
-                  style={{
-                    border: 'solid 1px #2196f3',
-                    color: 'white',
-                    background: '#2196f3',
-                    fontFamily: "Roboto",
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    fontStretch: "normal",
-                    fontStyle: "normal",
-                    lineHeight: 1.71,
-                    letterSpacing: "0.4px",
-                    textAlign: "left",
-                    cursor: 'pointer'
-                  }}
-                  component="span"
-                  startIcon={<AddIcon />}
-                >
-                  ADD ORDER
-                </Button>
-                <Menu
-                  id="simple-menu"
-                  anchorEl={templateAnchorEl}
-                  keepMounted
-                  open={Boolean(templateAnchorEl)}
-                  onClose={closeTemplateMenuHandler}
-                >
-                  <MenuItem onClick={() => addEditTemplateHandler()}>Add/Edit Template</MenuItem>
-                  <MenuItem>Use Template</MenuItem>
+                MANAGE TEMPLATE
+              </Button>
+              <Button
+                onClick={() => createFormHandler()}
+                variant="contained"
+                style={{
+                  border: 'solid 1px #2196f3',
+                  color: 'white',
+                  background: '#2196f3',
+                  fontFamily: "Roboto",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  fontStretch: "normal",
+                  fontStyle: "normal",
+                  lineHeight: 1.71,
+                  letterSpacing: "0.4px",
+                  textAlign: "left",
+                  cursor: 'pointer'
+                }}
+                component="span"
+                startIcon={<AddIcon />}
+              >
+                ADD ORDER
+              </Button>
+              <Menu
+                id="simple-menu"
+                anchorEl={templateAnchorEl}
+                keepMounted
+                open={Boolean(templateAnchorEl)}
+                onClose={closeTemplateMenuHandler}
+              >
+                <MenuItem onClick={() => addEditTemplateHandler()}>Add/Edit Template</MenuItem>
+                <MenuItem>Use Template</MenuItem>
 
-                </Menu>
-                {isAddGroupButtons &&
-                  <div style={{ display: 'inline-flex', gap: 10 }}>
+              </Menu>
+              {isAddGroupButtons &&
+                <div style={{ display: 'inline-flex', gap: 10 }}>
+                  <Button
+                    onClick={() => exportToExcelHandler()}
+                    variant="outlined"
+                    style={{
+
+                      fontFamily: "Roboto",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      fontStretch: "normal",
+                      fontStyle: "normal",
+                      lineHeight: 1.71,
+                      letterSpacing: "0.4px",
+                      textAlign: "left",
+                      cursor: 'pointer'
+                    }}
+                    component="span"
+
+                  > Export Excel </Button>
+                  <Tooltip title={'Limit to 16 records'}>
                     <Button
-                      onClick={() => exportToExcelHandler()}
+                      onClick={() => createOrderHandler()}
                       variant="outlined"
                       style={{
 
@@ -912,110 +934,91 @@ const Distribution = (props) => {
                       }}
                       component="span"
 
-                    > Export Excel </Button>
-                    <Tooltip title={'Limit to 16 records'}>
-                      <Button
-                        onClick={() => createOrderHandler()}
-                        variant="outlined"
-                        style={{
+                    > Add Multiple Orders </Button>
+                  </Tooltip>
+                  <Button
+                    onClick={changeStatusHandler}
+                    variant="outlined"
+                    color="primary"
+                    aria-controls="simple-menu" aria-haspopup="true"
+                    component="span"
+                    endIcon={<ArrowDownwardIcon />}
+                  >
 
-                          fontFamily: "Roboto",
-                          fontSize: "12px",
-                          fontWeight: 500,
-                          fontStretch: "normal",
-                          fontStyle: "normal",
-                          lineHeight: 1.71,
-                          letterSpacing: "0.4px",
-                          textAlign: "left",
-                          cursor: 'pointer'
-                        }}
-                        component="span"
-
-                      > Add Multiple Orders </Button>
-                    </Tooltip>
+                    Change Status
+                  </Button>
+                  <Tooltip title={'Reprint'}>
                     <Button
-                      onClick={changeStatusHandler}
+                      onClick={() => printAllOrdersHandler()}
                       variant="outlined"
-                      color="primary"
-                      aria-controls="simple-menu" aria-haspopup="true"
+                      style={{
+
+
+
+                        fontFamily: "Roboto",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        fontStretch: "normal",
+                        fontStyle: "normal",
+                        lineHeight: 1.71,
+                        letterSpacing: "0.4px",
+                        textAlign: "left",
+                        cursor: 'pointer'
+                      }}
                       component="span"
-                      endIcon={<ArrowDownwardIcon />}
-                    >
 
-                      Change Status
-                    </Button>
-                    <Tooltip title={'Reprint'}>
-                      <Button
-                        onClick={() => printAllOrdersHandler()}
-                        variant="outlined"
-                        style={{
+                    > PRINT ALL </Button>
+                  </Tooltip>
+                  <Tooltip title={'Create same data'}>
+                    <Button
+                      onClick={() => copyAllHandler()}
+                      variant="outlined"
+                      style={{
 
 
+                        fontFamily: "Roboto",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        fontStretch: "normal",
+                        fontStyle: "normal",
+                        lineHeight: 1.71,
+                        letterSpacing: "0.4px",
+                        textAlign: "left",
+                        cursor: 'pointer'
+                      }}
+                      component="span"
 
-                          fontFamily: "Roboto",
-                          fontSize: "12px",
-                          fontWeight: 500,
-                          fontStretch: "normal",
-                          fontStyle: "normal",
-                          lineHeight: 1.71,
-                          letterSpacing: "0.4px",
-                          textAlign: "left",
-                          cursor: 'pointer'
-                        }}
-                        component="span"
+                    > COPY DATA </Button>
+                  </Tooltip>
 
-                      > PRINT ALL </Button>
-                    </Tooltip>
-                    <Tooltip title={'Create same data'}>
-                      <Button
-                        onClick={() => copyAllHandler()}
-                        variant="outlined"
-                        style={{
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={closeChangeStatusMenuHandler}
+                  >
+                    {SUPPLY_STATUS.map(map => {
+                      return (
+                        <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
+                      )
+                    })}
+                  </Menu>
 
-
-                          fontFamily: "Roboto",
-                          fontSize: "12px",
-                          fontWeight: 500,
-                          fontStretch: "normal",
-                          fontStyle: "normal",
-                          lineHeight: 1.71,
-                          letterSpacing: "0.4px",
-                          textAlign: "left",
-                          cursor: 'pointer'
-                        }}
-                        component="span"
-
-                      > COPY DATA </Button>
-                    </Tooltip>
-
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={closeChangeStatusMenuHandler}
-                    >
-                      {SUPPLY_STATUS.map(map => {
-                        return (
-                          <MenuItem onClick={() => updateStatusHandler(map)}>{map}</MenuItem>
-                        )
-                      })}
-                    </Menu>
-
-                  </div>
-                }
-              </div>
-            </Grid>
-            <Grid item xs={12} align="right">
-              <Typography variant="h5">{`Grand Total : $${grandTotal}`}</Typography>
-            </Grid>
-            <Grid item xs={12} style={{ paddingTop: 10 }}>
-
-              <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
-            </Grid>
+                </div>
+              }
+            </div>
           </Grid>
-        </React.Fragment>
-      
+          <Grid item xs={12} align="right">
+            <Typography variant="h5">{`Grand Total : $${grandTotal}`}</Typography>
+          </Grid>
+          <Grid item xs={12} style={{ paddingTop: 10 }}>
+
+            <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
+          </Grid>
+        </Grid>
+      </React.Fragment>
+
       {isFormModal &&
         <Form module={module} printPatientOrdersHandler={printPatientOrdersHandler} filterRecordHandler={filterRecordHandler} generalInfo={generalForm} detailInfo={detailForm} employeeList={employeeList} patientList={patientList} productList={productList} stockList={stockList} createDistributionHandler={createDistributionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }

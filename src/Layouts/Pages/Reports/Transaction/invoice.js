@@ -1,10 +1,9 @@
-import { Box, Button, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import SingleWithClearAutoComplete from "../../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
 import { attemptToFetchTransaction, resetFetchTransactionState } from "../../../../store/actions/transactionAction";
 import { transactionListStateSelector } from "../../../../store/selectors/transactionSelector";
-import { ACTION_STATUSES, DCH_YEARS, DEFAULT_ITEM } from "../../../../utils/constants";
+import { ACTION_STATUSES, DCH_YEARS } from "../../../../utils/constants";
 import ReportChart from "../Chart/ReportChart";
 
 let numberOfMonth = 0;
@@ -88,9 +87,9 @@ const InvoiceReport = (props) => {
                 </Box>
             </Grid>
             <Grid justifyContent="space-between" container style={{ padding: 10 }}>
-                <Typography variant="body1" color="textSecondary">*** This report is based on all products (office/medical/incontinence/etc) purchased ***</Typography>
+                <Typography variant="body1" color="textSecondary">*** This report is based on all purchased products (office/medical/Incontinence/etc) ***</Typography>
             </Grid>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ width: 600 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Date Range</TableCell>
