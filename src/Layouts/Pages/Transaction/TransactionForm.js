@@ -3,7 +3,7 @@ import ModalHeader from "../../../Common/components/Modal/ModalHeader/ModalHeade
 import ModalFooter from "../../../Common/components/Modal/ModalFooter/ModalFooter";
 import styles from "./transaction.module.css";
 import ReactModal from "react-modal";
-import { Avatar, Button, Divider, Grid, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Button, Divider, Grid, Tooltip, Typography } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
@@ -15,6 +15,7 @@ let categoryList = [];
 let uoms = [];
 let vendors = [];
 let statuses = [];
+let totalAmount = parseFloat(0.0);
 let paymentMethods = [];
 SUPPLY_PAYMENT_METHOD.forEach((item, index) => {
     paymentMethods.push({
@@ -176,7 +177,7 @@ function TransportationForm(props) {
             label: 'Payment Method',
             name: 'paymentMethod',
             options: paymentMethods,
-            value : paymentMethods.find(method => method.name === 'Card')
+            value: paymentMethods.find(method => method.name === 'Card')
 
         },
         {
@@ -201,10 +202,11 @@ function TransportationForm(props) {
     useEffect(() => {
         console.log('[effects 1]');
         const fm = {};
+        totalAmount = parseFloat(0.0);
         fm.created_at = new Date();
         fm.orderedDt = new Date();
         fm.paymentDt = new Date();
-       
+
         fm.expectedDeliveryDt = new Date();
         fm.paymentMethod = paymentMethods.find(m => m.name === 'Card');
         fm.status = statuses.find(s => s.name === 'Order');
@@ -224,24 +226,24 @@ function TransportationForm(props) {
             fm.paymentDt = `${fm.payment_transaction_at}T00:00:00.000Z`;
             fm.status = fm.status ? statuses.find(s => s.name === fm.status) : DEFAULT_ITEM;
             const source = {};
-            source.category =fm.category;
+            source.category = fm.category;
             source.item = fm.item;
             source.size = fm.size;
             source.qty = fm.qty;
-            
-            source.dimension =fm.dimension;
+
+            source.dimension = fm.dimension;
             source.qty_uom = fm.qty_uom;
             source.count = fm.count;
-           source.unit_price = fm.unit_price;
-           source.price_per_pcs = fm.price_per_pcs;
-           source.vendor = fm.vendor;
+            source.unit_price = fm.unit_price;
+            source.price_per_pcs = fm.price_per_pcs;
+            source.vendor = fm.vendor;
             source.unitPrice = fm.unit_price;
             source.totalPrice = fm.total_price;
             source.grandTotal = fm.grand_total;
-            source.description =fm.description;
-           
+            source.description = fm.description;
+
             source.price_per_pcs = fm.price_per_pcs;
-           setDetailForm([source]);
+            setDetailForm([source]);
             setGeneralForm(fm);
 
 
@@ -249,7 +251,7 @@ function TransportationForm(props) {
         }
     }, [props.item]);
     const validateFormHandler = () => {
-        props.createTransactionHandler(generalForm, detailForm,props.mode);
+        props.createTransactionHandler(generalForm, detailForm, props.mode);
     }
     const footerActions = [
         {
@@ -279,7 +281,8 @@ function TransportationForm(props) {
             source.totalPcs = parseInt(source.qty || 0, 10) * parseInt(source.unitPiece || 0, 10);
             source.totalPrice = parseFloat(parseFloat(source.qty || 0) * parseFloat(source.unitPrice || 0)).toFixed(2)
             source.pricePerPcs = parseFloat(parseFloat(source.unitPrice || 0) / parseFloat(source.unitPiece || 0)).toFixed(2)
-            source.grandTotal =  source.totalPrice;
+            source.grandTotal = source.totalPrice;
+
         }
         setGeneralForm(source);
 
@@ -323,7 +326,7 @@ function TransportationForm(props) {
 
         source.search = item;
         console.log('   ', item);
-        
+
         source.productId = item.productId;
         source.category = item.category;
         source.vendor = item.vendor || '-';
@@ -336,12 +339,13 @@ function TransportationForm(props) {
             source.dimension = productInfo.dimension;
             source.qty_uom = productInfo.qty_uom;
             source.count = productInfo.count;
-           source.unit_price = productInfo.unit_price;
-           source.price_per_pcs = productInfo.price_per_pcs;
-           source.vendor = productInfo.vendor;
+            source.unit_price = productInfo.unit_price;
+            source.price_per_pcs = productInfo.price_per_pcs;
+            source.vendor = productInfo.vendor;
             source.unitPrice = productInfo.unit_price;
             source.totalPrice = productInfo.unit_price;
             source.grandTotal = productInfo.unit_price;
+
             source.productInfo = productInfo;
             source.description = productInfo.description;
             source.unitDistribution = productInfo.unit_distribution;
@@ -356,6 +360,7 @@ function TransportationForm(props) {
 
     }
     const deleteItemHandler = (indx) => {
+
         const fm = [...detailForm];
         fm.splice(indx, 1);
 
@@ -372,10 +377,10 @@ function TransportationForm(props) {
             id: uuidv4(),
             description: '-',
             qty: 0,
-            unitPrice : 0,
-            totalPrice : 0,
-            grandTotal : 0
-        
+            unitPrice: 0,
+            totalPrice: 0,
+            grandTotal: 0
+
         });
         setDetailForm(records);
     }
@@ -388,23 +393,31 @@ function TransportationForm(props) {
             return 'Create Transaction';
         }
     }
+    const recalculateGrandTotalHandler = () => {
+        totalAmount = parseFloat(0.00);
+        detailForm.forEach(gen => {
+            totalAmount = parseFloat(parseFloat(totalAmount) + parseFloat(gen.grandTotal)).toFixed(2);
+        });
+        console.log('total', totalAmount);
+    }
     const inputDetailHandler = ({ target }, source) => {
         source[target.name] = target.value;
-          console.log('[Target]', target, generalForm);
-            if (['qty', 'unitPiece', 'unitPrice'].includes(target.name)) {
-                source.totalPcs = parseInt(source.qty || 0, 10) * parseInt(source.unitPiece || 0, 10);
-                source.totalPrice = parseFloat(parseFloat(source.qty || 0) * parseFloat(source.unitPrice || 0)).toFixed(2)
-                source.pricePerPcs = parseFloat(parseFloat(source.unitPrice || 0) / parseFloat(source.unitPiece || 0)).toFixed(2)
-                source.grandTotal =  source.totalPrice;
-            }
+        console.log('[Target]', target, generalForm);
+        if (['qty', 'unitPiece', 'unitPrice'].includes(target.name)) {
+            source.totalPcs = parseInt(source.qty || 0, 10) * parseInt(source.unitPiece || 0, 10);
+            source.totalPrice = parseFloat(parseFloat(source.qty || 0) * parseFloat(source.unitPrice || 0)).toFixed(2)
+            source.pricePerPcs = parseFloat(parseFloat(source.unitPrice || 0) / parseFloat(source.unitPiece || 0)).toFixed(2)
+            source.grandTotal = source.totalPrice;
+        }
         setIsRefresh(!isRefresh);
 
     };
-   
+
     if (detailForm && detailForm.length === 0) {
         addItemHandler();
     }
     console.log('[general form]', generalForm);
+    recalculateGrandTotalHandler();
     return (
         <ReactModal
             style={{
@@ -480,7 +493,13 @@ function TransportationForm(props) {
                     </Grid>
 
                     <br />
-                    <Typography variant="h6">Items</Typography>
+                    <Grid container justifyContent="space-between">
+                        <Typography variant="h6">Items</Typography>
+                        <Box style={{ padding: 2, background: '#ebedeb', border: '1px solid #ebedeb' }}>
+                            <Typography variant="h5" color="primary">{`$${new Intl.NumberFormat('en-IN', {}).format(parseFloat(totalAmount))}`}</Typography>
+                        </Box>
+
+                    </Grid>
                     <Grid container>
                         <Grid item xs={12} style={{ paddingBottom: 10 }}>
                             <Divider variant="fullWidth" style={{
@@ -518,16 +537,16 @@ function TransportationForm(props) {
                                             <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'description')} value={item['description'] || '-'} onChange={inputDetailHandler} />
                                         </div>
                                         <div style={{ width: 100 }}>
-                                        <RegularTextField disabled={false} source={item}  {...details.find(d => d.id === 'qty')} value={item['qty']} onChange={inputDetailHandler} />
+                                            <RegularTextField disabled={false} source={item}  {...details.find(d => d.id === 'qty')} value={item['qty']} onChange={inputDetailHandler} />
                                         </div>
                                         <div style={{ width: 100 }}>
-                                        <RegularTextField disabled={false} source={item}  {...details.find(d => d.id === 'unitPrice')} value={item['unitPrice']} onChange={inputDetailHandler} />
+                                            <RegularTextField disabled={false} source={item}  {...details.find(d => d.id === 'unitPrice')} value={item['unitPrice']} onChange={inputDetailHandler} />
                                         </div>
                                         <div style={{ width: 120 }}>
-                                        <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'totalPrice')} value={item['totalPrice']} onChange={inputDetailHandler} />
+                                            <RegularTextField disabled={true} source={item}  {...details.find(d => d.id === 'totalPrice')} value={item['totalPrice']} onChange={inputDetailHandler} />
                                         </div>
                                         <div style={{ width: 120 }}>
-                                        <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'grandTotal')} value={item['grandTotal']} onChange={inputDetailHandler} />
+                                            <RegularTextField disabled={props.mode && props.mode === 'view' ? true : false} source={item}  {...details.find(d => d.id === 'grandTotal')} value={item['grandTotal']} onChange={inputDetailHandler} />
                                         </div>
                                     </div>
                                 </Grid>

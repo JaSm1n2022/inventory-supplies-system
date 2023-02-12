@@ -68,6 +68,9 @@ const App = (props) => {
 
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
+			<head>
+				<meta name="viewport" content="initial-scale=1, width=device-width" />
+			</head>
 			<Router basename="/">
 
 				<Layout isSignedIn={signedIn && session}>

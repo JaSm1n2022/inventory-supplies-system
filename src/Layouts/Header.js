@@ -91,7 +91,7 @@ function Header({
 
   return (
     <React.Fragment>
-      <Grid container justifyContent="space-between">
+      <Grid container>
 
         <Grid container justifyContent="space-between">
           <img src={Hospice} alt="" style={{ height: '50px', width: '400px' }} />
