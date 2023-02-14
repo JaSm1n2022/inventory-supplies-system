@@ -107,10 +107,10 @@ function Header({
             paddingBottom: 10,
             paddingTop: 4
           }}>
-            <Button variant="contained" color="primary" onClick={() => redirectLink('transaction')}>Supply Order Transaction</Button>
-            <Button variant="contained" color="primary" onClick={() => redirectLink('stockroom')}>Stock Room Inventory</Button>
-            <Button variant="contained" color="primary" onClick={() => redirectLink('distribution')}>Supplies Delivery Record</Button>
-            <Button variant="contained" color="primary" onClick={() => redirectLink('invoice')}>Invoice Statement</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('transaction')}>Transaction</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('stockroom')}>Stockroom</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('distribution')}>Distribution</Button>
+            <Button variant="contained" color="primary" onClick={() => redirectLink('invoice')}>Invoice</Button>
             <Button variant="contained" color="primary" onClick={() => redirectLink('dashboard')}>Dashboard</Button>
             <Button
               id="demo-customized-button"

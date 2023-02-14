@@ -430,7 +430,10 @@ export const SUPPLY_CATEGORY = [
   'Bed Alarm',
   'Covid-19 Test',
   'Flange',
-  'Drainable Pouch'
+  'Drainable Pouch',
+  'Deodorant',
+  'Hospital Gown'
+
 ]
 
 export const SUPPLY_PAYMENT_METHOD = [
