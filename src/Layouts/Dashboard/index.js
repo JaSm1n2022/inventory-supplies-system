@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, Tabs, Tab,  CircularProgress, Divider,   FormControl, FormLabel,Radio, } from '@mui/material';
+import { Grid, Box, Typography, Tabs, Tab, CircularProgress, Divider, FormControl, FormLabel, Radio, } from '@mui/material';
 
 import { patientListStateSelector } from '../../store/selectors/patientSelector';
 import { distributionListStateSelector } from '../../store/selectors/distributionSelector';
@@ -27,6 +27,7 @@ import { stockListStateSelector } from '../../store/selectors/stockSelector';
 import SupplyPlot from './components/SupplyPlot';
 import CardTransaction from './components/CardTransaction';
 import PrintReport from './components/PrintReport';
+import { PollRounded } from '@mui/icons-material';
 
 
 
@@ -69,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
   },
   small: {
-   
+
     color: 'black',
     backgroundColor: 'white',
     border: '1px solid black',
@@ -130,9 +131,9 @@ let estimatedSupplyGrandTotal = {
   underwear: parseFloat(0.0),
   glove: parseFloat(0.0),
   wipe: parseFloat(0.0),
-  ensureVanilla : parseFloat(0.0),
-  ensureChocolate : parseFloat(0.0),
-  ensureStrawberry : parseFloat(0.0)
+  ensureVanilla: parseFloat(0.0),
+  ensureChocolate: parseFloat(0.0),
+  ensureStrawberry: parseFloat(0.0)
 };
 
 let plotSummary = {
@@ -143,7 +144,7 @@ let plotSummary = {
   wipe: [],
   ensureVanilla: [],
   ensureChocolate: [],
-  ensureStrawberry : []
+  ensureStrawberry: []
 };
 
 
@@ -155,7 +156,7 @@ let unusedPlotSummary = {
   wipe: [],
   ensureVanilla: [],
   ensureChocolate: [],
-  ensureStrawberry : []
+  ensureStrawberry: []
 };
 let transactionType = {
 
@@ -337,8 +338,8 @@ const Dashboard = (props) => {
     listTransactions({ from: _sfrom, to: _sTo });
 
   }
-  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves,ensureVanillas,ensureChocolates,ensureStrawberries) => {
-    
+  const setPatientProductHandler = (patient, briefs, underpads, underwears, wipes, gloves, ensureVanillas, ensureChocolates, ensureStrawberries) => {
+
     const temp = {
       patientName: patient.name,
       brief: {
@@ -538,6 +539,82 @@ const Dashboard = (props) => {
       if (plot.productId) {
         const tempStock = [...stockList];
         let currentStock = tempStock.find(stk => stk.productId === plot.productId);
+
+        if (currentStock) {
+          plot.currentStock = tempStock.find(stk => stk.productId === plot.productId).qty_on_hand || 0;
+          plot.order = plot.threshold || plot.qty;
+
+        } else {
+          plot.currentStock = 0;
+          plot.order = plot.threshold || plot.qty;
+        }
+        newPlot.push(plot);
+      }
+    }
+    console.log('[new Plot]', newPlot);
+    //one by one 
+    //make data
+    const ids = newPlot.map(m => m.productId);
+    const uIds = Array.from(new Set(ids));
+
+    patientSupplyPlot[source] = newPlot;
+    const adjustment = [];
+    uIds.forEach(u => {
+      const sel = patientSupplyPlot[source].filter(n => n.productId === u);
+
+      sel.forEach((s) => {
+        adjustment.push(s);
+      });
+    })
+    patientSupplyPlot[source] = adjustment;
+    uIds.forEach(u => {
+      const sel = patientSupplyPlot[source].filter(n => n.productId === u);
+      console.log('[estimatedSupplyGrandTotal [sel]]', sel[0].product, source, sel[0].currentStock);
+      let orders = 0;
+      const stock = sel[0].currentStock;
+      sel.forEach(e => {
+        orders += parseInt(e.order || 0);
+      });
+
+      if (orders > 0) {
+        console.log('[estimatedSupplyGrandTotal]', estimatedSupplyGrandTotal[source], source);
+        const forOrder = parseInt(orders) - parseInt(stock);
+        const cartonCnt = Math.ceil(parseFloat(forOrder / sel[0].cnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
+        estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + (parseInt(cartonCnt) * sel[0].unitPrice);
+
+        plotSummary[source].push({
+          ...sel[0], stock, total: orders, carton: cartonCnt, amt: parseInt(cartonCnt) * sel[0].unitPrice
+        });
+      }
+    });
+    const stocks = stockList.filter(s => s.category && s.category.toLowerCase() === source);
+    stocks.forEach(b => {
+      if (!uIds.find(u => u === b.productId)) {
+        const pr = productList.find(p => p.id === b.productId);
+        if (pr) {
+          const temp = {
+            product: pr.description,
+            vendor: pr.vendor,
+            size: pr.size,
+            qty: b.qty_on_hand
+          };
+          if (b.qty_on_hand > 0) {
+            unusedPlotSummary[source].push(temp);
+          }
+        }
+      }
+    })
+  }
+
+
+  const plotHandlerOriginal = (source) => {
+    const newPlot = [];
+    const plots = supplyPlot.map(map => map[source]);
+    console.log('[plots]', plots);
+    for (const plot of plots) {
+      if (plot.productId) {
+        const tempStock = [...stockList];
+        let currentStock = tempStock.find(stk => stk.productId === plot.productId);
         if (currentStock) {
           plot.currentStock = tempStock.find(stk => stk.productId === plot.productId).qty_on_hand;
           if (currentStock.qty_on_hand === 0) {
@@ -589,16 +666,16 @@ const Dashboard = (props) => {
     patientSupplyPlot[source] = adjustment;
     uIds.forEach(u => {
       const sel = patientSupplyPlot[source].filter(n => n.productId === u);
-      console.log('[estimatedSupplyGrandTotal [sel]]',sel,source);
+      console.log('[estimatedSupplyGrandTotal [sel]]', sel, source);
       let orders = 0;
       sel.forEach(e => {
         orders += parseInt(e.order || 0);
       });
       if (orders > 0) {
-            console.log('[estimatedSupplyGrandTotal]',estimatedSupplyGrandTotal[source],source);
+        console.log('[estimatedSupplyGrandTotal]', estimatedSupplyGrandTotal[source], source);
         const cartonCnt = Math.ceil(parseFloat(orders / sel[0].cnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
         estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + (parseInt(cartonCnt) * sel[0].unitPrice);
-  
+
         plotSummary[source].push({
           ...sel[0], total: orders, carton: cartonCnt, amt: parseInt(cartonCnt) * sel[0].unitPrice
         });
@@ -709,9 +786,9 @@ const Dashboard = (props) => {
       underwear: [],
       glove: [],
       wipe: [],
-      ensureVanilla : [],
-      ensureChocolate : [],
-      ensureStrawberry : []
+      ensureVanilla: [],
+      ensureChocolate: [],
+      ensureStrawberry: []
     };
 
 
@@ -721,9 +798,9 @@ const Dashboard = (props) => {
       underwear: [],
       glove: [],
       wipe: [],
-      ensureVanilla : [],
-      ensureChocolate : [],
-      ensureStrawberry : [],
+      ensureVanilla: [],
+      ensureChocolate: [],
+      ensureStrawberry: [],
     };
     for (const patient of patientList) {
       let estimatedAmt = 0.0;
@@ -747,11 +824,11 @@ const Dashboard = (props) => {
       };
       const others = supplies.filter(supply => !['Diabetic Shake', 'Nutrition Shake', 'Brief', 'Underwear/Pull-ups', 'Underpads', 'Lotion', 'Cleanser', 'Ointment', 'Cream'].includes(supply.category));
       const nutritions = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category));
-     
+
       const ensureVanillas = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Vanilla') !== -1);
       const ensureChocolates = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Chocolate') !== -1);
-      const ensureStrawberries = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category)  && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Strawberry') !== -1);
-      
+      const ensureStrawberries = supplies.filter(supply => ['Diabetic Shake', 'Nutrition Shake'].includes(supply.category) && supply.description.indexOf('Ensure') !== -1 && supply.description.indexOf('Strawberry') !== -1);
+
       const briefs = supplies.filter(supply => supply.category === 'Brief');
       const wipes = supplies.filter(supply => supply.category === 'Wipes');
       const gloves = supplies.filter(supply => supply.category === 'Gloves');
@@ -808,7 +885,7 @@ const Dashboard = (props) => {
 
       }
       if ((patient.status.toLowerCase() === 'inactive' && patient.name.indexOf('C/O') !== -1) || patient.status.toLowerCase() !== 'inactive') {
-        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves,ensureVanillas,ensureChocolates,ensureStrawberries);
+        setPatientProductHandler(patient, briefs, underpads, underwears, wipes, gloves, ensureVanillas, ensureChocolates, ensureStrawberries);
       }
 
     }
@@ -851,7 +928,7 @@ const Dashboard = (props) => {
       mckesson: 0,
       walmart: 0,
       others: 0,
-      grand : 0
+      grand: 0
     }
     cardTransaction = [
       { info: "4344", ...transactionType },
@@ -860,6 +937,8 @@ const Dashboard = (props) => {
       { info: "1937", ...transactionType },
       { info: "0994", ...transactionType },
       { info: "9465", ...transactionType },
+      { info: "1003", ...transactionType },
+      { info: "2002", ...transactionType },
       { info: "4058", ...transactionType }
     ];
 
@@ -880,288 +959,288 @@ const Dashboard = (props) => {
           card.walmart += parseFloat(transact.grand_total);
         }
         if (transact.payment_info.indexOf(card.info) !== -1 && !['Walmart', 'Medline', 'Mckesson', 'Amazon'].includes(transact.vendor)) {
-          console.log('[Found Others]',transact);
+          console.log('[Found Others]', transact);
           card.others += parseFloat(transact.grand_total);
         }
         if (transact.payment_info.indexOf(card.info) !== -1) {
           card.grand += parseFloat(transact.grand_total);
         }
-        
+
       });
 
-        if (transact.category === 'Office') {
-          officeAmount += parseFloat(transact.grand_total);
-        }
-        if (transact.vendor === 'Amazon') {
-          amazonAmount += parseFloat(transact.grand_total);
-        } else if (transact.vendor === 'Medline') {
-          medlineAmount += parseFloat(transact.grand_total);
-        } else if (transact.vendor === 'Mckesson') {
-          mckessonAmount += parseFloat(transact.grand_total);
+      if (transact.category === 'Office') {
+        officeAmount += parseFloat(transact.grand_total);
+      }
+      if (transact.vendor === 'Amazon') {
+        amazonAmount += parseFloat(transact.grand_total);
+      } else if (transact.vendor === 'Medline') {
+        medlineAmount += parseFloat(transact.grand_total);
+      } else if (transact.vendor === 'Mckesson') {
+        mckessonAmount += parseFloat(transact.grand_total);
 
-        }
-      })
-      grandTotal = parseFloat(grandTotal).toFixed(2);
-      officeAmount = parseFloat(officeAmount).toFixed(2);
-      const clientAmount = parseFloat(grandTotal - officeAmount).toFixed(2);
-      transactionDashboard.expenses = grandTotal;
-      transactionDashboard.client = clientAmount;
-      transactionDashboard.office = officeAmount;
-      transactionDashboard.series = [parseFloat(officeAmount), parseFloat(clientAmount)];
-      providerDashboard.expenses = grandTotal;
-      providerDashboard.amazon = amazonAmount;
-      providerDashboard.medline = medlineAmount;
-      providerDashboard.mckesson = mckessonAmount;
-      providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
+      }
+    })
+    grandTotal = parseFloat(grandTotal).toFixed(2);
+    officeAmount = parseFloat(officeAmount).toFixed(2);
+    const clientAmount = parseFloat(grandTotal - officeAmount).toFixed(2);
+    transactionDashboard.expenses = grandTotal;
+    transactionDashboard.client = clientAmount;
+    transactionDashboard.office = officeAmount;
+    transactionDashboard.series = [parseFloat(officeAmount), parseFloat(clientAmount)];
+    providerDashboard.expenses = grandTotal;
+    providerDashboard.amazon = amazonAmount;
+    providerDashboard.medline = medlineAmount;
+    providerDashboard.mckesson = mckessonAmount;
+    providerDashboard.other = grandTotal - amazonAmount - medlineAmount - mckessonAmount;
 
-      providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount), parseFloat(providerDashboard.other)];
-      isTransactionDone = true;
-      setIsTransactionCollection(false);
-    }
+    providerDashboard.series = [parseFloat(amazonAmount), parseFloat(medlineAmount), parseFloat(mckessonAmount), parseFloat(providerDashboard.other)];
+    isTransactionDone = true;
+    setIsTransactionCollection(false);
+  }
   const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
-    const inputGeneralHandler = ({ target }) => {
-      if (target.name === 'patient' && !target.value) {
-        patientDashboard = [...patientOptions];
-        patientDashboard.forEach(e => {
-          patientGrandTotal += e.estimatedAmt;
-        })
-        setPatient(DEFAULT_ITEM);
-      }
-
-
-    };
-    const autoCompleteGeneralInputHander = (item) => {
-      if (item.category === 'patient') {
-
-        const temp = [...patientOptions];
-        const found = temp.filter(t => (t.name === item.name || t.cna === item.name));
-        console.log('[temp]', temp, found, item);
-        patientDashboard = found;
-        patientGrandTotal = 0;
-        patientDashboard.forEach(e => {
-          patientGrandTotal += e.estimatedAmt;
-        })
-        setPatient(item);
-      }
-
-    }
-    console.log('[series]', patientDashboard);
-    const plotViewHandler = (event) => {
-      setPlotView(event.target.value);
+    setValue(newValue);
+  };
+  const inputGeneralHandler = ({ target }) => {
+    if (target.name === 'patient' && !target.value) {
+      patientDashboard = [...patientOptions];
+      patientDashboard.forEach(e => {
+        patientGrandTotal += e.estimatedAmt;
+      })
+      setPatient(DEFAULT_ITEM);
     }
 
-    
-    numberActive = patientDashboard.filter(p => p.status === 'Active').length;
-    numberInactive = patientDashboard.length - numberActive;
-    
-    return (
-      <div className={classes.root}>
-        {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
-          <div align="center" style={{ paddingTop: '100px' }}>
-            <br />
-            <CircularProgress />&nbsp;<span>Loading</span>...
+
+  };
+  const autoCompleteGeneralInputHander = (item) => {
+    if (item.category === 'patient') {
+
+      const temp = [...patientOptions];
+      const found = temp.filter(t => (t.name === item.name || t.cna === item.name));
+      console.log('[temp]', temp, found, item);
+      patientDashboard = found;
+      patientGrandTotal = 0;
+      patientDashboard.forEach(e => {
+        patientGrandTotal += e.estimatedAmt;
+      })
+      setPatient(item);
+    }
+
+  }
+  console.log('[series]', patientDashboard);
+  const plotViewHandler = (event) => {
+    setPlotView(event.target.value);
+  }
+
+
+  numberActive = patientDashboard.filter(p => p.status === 'Active').length;
+  numberInactive = patientDashboard.length - numberActive;
+
+  return (
+    <div className={classes.root}>
+      {!isDistributionListDone || !isPatientListDone || !isTransactionDone || !isProductListDone || !isStockListDone ?
+        <div align="center" style={{ paddingTop: '100px' }}>
+          <br />
+          <CircularProgress />&nbsp;<span>Loading</span>...
+        </div>
+        :
+        <React.Fragment>
+          <Typography variant="h6">DASHBOARD</Typography>
+          <div style={{ width: 500, paddingTop: 20 }}>
+            <DateTypeAutoComplete
+              value={dateSelected || DEFAULT_ITEM}
+              name="dateType"
+
+              placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
+              onSelectHandler={autoCompleteInputHander}
+              onClearHandler={onClearHandler}
+              options={dateOptions || [DEFAULT_ITEM]}>
+
+            </DateTypeAutoComplete>
+            {isDateCustom &&
+              <DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
+            }
           </div>
-          :
-          <React.Fragment>
-            <Typography variant="h6">DASHBOARD</Typography>
-            <div style={{ width: 500, paddingTop: 20 }}>
-              <DateTypeAutoComplete
-                value={dateSelected || DEFAULT_ITEM}
-                name="dateType"
+          <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
+            <Tab
 
-                placeholder={dateSelected.name ? `Date : ${dateFrom} to ${dateTo}` : 'Date'}
-                onSelectHandler={autoCompleteInputHander}
-                onClearHandler={onClearHandler}
-                options={dateOptions || [DEFAULT_ITEM]}>
+              value="one"
+              label="CLIENT EXPENSES REPORT"
+              wrapped
+              {...a11yProps('one')}
+            />
+            <Tab value="two" style={{ fontSize: 14 }} label="SUPPLIES TRANSACTION PAYMENTS" {...a11yProps('two')} />
+            <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
+            <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
+          </Tabs>
 
-              </DateTypeAutoComplete>
-              {isDateCustom &&
-                <DateRangeModal description={`Created`} dateFrom={dateFrom} dateTo={dateTo} isOpen={isDateCustom} noHandler={closeDateModalHandler} yesHandler={addDateHandler} />
-              }
-            </div>
-            <Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
-              <Tab
-
-                value="one"
-                label="CLIENT EXPENSES REPORT"
-                wrapped
-                {...a11yProps('one')}
-              />
-              <Tab value="two" style={{ fontSize: 14 }} label="SUPPLIES TRANSACTION PAYMENTS" {...a11yProps('two')} />
-              <Tab value="three" style={{ fontSize: 14 }} label="PAYMENT METHOD TRACKING" {...a11yProps('three')} />
-              <Tab value="four" style={{ fontSize: 14 }} label="ORDER PLOT STRATEGY" {...a11yProps('four')} />
-            </Tabs>
-
-            {/* Client Expenses Report */}
-            <TabPanel value={value} index="one">
-              <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
-                <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
-                  <div style={{ display: 'flex', gap: 10 }}>
+          {/* Client Expenses Report */}
+          <TabPanel value={value} index="one">
+            <Grid container style={{ paddingLeft: 10, paddingRight: 10 }} direction="row">
+              <Grid container justifyContent="space-between" style={{ paddingBottom: 20 }}>
+                <div style={{ display: 'flex', gap: 10 }}>
 
 
-                    <div style={{ width: 300 }}>
+                  <div style={{ width: 300 }}>
 
-                      <SingleWithClearAutoComplete
-                        id='patient'
-                        placeholder='Select Patient/CNA'
-                        label='Select Patient'
-                        name='patient'
-                        options={patientCnaList}
-                        value={patient}
-                        onSelectHandler={autoCompleteGeneralInputHander}
-                        onChangeHandler={inputGeneralHandler}
-                      />
-                    </div>
-                  </div>
-                  
-                </Grid>
-                <Grid item xs={12} style={{ paddingBottom: 10 }}>
-                  <Divider variant="fullWidth" style={{
-
-                    height: '.02em',
-                    border: 'solid 1px rgba(0, 0, 0, 0.12)'
-                  }} orientation="horizontal" flexItem />
-                </Grid>
-                <Grid container direction="row">
-                <PrintReport source={'clientExpensesReport'} clientExpensesAmt={`$${parseFloat(patientGrandTotal || 0.0).toFixed(2)}`} patientDashboard={patientDashboard} numberActive={numberActive} numberInactive={numberInactive} dateFrom={dateFrom} dateTo={dateTo}/>
-                </Grid>
-              </Grid>
-            </TabPanel>
-
-
-            <TabPanel value={value} index="two">
-              <Grid container direction="row">
-              <PrintReport source={'supplyExpensesReport'} transactionDashboard={transactionDashboard}  providerDashboard={providerDashboard} dateFrom={dateFrom} dateTo={dateTo}/>
-               
-              </Grid>
-            </TabPanel>
-
-            {/* Card History Report */}
-            <TabPanel value={value} index="three">
-                <PrintReport source={'cardHistoryReport'} details={cardTransaction} dateFrom={dateFrom} dateTo={dateTo}/>
-            </TabPanel>
-            <TabPanel value={value} index="four">
-              <FormControl component="fieldset">
-                <FormLabel component="legend">** Plot View based on patient existing delivery supplies record from {dateFrom} to {dateTo}</FormLabel>
-                <div style={{ display: 'inline-flex' }}>
-                  <div>
-
-                    <Radio
-                      checked={plotView === 'brief'}
-                      onChange={plotViewHandler}
-                      value="brief"
-                      label="Brief"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'A' }}
-                    ></Radio>BRIEFS
-                    <Radio
-                      checked={plotView === 'underpad'}
-                      onChange={plotViewHandler}
-                      value="underpad"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>UNDERPADS
-                    <Radio
-                      checked={plotView === 'underwear'}
-                      onChange={plotViewHandler}
-                      value="underwear"
-
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'A' }}
-                    ></Radio>UNDERWEARS
-                    <Radio
-                      checked={plotView === 'wipe'}
-                      onChange={plotViewHandler}
-                      value="wipe"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>WIPES
-                    <Radio
-                      checked={plotView === 'glove'}
-                      onChange={plotViewHandler}
-                      value="glove"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>GLOVES
-                      <Radio
-                      checked={plotView === 'ensureVanilla'}
-                      onChange={plotViewHandler}
-                      value="ensureVanilla"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>ENSURE VANILLA
-              
-              <Radio
-                      checked={plotView === 'ensureChocolate'}
-                      onChange={plotViewHandler}
-                      value="ensureChocolate"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>ENSURE CHOCOLATE
-                    <Radio
-                      checked={plotView === 'ensureStrawberry'}
-                      onChange={plotViewHandler}
-                      value="ensureStrawberry"
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    ></Radio>ENSURE STRAWBERRY
+                    <SingleWithClearAutoComplete
+                      id='patient'
+                      placeholder='Select Patient/CNA'
+                      label='Select Patient'
+                      name='patient'
+                      options={patientCnaList}
+                      value={patient}
+                      onSelectHandler={autoCompleteGeneralInputHander}
+                      onChangeHandler={inputGeneralHandler}
+                    />
                   </div>
                 </div>
-              </FormControl>
-              <div>
+
+              </Grid>
+              <Grid item xs={12} style={{ paddingBottom: 10 }}>
                 <Divider variant="fullWidth" style={{
-                  height: '.03em',
+
+                  height: '.02em',
                   border: 'solid 1px rgba(0, 0, 0, 0.12)'
                 }} orientation="horizontal" flexItem />
+              </Grid>
+              <Grid container direction="row">
+                <PrintReport source={'clientExpensesReport'} clientExpensesAmt={`$${parseFloat(patientGrandTotal || 0.0).toFixed(2)}`} patientDashboard={patientDashboard} numberActive={numberActive} numberInactive={numberInactive} dateFrom={dateFrom} dateTo={dateTo} />
+              </Grid>
+            </Grid>
+          </TabPanel>
+
+
+          <TabPanel value={value} index="two">
+            <Grid container direction="row">
+              <PrintReport source={'supplyExpensesReport'} transactionDashboard={transactionDashboard} providerDashboard={providerDashboard} dateFrom={dateFrom} dateTo={dateTo} />
+
+            </Grid>
+          </TabPanel>
+
+          {/* Card History Report */}
+          <TabPanel value={value} index="three">
+            <PrintReport source={'cardHistoryReport'} details={cardTransaction} dateFrom={dateFrom} dateTo={dateTo} />
+          </TabPanel>
+          <TabPanel value={value} index="four">
+            <FormControl component="fieldset">
+              <FormLabel component="legend">** Plot View based on patient existing delivery supplies record from {dateFrom} to {dateTo}</FormLabel>
+              <div style={{ display: 'inline-flex' }}>
+                <div>
+
+                  <Radio
+                    checked={plotView === 'brief'}
+                    onChange={plotViewHandler}
+                    value="brief"
+                    label="Brief"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  ></Radio>BRIEFS
+                  <Radio
+                    checked={plotView === 'underpad'}
+                    onChange={plotViewHandler}
+                    value="underpad"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>UNDERPADS
+                  <Radio
+                    checked={plotView === 'underwear'}
+                    onChange={plotViewHandler}
+                    value="underwear"
+
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  ></Radio>UNDERWEARS
+                  <Radio
+                    checked={plotView === 'wipe'}
+                    onChange={plotViewHandler}
+                    value="wipe"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>WIPES
+                  <Radio
+                    checked={plotView === 'glove'}
+                    onChange={plotViewHandler}
+                    value="glove"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>GLOVES
+                  <Radio
+                    checked={plotView === 'ensureVanilla'}
+                    onChange={plotViewHandler}
+                    value="ensureVanilla"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>ENSURE VANILLA
+
+                  <Radio
+                    checked={plotView === 'ensureChocolate'}
+                    onChange={plotViewHandler}
+                    value="ensureChocolate"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>ENSURE CHOCOLATE
+                  <Radio
+                    checked={plotView === 'ensureStrawberry'}
+                    onChange={plotViewHandler}
+                    value="ensureStrawberry"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  ></Radio>ENSURE STRAWBERRY
+                </div>
               </div>
-              {plotView === 'brief' ?
-                <SupplyPlot title={'BRIEF'} patientPlot={patientSupplyPlot.brief} estimatedGrandTotal={estimatedSupplyGrandTotal.brief} unusedSummary={unusedPlotSummary.brief} summary={plotSummary.brief} />
-                : plotView === 'underpad' ?
-                  <SupplyPlot title={'UNDERPAD'} patientPlot={patientSupplyPlot.underpad} estimatedGrandTotal={estimatedSupplyGrandTotal.underpad} unusedSummary={unusedPlotSummary.underpad} summary={plotSummary.underpad} />
-                  : plotView === 'underwear' ?
-                    <SupplyPlot title={'UNDERWEAR'} patientPlot={patientSupplyPlot.underwear} estimatedGrandTotal={estimatedSupplyGrandTotal.underwear} unusedSummary={unusedPlotSummary.underwear} summary={plotSummary.underwear} />
-                    : plotView === 'wipe' ?
-                      <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
-                      : plotView === 'glove' ?
-                        <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
-                        : plotView === 'ensureVanilla' ?
+            </FormControl>
+            <div>
+              <Divider variant="fullWidth" style={{
+                height: '.03em',
+                border: 'solid 1px rgba(0, 0, 0, 0.12)'
+              }} orientation="horizontal" flexItem />
+            </div>
+            {plotView === 'brief' ?
+              <SupplyPlot title={'BRIEF'} patientPlot={patientSupplyPlot.brief} estimatedGrandTotal={estimatedSupplyGrandTotal.brief} unusedSummary={unusedPlotSummary.brief} summary={plotSummary.brief} />
+              : plotView === 'underpad' ?
+                <SupplyPlot title={'UNDERPAD'} patientPlot={patientSupplyPlot.underpad} estimatedGrandTotal={estimatedSupplyGrandTotal.underpad} unusedSummary={unusedPlotSummary.underpad} summary={plotSummary.underpad} />
+                : plotView === 'underwear' ?
+                  <SupplyPlot title={'UNDERWEAR'} patientPlot={patientSupplyPlot.underwear} estimatedGrandTotal={estimatedSupplyGrandTotal.underwear} unusedSummary={unusedPlotSummary.underwear} summary={plotSummary.underwear} />
+                  : plotView === 'wipe' ?
+                    <SupplyPlot title={'WIPE'} patientPlot={patientSupplyPlot.wipe} estimatedGrandTotal={estimatedSupplyGrandTotal.wipe} unusedSummary={unusedPlotSummary.wipe} summary={plotSummary.wipe} />
+                    : plotView === 'glove' ?
+                      <SupplyPlot title={'GLOVE'} patientPlot={patientSupplyPlot.glove} estimatedGrandTotal={estimatedSupplyGrandTotal.glove} unusedSummary={unusedPlotSummary.glove} summary={plotSummary.glove} />
+                      : plotView === 'ensureVanilla' ?
                         <SupplyPlot title={'ENSURE VANILLA'} patientPlot={patientSupplyPlot.ensureVanilla} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureVanilla} unusedSummary={unusedPlotSummary.ensureVanilla} summary={plotSummary.ensureVanilla} />
                         : plotView === 'ensureChocolate' ?
-                        <SupplyPlot title={'ENSURE CHOCOLATE'} patientPlot={patientSupplyPlot.ensureChocolate} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureChocolate} unusedSummary={unusedPlotSummary.ensureChocolate} summary={plotSummary.ensureChocolate} />
-                        : plotView === 'ensureStrawberry' ?
-                        <SupplyPlot title={'ENSURE STRAWBERRY'} patientPlot={patientSupplyPlot.ensureStrawberry} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureStrawberry} unusedSummary={unusedPlotSummary.ensureStrawberry} summary={plotSummary.ensureStrawberry} />
-                        : null}
-            </TabPanel>
-          </React.Fragment>
-        }
-      </div>
-    );
-  }
-  const mapStateToProps = store => ({
-    patients: patientListStateSelector(store),
-    distributions: distributionListStateSelector(store),
-    transactions: transactionListStateSelector(store),
-    products: productListStateSelector(store),
-    stocks: stockListStateSelector(store),
-  });
+                          <SupplyPlot title={'ENSURE CHOCOLATE'} patientPlot={patientSupplyPlot.ensureChocolate} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureChocolate} unusedSummary={unusedPlotSummary.ensureChocolate} summary={plotSummary.ensureChocolate} />
+                          : plotView === 'ensureStrawberry' ?
+                            <SupplyPlot title={'ENSURE STRAWBERRY'} patientPlot={patientSupplyPlot.ensureStrawberry} estimatedGrandTotal={estimatedSupplyGrandTotal.ensureStrawberry} unusedSummary={unusedPlotSummary.ensureStrawberry} summary={plotSummary.ensureStrawberry} />
+                            : null}
+          </TabPanel>
+        </React.Fragment>
+      }
+    </div>
+  );
+}
+const mapStateToProps = store => ({
+  patients: patientListStateSelector(store),
+  distributions: distributionListStateSelector(store),
+  transactions: transactionListStateSelector(store),
+  products: productListStateSelector(store),
+  stocks: stockListStateSelector(store),
+});
 
-  const mapDispatchToProps = dispatch => ({
-    listPatients: (data) => dispatch(attemptToFetchPatient(data)),
-    resetListPatients: () => dispatch(resetFetchPatientState()),
-    listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
-    resetListDistribution: () => dispatch(resetFetchDistributionState()),
-    listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
-    resetlistTransactions: () => dispatch(resetFetchTransactionState()),
-    listProducts: (data) => dispatch(attemptToFetchProduct(data)),
-    resetListProducts: () => dispatch(resetFetchProductState()),
-    listStocks: (data) => dispatch(attemptToFetchStock(data)),
-    resetListStocks: () => dispatch(resetFetchStockState()),
+const mapDispatchToProps = dispatch => ({
+  listPatients: (data) => dispatch(attemptToFetchPatient(data)),
+  resetListPatients: () => dispatch(resetFetchPatientState()),
+  listDistributions: (data) => dispatch(attemptToFetchDistribution(data)),
+  resetListDistribution: () => dispatch(resetFetchDistributionState()),
+  listTransactions: (data) => dispatch(attemptToFetchTransaction(data)),
+  resetlistTransactions: () => dispatch(resetFetchTransactionState()),
+  listProducts: (data) => dispatch(attemptToFetchProduct(data)),
+  resetListProducts: () => dispatch(resetFetchProductState()),
+  listStocks: (data) => dispatch(attemptToFetchStock(data)),
+  resetListStocks: () => dispatch(resetFetchStockState()),
 
-  });
+});
 
-  export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 
 
