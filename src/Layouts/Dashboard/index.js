@@ -548,6 +548,7 @@ const Dashboard = (props) => {
           plot.currentStock = 0;
           plot.order = plot.threshold || plot.qty;
         }
+        plot.newThreshold = plot.threshold;
         newPlot.push(plot);
       }
     }
@@ -562,7 +563,8 @@ const Dashboard = (props) => {
     uIds.forEach(u => {
       const sel = patientSupplyPlot[source].filter(n => n.productId === u);
 
-      sel.forEach((s) => {
+      sel.forEach((s, indx) => {
+        s.itemNbr = indx;
         adjustment.push(s);
       });
     })
@@ -579,7 +581,8 @@ const Dashboard = (props) => {
       if (orders > 0) {
         console.log('[estimatedSupplyGrandTotal]', estimatedSupplyGrandTotal[source], source);
         const forOrder = parseInt(orders) - parseInt(stock);
-        const cartonCnt = Math.ceil(parseFloat(forOrder / sel[0].cnt)) === 0 ? 1 : Math.ceil(parseFloat(orders / sel[0].cnt));
+        let cartonCnt = Math.ceil(parseFloat(forOrder / sel[0].cnt)) === 0 ? 1 : Math.ceil(parseFloat(forOrder / sel[0].cnt));
+        cartonCnt = forOrder < 0 ? 0 : cartonCnt;
         estimatedSupplyGrandTotal[source] = parseFloat(estimatedSupplyGrandTotal[source]) + (parseInt(cartonCnt) * sel[0].unitPrice);
 
         plotSummary[source].push({
