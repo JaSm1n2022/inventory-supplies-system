@@ -232,16 +232,19 @@ const Transaction = (props) => {
 
 
     selectedData.forEach(sel => {
+      console.log('[selMe]', sel);
       if (stockList && stockList.length && sel.product_id && stat.toLowerCase() === 'delivered' && stat !== sel.status) {
-        console.log('[selMe]', sel);
+
         const stock = stockList.find(s => s.productId === sel.product_id);
+        const product = productList.find(prod => prod.id === sel.product_id);
         console.log('[stocks]', stock);
         let qty = parseInt(sel.qty, 10);
+        let realQty = qty * parseInt(product.count || 1);
 
         forStockUpdates.push(
           {
             id: stock.id,
-            qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(qty, 10))
+            qty_on_hand: Math.abs(parseInt(stock.qty_on_hand, 10) + parseInt(realQty, 10))
 
           });
       }
@@ -251,13 +254,15 @@ const Transaction = (props) => {
       });
     })
     setAnchorEl(null);
-    console.log('[forUpdateStatus]', forUpdateStatus);
+    console.log('[forUpdateStatus]', forUpdateStatus, forStockUpdates);
+
     if (forStockUpdates.length) {
       isUpdateStockDone = false;
       props.updateStock(forStockUpdates);
     }
     isUpdateTransactionDone = false;
     props.updateTransaction(forUpdateStatus);
+
 
   }
   console.log('[Is Create Transaction Collection]', props.CreateTransactionState);
