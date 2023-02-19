@@ -7,7 +7,7 @@ import ReactModal from "react-modal";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { QUANTITY_UOM, STATUS_ACTIVE_OPTIONS, SUPPLY_CATEGORY,SUPPLY_VENDOR } from "../../../utils/constants";
+import { QUANTITY_UOM, STATUS_ACTIVE_OPTIONS, SUPPLY_CATEGORY, SUPPLY_VENDOR } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
 import { Grid } from "@mui/material";
@@ -58,16 +58,7 @@ SUPPLY_VENDOR.forEach((item, index) => {
 
     })
 });
-SUPPLY_CATEGORY.forEach((item, index) => {
-    categoryList.push({
-        id: index,
-        name: item,
-        value: item,
-        label: item,
-        category: 'category'
 
-    })
-});
 function ProductForm(props) {
     const [generalForm, setGeneralForm] = useState({});
     const { isOpen,
@@ -76,18 +67,18 @@ function ProductForm(props) {
         isEdit } = props;
 
     const general = [
-      
+
         {
             id: 'category',
             component: 'singlecomplete',
             placeholder: 'Item Category',
             label: 'Item Category',
             name: 'category',
-            options : categoryList,
+            options: [...categoryList],
             disabled: props.mode && props.mode === 'view' ? true : false,
-            cols : 3
-            
-            
+            cols: 3
+
+
         },
         {
             id: 'item',
@@ -97,8 +88,8 @@ function ProductForm(props) {
             name: 'item',
             disabled: props.mode && props.mode === 'view' ? true : false,
             cols: 4
-            
-            
+
+
         },
         {
             id: 'description',
@@ -107,7 +98,7 @@ function ProductForm(props) {
             label: 'Description',
             name: 'description',
             disabled: props.mode && props.mode === 'view' ? true : false,
-            cols : 5
+            cols: 5
         },
         {
             id: 'qty',
@@ -115,10 +106,10 @@ function ProductForm(props) {
             placeholder: 'qty',
             label: 'Qty',
             name: 'qty',
-            type:'number',
+            type: 'number',
             disabled: props.mode && props.mode === 'view' ? true : false,
 
-            
+
         },
 
         {
@@ -129,9 +120,9 @@ function ProductForm(props) {
             name: 'qtyUom',
             options: uoms,
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
-     
+
         {
             id: 'count',
             component: 'textfield',
@@ -139,7 +130,7 @@ function ProductForm(props) {
             label: 'Count/Pcs',
             name: 'count',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'size',
@@ -148,7 +139,7 @@ function ProductForm(props) {
             label: 'Size',
             name: 'size',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'flavor',
@@ -157,7 +148,7 @@ function ProductForm(props) {
             label: 'Flavor/Color',
             name: 'flavor',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'dimension',
@@ -166,8 +157,8 @@ function ProductForm(props) {
             label: 'Dimension',
             name: 'dimension',
             disabled: props.mode && props.mode === 'view' ? true : false
-            
-            
+
+
         },
         {
             id: 'unitPrice',
@@ -176,9 +167,9 @@ function ProductForm(props) {
             label: 'Unit Price',
             name: 'unitPrice',
             disabled: props.mode && props.mode === 'view' ? true : false,
-            type:'number'
-            
-            
+            type: 'number'
+
+
         },
         {
             id: 'pricePerPcs',
@@ -187,9 +178,9 @@ function ProductForm(props) {
             label: 'Price Per Pcs',
             name: 'pricePerPcs',
             disabled: true,
-            type:'number'
-            
-            
+            type: 'number'
+
+
         },
         {
             id: 'vendor',
@@ -199,8 +190,8 @@ function ProductForm(props) {
             name: 'vendor',
             disabled: props.mode && props.mode === 'view' ? true : false,
             options: vendors
-            
-            
+
+
         },
         {
             id: 'shortDescription',
@@ -208,7 +199,7 @@ function ProductForm(props) {
             placeholder: 'Short Description',
             label: 'Short Description',
             name: 'shortDescription'
-            
+
         },
         {
             id: 'unitUom',
@@ -218,7 +209,7 @@ function ProductForm(props) {
             name: 'unitUom',
             options: [...units],
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
         {
             id: 'status',
@@ -228,28 +219,39 @@ function ProductForm(props) {
             name: 'status',
             options: [...status],
             disabled: props.mode && props.mode === 'view' ? true : false
-            
+
         },
-        
+
 
 
     ]
 
-    
+
     useEffect(() => {
         console.log('[effects 1]');
         const fm = {};
         fm.created_at = new Date();
         fm.pricePerPcs = 0.0;
         fm.status = status.find(s => s.name === 'Active');
+        categoryList = [];
+        [...SUPPLY_CATEGORY].forEach((item, index) => {
+            categoryList.push({
+                id: index,
+                name: item,
+                value: item,
+                label: item,
+                category: 'category'
+
+            })
+        });
         setGeneralForm(fm);
-      },[]);
+    }, []);
     useEffect(() => {
-        if(props.item) {
+        if (props.item) {
             console.log('[effects 2]');
-            
-            const generalFm = {...props.item};
-            console.log('[items]',generalFm.qty_uom,props.item,uoms,uoms.find(cat => cat.name === generalFm.qty_uom));
+
+            const generalFm = { ...props.item };
+            console.log('[items]', generalFm.qty_uom, props.item, uoms, uoms.find(cat => cat.name === generalFm.qty_uom));
             generalFm.status = generalFm.status ? status.find(s => s.name === 'Active') : status.find(s => s.name === 'Inactive');
             generalFm.created_at = moment(new Date(generalFm.created_at)).utc().format('YYYY-MM-DD');
             generalFm.category = categoryList.find(cat => cat.name === generalFm.category);
@@ -261,13 +263,13 @@ function ProductForm(props) {
             generalFm.shortDescription = generalFm.short_description;
 
             setGeneralForm(generalFm);
-            
-            
-            
+
+
+
         }
     }, [props.item]);
     const validateFormHandler = () => {
-        props.createProductHandler(generalForm,props.mode);
+        props.createProductHandler(generalForm, props.mode);
     }
     const footerActions = [
         {
@@ -288,40 +290,40 @@ function ProductForm(props) {
         },
     ];
     const inputGeneralHandler = ({ target }) => {
-        console.log('[Target]',target,generalForm);
-        const source = { ...generalForm};
+        console.log('[Target]', target, generalForm);
+        const source = { ...generalForm };
         source[target.name] = target.value;
-        if(target.name === 'count' || target.name === 'unitPrice') {
-            source.pricePerPcs = parseFloat(parseFloat(source.unitPrice) / parseInt(source.count || 1,10)).toFixed(2);
+        if (target.name === 'count' || target.name === 'unitPrice') {
+            source.pricePerPcs = parseFloat(parseFloat(source.unitPrice) / parseInt(source.count || 1, 10)).toFixed(2);
         }
         setGeneralForm(source);
 
     };
     const autoCompleteGeneralInputHander = (item) => {
         const src = { ...generalForm };
-        console.log('[src]',src,item);
+        console.log('[src]', src, item);
         if (item.category === 'status') {
             src.status = item;
-          
+
         }
-        if(item.category === 'category') {
-         src['category'] = item;
-         src['categoryName'] = item.name;
+        if (item.category === 'category') {
+            src['category'] = item;
+            src['categoryName'] = item.name;
         }
         if (item.category === 'vendor') {
             src['vendor'] = item;
             src['vendorName'] = item.name;
         }
-        if(item.category === 'uom') {
+        if (item.category === 'uom') {
             src['qtyUom'] = item;
             src['uom'] = item.name;
-           }
-           if(item.category === 'unit') {
+        }
+        if (item.category === 'unit') {
             src['unitUom'] = item;
             src['unit'] = item.name;
-           }
+        }
         setGeneralForm(src);
-        
+
     }
     const onChangeGeneralInputHandler = (e) => {
         const src = { ...generalForm };
@@ -330,23 +332,23 @@ function ProductForm(props) {
             setGeneralForm(src);
         }
     }
-    
-    
+
+
     const dateInputHandler = (value, name) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);
-      }
-      const titleHandler = () => {
-          if(props.mode === 'view') {
-                return 'View Product'
-          } else if (props.mode === 'edit') {
-              return 'Edit Product';
-          } else {
-              return 'Create Product';
-          }
-      }
-      console.log('[general form]',generalForm);
+    }
+    const titleHandler = () => {
+        if (props.mode === 'view') {
+            return 'View Product'
+        } else if (props.mode === 'edit') {
+            return 'Edit Product';
+        } else {
+            return 'Create Product';
+        }
+    }
+    console.log('[product category]', categoryList);
     return (
         <ReactModal
             style={{
@@ -393,7 +395,7 @@ function ProductForm(props) {
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
                                             <React.Fragment>
-                                                 <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
+                                                <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
                                             </React.Fragment>
                                             : item.component === 'singlecomplete' ?
                                                 <React.Fragment>
@@ -402,11 +404,11 @@ function ProductForm(props) {
                                                         value={generalForm[item.name]}
                                                         onSelectHandler={autoCompleteGeneralInputHander}
                                                         onChangeHandler={onChangeGeneralInputHandler}
-                                                        />
+                                                    />
                                                 </React.Fragment>
                                                 : item.component === 'select' ?
                                                     <React.Fragment>
-                                                        <RegularSelect 	{...item} 
+                                                        <RegularSelect 	{...item}
 
                                                             onChange={inputGeneralHandler}
                                                             value={generalForm[item.value]}
@@ -418,14 +420,14 @@ function ProductForm(props) {
                             )
                         })}
                     </Grid>
-                    
+
 
                 </div>
                 <br />
                 {props.mode && props.mode === 'view' ?
-                null : 
-                <ModalFooter actions={footerActions} />
-}   
+                    null :
+                    <ModalFooter actions={footerActions} />
+                }
             </div>
         </ReactModal >
 

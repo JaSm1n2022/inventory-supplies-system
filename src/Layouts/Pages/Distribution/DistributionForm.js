@@ -215,8 +215,17 @@ function DistributionForm(props) {
             placeholder: 'Vendor',
             label: 'Vendor',
             name: 'vendor',
-            type: 'test',
+            type: 'text',
             value: '-'
+        },
+        {
+            id: 'comments',
+            component: 'textfield',
+            placeholder: 'Comments',
+            label: 'Comments',
+            name: 'comments',
+            type: 'text',
+            value: ''
         },
 
 
@@ -250,6 +259,7 @@ function DistributionForm(props) {
             if (props.mode === 'edit') {
                 originalOrderQty = generalFm.order_qty;
             }
+
             generalFm.patientName = generalFm.patient?.name;
             generalFm.patientId = generalFm.patient?.id;
             generalFm.requestorName = generalFm.requestor.name;
@@ -423,6 +433,7 @@ function DistributionForm(props) {
             stockQty: 0,
             unitDistribution: '-',
             status: '',
+            comments: '',
             productId: ''
         });
         setDetailForm(records);
@@ -495,6 +506,7 @@ function DistributionForm(props) {
                         {general.map(item => {
                             return (
                                 <Grid item xs={3}>
+
                                     {item.component === 'textfield' ?
                                         <React.Fragment>
                                             <RegularTextField {...item} value={generalForm[item.name]} onChange={inputGeneralHandler} />
@@ -582,13 +594,16 @@ function DistributionForm(props) {
                                             <RegularTextField disabled={true} source={item}   {...details.find(d => d.id === 'vendor')} value={item['vendor'] || '-'} />
                                         </div>
                                     </div>
+
                                 </Grid>
 
-
+                                <Grid item xs={6}>
+                                    <RegularTextField disabled={false} source={item}   {...details.find(d => d.id === 'comments')} value={item['comments'] || ''} onChange={inputDetailHandler} />
+                                </Grid>
 
                                 {item.stockStatus && item.orderQty > 0 &&
-                                    <Grid item xs={12} >
-                                        <div id="in-stock" style={{ borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8, paddingBottom: 2 }}>
+                                    <Grid item xs={6} >
+                                        <div id="in-stock" style={{ height: 28, borderRadius: '4px', border: '1px solid #9e9e9e', paddingTop: 8, paddingLeft: 8, paddingBottom: 2 }}>
 
                                             <Typography variant="h6" style={{ color: item.stockStatus.indexOf('In Stock') !== -1 ? 'blue' : 'red' }}>{item.stockStatus}</Typography>
                                         </div>

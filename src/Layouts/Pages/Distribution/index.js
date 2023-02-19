@@ -101,6 +101,7 @@ const Distribution = (props) => {
         search: { ...prod },
         ...prod,
         orderQty: data.order_qty,
+        comments: data.comments,
         productId: data.productId,
         unitDistribution: data.unit_distribution || data.unitDistribution || data.unit_uom,
         distributionId: data.id
@@ -361,6 +362,7 @@ const Distribution = (props) => {
           order_status: general.statusName,
           order_qty: payload.orderQty,
           order_at: general.orderDt,
+          comments: general.comments,
           patient_name: general.patientName,
           delivery_location: general.facility,
           requestor: general.requestorName,
@@ -442,6 +444,7 @@ const Distribution = (props) => {
         order_status: general.statusName,
         order_qty: payload.orderQty,
         order_at: general.orderDt,
+        comments: payload.comments,
         patient_name: general.patientName,
         delivery_location: general.facility,
         requestor: general.requestorName,
@@ -624,6 +627,7 @@ const Distribution = (props) => {
         search: { ...prod },
         ...prod,
         orderQty: ea.order_qty,
+        comments: ea.comments,
         productId: ea.productId,
         unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
       });
@@ -662,6 +666,7 @@ const Distribution = (props) => {
         search: { ...prod },
         ...prod,
         orderQty: ea.orderQty || ea.order_qty,
+        comments: ea.commemnts,
         productId: ea.productId,
         unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
       });
@@ -718,6 +723,7 @@ const Distribution = (props) => {
           ...prod,
           orderQty: ea.order_qty,
           productId: ea.productId,
+          comments: ea.comments,
           unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
         });
         maxCnt++;
@@ -766,6 +772,7 @@ const Distribution = (props) => {
             search: { ...prod },
             ...prod,
             orderQty: ea.order_qty,
+            comments: ea.comments,
             productId: ea.productId,
             unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
           });
@@ -800,6 +807,7 @@ const Distribution = (props) => {
         search: { ...prod },
         ...prod,
         orderQty: parseInt(ea.orderQty || 0, 10),
+        comments: ea.comments,
         productId: ea.productId,
         unitDistribution: prod.unit_distribution || prod.unitDistribution || ea.unit_uom
       });

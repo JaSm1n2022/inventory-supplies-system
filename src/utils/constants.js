@@ -384,7 +384,6 @@ export const SUPPLY_CATEGORY = [
   'Lotion',
   'Cleanser',
   'Toothbrush',
-  'ToothPaste',
   'Pill Crusher',
   'Sanitizer',
   'Lancet',

@@ -127,7 +127,7 @@ const TemplateMultiplePrint = (props) => {
 
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
-                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={DocumentHandler.productItems(item.details)} />
+                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.cnaColumns()} dataSource={DocumentHandler.productItems(item.details, 'admin')} />
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50 }}>
                                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -214,7 +214,7 @@ const TemplateMultiplePrint = (props) => {
 
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50, paddingTop: 10 }}>
-                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.adminColumns()} dataSource={[...DocumentHandler.productItems(item.details)]} />
+                                            <PrintTable onCheckboxSelectionHandler={null} columns={DocumentHandler.adminColumns()} dataSource={[...DocumentHandler.productItems(item.details, 'admin')]} />
                                         </div>
                                         <div style={{ paddingLeft: 10, paddingRight: 50 }}>
                                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -223,7 +223,7 @@ const TemplateMultiplePrint = (props) => {
 
                                                     <TableRow style={{ border: 0 }} className={classes.tableRow}>
                                                         <TableCell style={{ height: 24, border: 0 }}>
-                                                        <div>{item.general.requestor ? item.general.requestor.name : ''} {item.general.requestor && item.general.requestor.position ? `(${item.general.requestor.position})` : ''}</div>
+                                                            <div>{item.general.requestor ? item.general.requestor.name : ''} {item.general.requestor && item.general.requestor.position ? `(${item.general.requestor.position})` : ''}</div>
                                                             <div>_________________________________________</div>
                                                             <div>Name and Title (DCH)</div>
                                                         </TableCell>
