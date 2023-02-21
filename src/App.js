@@ -13,6 +13,7 @@ import Vendor from './Layouts/Settings/Vendor';
 import Product from './Layouts/Settings/Product';
 import Location from './Layouts/Settings/Location';
 import Patient from './Layouts/Settings/Patient';
+import Threshold from './Layouts/Settings/Threshold';
 import Employee from './Layouts/Settings/Employee';
 import Dashboard from './Layouts/Dashboard';
 import ClientExpensesReport from './Layouts/Pages/Reports/Distribution'
@@ -87,6 +88,7 @@ const App = (props) => {
 							<Route exact path="/vendor" component={withRouter(Vendor)} />
 							<Route exact path="/location" component={withRouter(Location)} />
 							<Route exact path="/patient" component={withRouter(Patient)} />
+							<Route exact path="/threshold" component={withRouter(Threshold)} />
 							<Route exact path="/employee" component={withRouter(Employee)} />
 							<Route exact path="/product" component={withRouter(Product)} />
 							<Route exact path="/document" component={withRouter(ComponentToPrint)} />

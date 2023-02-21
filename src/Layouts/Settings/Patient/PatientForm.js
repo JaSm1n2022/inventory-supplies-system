@@ -7,12 +7,12 @@ import { Grid } from "@mui/material";
 import RegularTextField from "../../../Common/components/TextField/RegularTextField";
 import RegularDatePicker from "../../../Common/components/Date/RegularDatePicker";
 import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import { CARE_TYPE} from "../../../utils/constants";
+import { CARE_TYPE } from "../../../utils/constants";
 import RegularSelect from "../../../Common/components/Select/RegularSelect";
 import moment from "moment";
- 
-const statuses  = [{name :'Active',value:'Active',label:'Active',category: 'status'},
-{name :'Inactive',value:'Inactive',label:'Inactive',category : 'status'}];
+
+const statuses = [{ name: 'Active', value: 'Active', label: 'Active', category: 'status' },
+{ name: 'Inactive', value: 'Inactive', label: 'Inactive', category: 'status' }];
 let careTypes = [];
 CARE_TYPE.forEach((item, index) => {
     careTypes.push({
@@ -82,7 +82,7 @@ function PatientForm(props) {
             placeholder: 'Care Type',
             label: 'Care Type',
             name: 'careType',
-            options:careTypes,
+            options: careTypes,
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
         {
@@ -110,13 +110,24 @@ function PatientForm(props) {
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
         {
+            id: 'assignRnId',
+            component: 'singlecomplete',
+            placeholder: 'Assigned RN',
+            label: 'Assigned RN',
+            name: 'assignRnId',
+            options: [...props.rnList],
+            disabled: props.mode && props.mode === 'view' ? true : false,
+        },
+        /*
+        {
             id: 'assignRn',
             component: 'textfield',
             placeholder: 'Assigned RN',
             label: 'Assigned RN',
             name: 'assignRn',
-            disabled: props.mode && props.mode === 'view' ? true : false,
+            disabled: true,
         },
+        */
         {
             id: 'rnVisitFreq',
             component: 'textfield',
@@ -125,12 +136,24 @@ function PatientForm(props) {
             name: 'rnVisitFreq',
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
+
+        /*
         {
             id: 'assignCna',
             component: 'textfield',
             placeholder: 'Assigned CNA',
             label: 'Assigned CNA',
             name: 'assignCna',
+            disabled: props.mode && props.mode === 'view' ? true : false,
+        },
+        */
+        {
+            id: 'assignCnaId',
+            component: 'singlecomplete',
+            placeholder: 'Assigned CNA',
+            label: 'Assigned CNA',
+            name: 'assignCnaId',
+            options: [...props.cnaList],
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
         {
@@ -148,20 +171,21 @@ function PatientForm(props) {
             label: 'Status',
             name: 'status',
             value: 'Active',
-            options :statuses,
+            options: statuses,
             disabled: props.mode && props.mode === 'view' ? true : false,
         },
-        
+
     ]
 
 
     useEffect(() => {
         console.log('[effects 1]');
-        const fm = {status : statuses.find(s => s.name === 'Active'),
-        soc : moment(new Date()).utc().format('YYYY-MM-DD'),
-        eoc :  moment(new Date()).utc().format('YYYY-MM-DD'),
-        dob :  moment(new Date()).utc().format('YYYY-MM-DD')
-    };
+        const fm = {
+            status: statuses.find(s => s.name === 'Active'),
+            soc: moment(new Date()).utc().format('YYYY-MM-DD'),
+            eoc: moment(new Date()).utc().format('YYYY-MM-DD'),
+            dob: moment(new Date()).utc().format('YYYY-MM-DD')
+        };
         fm.created_at = new Date();
         fm.pricePerPcs = 0.0;
         setGeneralForm(fm);
@@ -181,15 +205,17 @@ function PatientForm(props) {
             generalFm.placeOfService = generalFm.place_of_service;
             generalFm.contactNbr = generalFm.contact_nbr;
             generalFm.assignRn = generalFm.assigned_rn;
+            generalFm.assignCnaId = [...props.cnaList].find(emp => emp.id === generalFm.assigned_cna_id);
+            generalFm.assignRnId = [...props.rnList].find(emp => emp.id === generalFm.assigned_rn_id);
             generalFm.rnVisitFreq = generalFm.rn_visit_freq;
             generalFm.assignCna = generalFm.assigned_cna;
             generalFm.cnaVisitFreq = generalFm.cna_visit_freq;
             generalFm.status = statuses.find(s => s.name === generalFm.status);
             ;
-           
-            
-       
-           
+
+
+
+
             setGeneralForm(generalFm);
 
 
@@ -227,15 +253,23 @@ function PatientForm(props) {
         setGeneralForm(source);
 
     };
-    const autoCompleteGeneralInputHander = (item) => {
+    const autoCompleteGeneralInputHandler = (item) => {
         const src = { ...generalForm };
         console.log('[src]', src, item);
-        if(item.category === 'status') {
+        if (item.categoryType === 'cna') {
+            src.assignCna = item.name;
+            src.assignCnaId = item;
+        }
+        if (item.categoryType === 'rn') {
+            src.assignRn = item.name;
+            src.assignRnId = item;
+        }
+        if (item.category === 'status') {
             src.status = item;
         }
         if (item.category === 'careType') {
             src.careType = item;
-          
+
         }
 
         setGeneralForm(src);
@@ -250,7 +284,7 @@ function PatientForm(props) {
     }
 
 
-    const dateInputHandler = (name,value) => {
+    const dateInputHandler = (name, value) => {
         const src = { ...generalForm };
         src[name] = value;
         setGeneralForm(src);
@@ -311,7 +345,7 @@ function PatientForm(props) {
                                         </React.Fragment>
                                         : item.component === 'datepicker' ?
                                             <React.Fragment>
-                                               
+
                                                 <RegularDatePicker {...item} value={generalForm[item.name]} onChange={dateInputHandler} />
                                             </React.Fragment>
                                             : item.component === 'singlecomplete' ?
@@ -319,7 +353,7 @@ function PatientForm(props) {
                                                     <SingleWithClearAutoComplete
                                                         {...item}
                                                         value={generalForm[item.name]}
-                                                        onSelectHandler={autoCompleteGeneralInputHander}
+                                                        onSelectHandler={autoCompleteGeneralInputHandler}
                                                         onChangeHandler={onChangeGeneralInputHandler}
                                                     />
                                                 </React.Fragment>

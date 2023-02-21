@@ -1,41 +1,32 @@
 
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, CircularProgress, Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import DataHandler from "./DataHandler";
-import FilterTable from "./FilterTable";
-
 import AddIcon from "@mui/icons-material/Add";
-
 import { ACTION_STATUSES } from "../../../utils/constants";
 import { useState } from "react";
 import * as FileSaver from 'file-saver';
-
-import PatientForm from "./PatientForm";
 import { connect } from "react-redux";
-import { patientCreateStateSelector, patientDeleteStateSelector, patientListStateSelector, patientUpdateStateSelector } from "../../../store/selectors/patientSelector";
-import { attemptToCreatePatient, attemptToDeletePatient, attemptToFetchPatient, attemptToUpdatePatient, resetCreatePatientState, resetDeletePatientState, resetFetchPatientState, resetUpdatePatientState } from "../../../store/actions/patientAction";
-
-
+import { patientListStateSelector } from "../../../store/selectors/patientSelector";
+import { attemptToFetchPatient, resetFetchPatientState } from "../../../store/actions/patientAction";
 import Helper from "../../../utils/helper";
-import InventoryTable from "../../../Common/components/inventorySystem/InventoryTable";
 import ActionsFunction from "../../../Common/components/inventorySystem/ActionsFunction";
-import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/actions/employeeAction";
+import ThresholdForm from "./ThresholdForm";
+
 import { employeeListStateSelector } from "../../../store/selectors/employeeSelector";
-import TOAST from "../../../modules/toastManager";
-let cnaList = [];
-let rnList = [];
+import { attemptToFetchEmployee, resetFetchEmployeeState } from "../../../store/actions/employeeAction";
 let originalSource = [];
-const Patient = (props) => {
+let isListEmployeeDone = false;
+let isListPatientDone = false;
+let patientList = [];
+let employeeList = [];
+const Threshold = (props) => {
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState([]);
   const [isPatientsCollection, setIsPatientsCollection] = useState(true);
-  const [isCreatePatientCollection, setIsCreatePatientCollection] = useState(true);
-  const [isUpdatePatientCollection, setIsUpdatePatientCollection] = useState(true);
-  const [isDeletePatientCollection, setIsDeletePatientCollection] = useState(true);
   const [isFormModal, setIsFormModal] = useState(false);
   const [item, setItem] = useState(undefined);
   const [mode, setMode] = useState('create');
-  const [isAddGroupButtons, setIsAddGroupButtons] = useState(false);
   function payloadHandler() {
     /*
     const payload = {
@@ -45,50 +36,48 @@ const Patient = (props) => {
 
     return null;
   }
-  const createFormHandler = (data, mode) => {
-    setItem(data);
-    setMode(mode || 'create');
-    setIsFormModal(true);
-  }
-  const closeFormModalHandler = () => {
-
-
-    setIsFormModal(false);
-  }
 
   useEffect(() => {
 
     if (!isPatientsCollection && props.patients && props.patients.status === ACTION_STATUSES.SUCCEED) {
+      isListPatientDone = true;
       props.resetListPatients();
       setIsPatientsCollection(true);
 
     }
 
-    if (!isCreatePatientCollection && props.createPatientState && props.createPatientState.status === ACTION_STATUSES.SUCCEED) {
-      props.resetCreatePatient();
-      setIsCreatePatientCollection(true);
 
-    }
-    if (!isUpdatePatientCollection && props.updatePatientState && props.updatePatientState.status === ACTION_STATUSES.SUCCEED) {
-      props.resetUpdatePatient();
-      setIsUpdatePatientCollection(true);
-
-      if (!isDeletePatientCollection && props.deletePatientState && props.deletePatientState.status === ACTION_STATUSES.SUCCEED) {
-        props.resetDeletePatient();
-        setIsDeletePatientCollection(true);
-
-      }
-    }
-  }, [isPatientsCollection, isCreatePatientCollection, isUpdatePatientCollection, isDeletePatientCollection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPatientsCollection]);
   useEffect(() => {
-
     props.listEmployees();
+
     props.listPatients(payloadHandler());
   }, []);
 
+  const createFormHandler = (data, mode) => {
+    setItem(data);
+    setMode(mode || 'create');
+    setIsFormModal(true);
+    console.log('[Create Threshold form]');
+  }
   console.log('[props.Patients]', props.patients);
   if (isPatientsCollection && props.patients && props.patients.status === ACTION_STATUSES.SUCCEED) {
+    patientList = [];
+
     let source = props.patients.data || [];
+    source.forEach((s, indx) => {
+      if (s.status === 'Active') {
+        s.label = s.name;
+        s.value = s.name;
+        s.id = indx;
+        s.title = s.name;
+        s.description = s.name;
+        s.category = 'patient';
+        patientList.push(s);
+      }
+    })
+
     source = DataHandler.mapData(source);
     const cols = DataHandler.columns().map((col, index) => {
       if (col.name === 'actions') {
@@ -128,8 +117,6 @@ const Patient = (props) => {
       assigned_rn: payload.assignRn,
       rn_visit_freq: payload.rnVisitFreq,
       assigned_cna: payload.assignCna,
-      assigned_cna_id: payload.assignCnaId ? payload.assignCnaId.id : undefined,
-      assigned_rn_id: payload.assignRnId ? payload.assignRnId.id : undefined,
       cna_visit_freq: payload.cnaVisitFreq,
       status: payload.status && payload.status.name ? payload.status.name : '',
 
@@ -148,24 +135,7 @@ const Patient = (props) => {
 
   }
   console.log('[Is Create Patient Collection]', props.createPatientState);
-  if (isCreatePatientCollection && props.createPatientState && props.createPatientState.status === ACTION_STATUSES.SUCCEED) {
-    TOAST.ok('Successfully Saved.');
-    setIsCreatePatientCollection(false);
-    props.listPatients();
 
-  }
-  if (isUpdatePatientCollection && props.updatePatientState && props.updatePatientState.status === ACTION_STATUSES.SUCCEED) {
-    TOAST.ok('Successfully Updated.');
-    setIsUpdatePatientCollection(false);
-    props.listPatients();
-
-  }
-  if (isDeletePatientCollection && props.deletePatientState && props.deletePatientState.status === ACTION_STATUSES.SUCCEED) {
-    TOAST.ok('Successfully Deleted.');
-    setIsDeletePatientCollection(false);
-    props.listPatients();
-
-  }
   const filterRecordHandler = (keyword) => {
     console.log('[Keyword]', keyword);
     if (!keyword) {
@@ -197,7 +167,7 @@ const Patient = (props) => {
         item.isChecked = isAll; // reset
       });
     }
-    setIsAddGroupButtons(dtSource.find(f => f.isChecked));
+
     originalSource = [...dtSource];
     setDataSource(dtSource);
 
@@ -231,75 +201,44 @@ const Patient = (props) => {
 
   }
 
+  const closeFormModalHandler = () => {
+    setIsFormModal(false);
+  }
   if (props.employees && props.employees.status === ACTION_STATUSES.SUCCEED) {
-    cnaList = [];
-    rnList = [];
-
-
-    [...props.employees.data].forEach(item => {
+    isListEmployeeDone = true;
+    employeeList = [...props.employees.data];
+    employeeList.forEach(item => {
       item.name = item.name.toUpperCase();
       item.value = item.name.toUpperCase();
       item.label = item.name.toUpperCase();
-      item.categoryType = 'cna';
-      cnaList.push({ ...item });
+      item.categoryType = 'employee'
+    });
 
-    });
-    [...props.employees.data].forEach(item => {
-      item.name = item.name.toUpperCase();
-      item.value = item.name.toUpperCase();
-      item.label = item.name.toUpperCase();
-      item.categoryType = 'rn';
-      rnList.push({ ...item });
-    });
     props.resetListEmployees();
   }
 
   return (
     <React.Fragment>
-      <Grid container style={{ paddingTop: 12 }}>
-        <Grid container justifyContent="space-between">
-          <div>
-            <Typography variant="h4">Patient Management</Typography>
-          </div>
-          <div>
-            <FilterTable filterRecordHandler={filterRecordHandler} />
-          </div>
-        </Grid>
+      {isListEmployeeDone && isListPatientDone ?
+        <Grid container style={{ paddingTop: 12 }}>
+          <Grid container justifyContent="space-between">
+            <div>
+              <Typography variant="h4">Plot Order Threshold Management</Typography>
+            </div>
+
+          </Grid>
 
 
 
-        <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
-          <div style={{ display: 'inline-flex', gap: 10 }}>
-            <Button
-              onClick={() => createFormHandler()}
-              variant="contained"
-              style={{
-                border: 'solid 1px #2196f3',
-                color: 'white',
-                background: '#2196f3',
-                fontFamily: "Roboto",
-                fontSize: "12px",
-                fontWeight: 500,
-                fontStretch: "normal",
-                fontStyle: "normal",
-                lineHeight: 1.71,
-                letterSpacing: "0.4px",
-                textAlign: "left",
-                cursor: 'pointer'
-              }}
-              component="span"
-              startIcon={<AddIcon />}
-            >
-              ADD PATIENT
-            </Button>
-            {isAddGroupButtons &&
+          <Grid container justifyContent="space-between" style={{ paddingBottom: 10 }}>
+            <div style={{ display: 'inline-flex', gap: 10 }}>
               <Button
-                onClick={() => exportToExcelHandler()}
+                onClick={() => createFormHandler()}
                 variant="contained"
                 style={{
-                  border: 'solid 1px blue',
+                  border: 'solid 1px #2196f3',
                   color: 'white',
-                  background: 'blue',
+                  background: '#2196f3',
                   fontFamily: "Roboto",
                   fontSize: "12px",
                   fontWeight: 500,
@@ -312,43 +251,35 @@ const Patient = (props) => {
                 }}
                 component="span"
                 startIcon={<AddIcon />}
-              > Export Excel </Button>
-            }
-          </div>
-        </Grid>
-        <Grid item xs={12}>
+              >
+                ADD THRESHOLD
+              </Button>
 
-          <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
+            </div>
+          </Grid>
+
         </Grid>
-      </Grid>
+        : <div><CircularProgress>Loading...</CircularProgress></div>
+      }
       {isFormModal &&
-        <PatientForm cnaList={cnaList} rnList={rnList} saveHandler={saveHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
+        <ThresholdForm requestorList={employeeList} patientList={patientList} saveHandler={saveHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }
     </React.Fragment>
   )
 }
 const mapStateToProps = store => ({
   patients: patientListStateSelector(store),
-  createPatientState: patientCreateStateSelector(store),
-  updatePatientState: patientUpdateStateSelector(store),
-  deletePatientState: patientDeleteStateSelector(store),
   employees: employeeListStateSelector(store),
-
 });
 
 const mapDispatchToProps = dispatch => ({
+
   listPatients: (data) => dispatch(attemptToFetchPatient(data)),
   resetListPatients: () => dispatch(resetFetchPatientState()),
-  createPatient: (data) => dispatch(attemptToCreatePatient(data)),
-  resetCreatePatient: () => dispatch(resetCreatePatientState()),
-  updatePatient: (data) => dispatch(attemptToUpdatePatient(data)),
-  resetUpdatePatient: () => dispatch(resetUpdatePatientState()),
-  deletePatient: (data) => dispatch(attemptToDeletePatient(data)),
-  resetDeletePatient: () => dispatch(resetDeletePatientState()),
   listEmployees: (data) => dispatch(attemptToFetchEmployee(data)),
   resetListEmployees: () => dispatch(resetFetchEmployeeState()),
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Patient);
+export default connect(mapStateToProps, mapDispatchToProps)(Threshold);
 

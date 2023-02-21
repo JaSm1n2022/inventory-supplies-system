@@ -61,6 +61,11 @@ function Header({
     redirectLink('patient');
 
   }
+  const thresholdSettingHandler = () => {
+    setAnchorEl(null);
+    redirectLink('threshold');
+
+  }
   const employeeSettingHandler = () => {
     setAnchorEl(null);
     redirectLink('employee');
@@ -133,6 +138,7 @@ function Header({
               onClose={handleClose}
             >
               <MenuItem onClick={patientSettingHandler}>Patients</MenuItem>
+              <MenuItem onClick={thresholdSettingHandler}>Threshold</MenuItem>
               <MenuItem onClick={facilitySettingHandler}>Location</MenuItem>
               <MenuItem onClick={employeeSettingHandler}>Employees</MenuItem>
               <MenuItem onClick={vendorSettingHandler}>Vendors</MenuItem>

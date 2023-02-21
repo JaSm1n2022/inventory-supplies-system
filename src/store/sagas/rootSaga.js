@@ -9,18 +9,20 @@ import employeeSaga from './employeeSaga';
 import patientSaga from './patientSaga';
 import vendorSaga from './vendorSaga';
 import templateSaga from './templateSaga';
+import thresholdSaga from './thresholdSaga';
 export function* rootSaga() {
   yield all([
-  authSaga(),
- 
-  invoiceSaga(),
-  productSaga(),
-  stockSaga(),
-  transactionSaga(),
-  distributionSaga(),
-  employeeSaga(),
-  patientSaga(),
-  vendorSaga(),
-  templateSaga()
-]);
+    authSaga(),
+
+    invoiceSaga(),
+    productSaga(),
+    stockSaga(),
+    transactionSaga(),
+    distributionSaga(),
+    employeeSaga(),
+    patientSaga(),
+    vendorSaga(),
+    templateSaga(),
+    thresholdSaga(),
+  ]);
 }

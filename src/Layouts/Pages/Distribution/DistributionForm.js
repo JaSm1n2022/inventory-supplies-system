@@ -167,6 +167,7 @@ function DistributionForm(props) {
             placeholder: 'Search Item',
             label: 'Search Item',
             name: 'search',
+
             options: [...props.productList]
         },
         {
@@ -566,7 +567,7 @@ function DistributionForm(props) {
 
                                         <div style={{ width: 300 }}>
                                             <SingleWithClearAutoComplete
-                                                disabled={props.mode && props.mode === 'view' ? true : false}
+                                                disabled={(props.mode && props.mode === 'view') || props.mode === 'edit' ? true : false}
                                                 source={item}
                                                 {...details.find(d => d.id === 'search')}
                                                 value={item['search']}

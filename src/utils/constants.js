@@ -528,3 +528,13 @@ export const DCH_YEARS = [
   { from: '2023-01-01', to: '2023-01-31' },
   { from: '2023-02-01', to: '2023-02-28' }
 ]
+export const THRESHOLD_CATEGORY = [
+  { categoryType: 'thresholdCategory', category: 'brief', default: 40, name: 'brief', label: 'brief', value: 'brief' },
+  { categoryType: 'thresholdCategory', category: 'underpad', name: 'underpad', label: 'underpad', value: 'underpad', default: 20 },
+  { categoryType: 'thresholdCategory', category: 'underwear', name: 'underwear', label: 'underwear', value: 'underwear', default: 40 },
+  { categoryType: 'thresholdCategory', category: 'gloves', name: 'gloves', label: 'gloves', value: 'gloves', default: 1 },
+  { categoryType: 'thresholdCategory', category: 'wipes', name: 'wipes', label: 'wipes', value: 'wipes', default: 1 },
+  { categoryType: 'thresholdCategory', category: 'ensure vanilla', name: 'ensure vanilla', label: 'ensure vanilla', value: 'ensure vanilla', default: 14 },
+  { categoryType: 'thresholdCategory', category: 'ensure chocolate', name: 'ensure chocolate', label: 'ensure chocolate', value: 'ensure chocolate', default: 14 },
+  { categoryType: 'thresholdCategory', category: 'ensure strawberry', name: 'ensure strawberry', label: 'ensure strawberry', value: 'ensure strawberry', default: 14 }
+]

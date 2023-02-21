@@ -11,21 +11,21 @@ export type InvoiceState = {
     error: ?string,
     status: ?string
   },
- 
-  invoiceUpdate : {
+
+  invoiceUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  invoiceDelete : {
+
+  invoiceDelete: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
-  invoiceCreate : {
+  invoiceCreate: {
 
     data: ?Object,
     error: ?string,
@@ -39,15 +39,15 @@ export type ProductState = {
     error: ?string,
     status: ?string
   },
- 
-  productUpdate : {
+
+  productUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  productDelete : {
+
+  productDelete: {
 
     data: ?Object,
     error: ?string,
@@ -69,15 +69,15 @@ export type EmployeeState = {
     error: ?string,
     status: ?string
   },
- 
-  employeeUpdate : {
+
+  employeeUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  employeeDelete : {
+
+  employeeDelete: {
 
     data: ?Object,
     error: ?string,
@@ -98,15 +98,15 @@ export type VendorState = {
     error: ?string,
     status: ?string
   },
- 
-  vendorUpdate : {
+
+  vendorUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  vendorDelete : {
+
+  vendorDelete: {
 
     data: ?Object,
     error: ?string,
@@ -128,15 +128,15 @@ export type TemplateState = {
     error: ?string,
     status: ?string
   },
- 
-  templateUpdate : {
+
+  templateUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  templateDelete : {
+
+  templateDelete: {
 
     data: ?Object,
     error: ?string,
@@ -157,15 +157,15 @@ export type PatientState = {
     error: ?string,
     status: ?string
   },
- 
-  patientUpdate : {
+
+  patientUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  patientDelete : {
+
+  patientDelete: {
 
     data: ?Object,
     error: ?string,
@@ -180,22 +180,49 @@ export type PatientState = {
 
 };
 
+export type ThresholdState = {
+  thresholdList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
 
+  thresholdUpdate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+
+  thresholdDelete: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  thresholdCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
 export type StockState = {
   stockList: {
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  stockUpdate : {
+
+  stockUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  stockDelete : {
+
+  stockDelete: {
 
     data: ?Object,
     error: ?string,
@@ -217,15 +244,15 @@ export type TransactionState = {
     error: ?string,
     status: ?string
   },
- 
-  transactionUpdate : {
+
+  transactionUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  transactionDelete : {
+
+  transactionDelete: {
 
     data: ?Object,
     error: ?string,
@@ -247,15 +274,15 @@ export type DistributionState = {
     error: ?string,
     status: ?string
   },
- 
-  distributionUpdate : {
+
+  distributionUpdate: {
 
     data: ?Object,
     error: ?string,
     status: ?string
   },
- 
-  distributionDelete : {
+
+  distributionDelete: {
 
     data: ?Object,
     error: ?string,
