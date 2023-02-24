@@ -431,7 +431,11 @@ export const SUPPLY_CATEGORY = [
   'Flange',
   'Drainable Pouch',
   'Deodorant',
-  'Hospital Gown'
+  'Hospital Gown',
+  'Tax Fee',
+  'Shipping Fee',
+  'Powder',
+  'Mouthwash'
 
 ]
 
