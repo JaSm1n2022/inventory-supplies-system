@@ -477,9 +477,9 @@ const Transaction = (props) => {
           <InventoryTable onCheckboxSelectionHandler={onCheckboxSelectionHandler} columns={columns} dataSource={dataSource} />
         </Grid>
       </Grid>
-      
-    
-    }
+
+
+
       {isFormModal &&
         <TransactionForm productList={productList} createTransactionHandler={createTransactionHandler} mode={mode} isOpen={isFormModal} isEdit={false} item={item} onClose={closeFormModalHandler} />
       }

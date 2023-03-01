@@ -435,7 +435,8 @@ export const SUPPLY_CATEGORY = [
   'Tax Fee',
   'Shipping Fee',
   'Powder',
-  'Mouthwash'
+  'Mouthwash',
+  'Amazon Promotion Applied'
 
 ]
 
