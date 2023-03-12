@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import { Select,InputLabel, Tooltip, MenuItem,FormControl,FormHelperText } from '@mui/material';
+import { Select, InputLabel, Tooltip, MenuItem, FormControl, FormHelperText } from '@mui/material';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 0,
     },
     root: {
-        
+
         width: '100%',
         fontSize: '10pt',
         borderBottom: '0px solid white',
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     rootRule: {
-        
+
         width: '100%',
         fontSize: '10pt',
         borderBottom: '0px solid white',
@@ -61,10 +61,10 @@ export default function RegularSelect({ tooltiptext, tooltipPlacement, disabled,
             placeholder={placeholder}
             label={label}
             name={name}
-            
+
             disabled={disabled || false}
             className={root && root === 'minmax' ? classes.rootRule : classes.root}
-            value={value || 'Select'}
+            value={value || ''}
             source={source}
             onChange={(event) => onChange(event, source)}
         >
@@ -73,7 +73,7 @@ export default function RegularSelect({ tooltiptext, tooltipPlacement, disabled,
             {options && options.length > 0 && options.map((c, i) => {
                 return (
                     <MenuItem key={`reg-sel-${i}`} value={c.value}><label htmlFor="" style={{ fontSize: '10pt' }}>{c.description || c.name}</label>
-                       
+
 
                     </MenuItem>
                 )

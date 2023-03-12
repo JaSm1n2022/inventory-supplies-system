@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
 
-import { Tooltip,TextField } from '@mui/material';
+import { Tooltip, TextField } from '@mui/material';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       margin: 0,
       width: '100%',
-      height:  '38px'
+      height: '38px'
     },
   },
   inputRoot: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 */
 
 export default function RegularTextField(props) {
-  const { tooltiptext, tooltipPlacement,id, source, onChange, variant, label, isError, type, value, errorMsg, readonly, name, placeholder, border, background, disabled, size } = props;
+  const { tooltiptext, tooltipPlacement, height, id, source, onChange, variant, label, isError, type, value, errorMsg, readonly, name, placeholder, border, background, disabled, size } = props;
   const classes = useStyles(props);
   let colorBkg = background || '';
   colorBkg = disabled ? '#e9ecef' : colorBkg;
@@ -53,13 +53,13 @@ export default function RegularTextField(props) {
     <TextField
       error={isError || false}
       id={id || 'txt-fld'}
-      
+
       disabled={disabled || false}
       type={type || "text"}
       label={isError ? 'Error' : topLabel ? <label hmtlfor="" style={{ fontSize: '10pt' }}>{topLabel}</label> : ''}
       defaultValue={value}
       helperText={isError ? <label hmtlFor="" style={{ fontSize: '10pt' }}>{errorMsg}</label> : ''}
-       readOnly={readonly || false}
+      readOnly={readonly || false}
       onKeyPress={(ev) => {
         if (ev.key === 'Enter') {
           // Do code here
@@ -69,14 +69,14 @@ export default function RegularTextField(props) {
       onChange={(e) => onChange(e, source)}
       name={name}
       value={value}
-      
+
       placeholder={placeholder}
       variant={variant || 'outlined'} InputProps={{
         style: {
           fontSize: size || 12,
           marginLeft: '0',
           marginRight: '0',
-          height:'38px',
+          height: height || 30,
 
 
           background: colorBkg
@@ -91,12 +91,12 @@ export default function RegularTextField(props) {
     <form className={classes.root} noValidate autoComplete="off">
       {tooltiptext ?
         <React.Fragment>
-         <Tooltip placement={tooltipPlacement || 'bottom-start'} title={<label style={{ fontSize: "12px", paddingTop: "3px" }}>{tooltiptext}</label>}>
-         {body}</Tooltip>
-         </React.Fragment>
+          <Tooltip placement={tooltipPlacement || 'bottom-start'} title={<label style={{ fontSize: "12px", paddingTop: "3px" }}>{tooltiptext}</label>}>
+            {body}</Tooltip>
+        </React.Fragment>
         :
         <React.Fragment>{body}</React.Fragment>
-        
+
       }
     </form>
   );

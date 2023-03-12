@@ -519,7 +519,7 @@ export const PATIENT_DASHBOARD_CATEGORY = [
   'Brief',
   'Underwear/Pull-ups',
   'Lotion/Cleanser/Ointment',
-  'Ensure/Glucerna/BOOST',
+  'Nutrition Drink',
   'Other'
 ]
 export const YEARS = [
@@ -542,4 +542,95 @@ export const THRESHOLD_CATEGORY = [
   { categoryType: 'thresholdCategory', category: 'ensure vanilla', name: 'ensure vanilla', label: 'ensure vanilla', value: 'ensure vanilla', default: 14 },
   { categoryType: 'thresholdCategory', category: 'ensure chocolate', name: 'ensure chocolate', label: 'ensure chocolate', value: 'ensure chocolate', default: 14 },
   { categoryType: 'thresholdCategory', category: 'ensure strawberry', name: 'ensure strawberry', label: 'ensure strawberry', value: 'ensure strawberry', default: 14 }
+]
+
+export const ORDER_FORM = [
+  {
+    category: 'Brief',
+    fields: [
+      {
+        component: 'select',
+        name: 'size',
+        label: 'Size',
+        placeholder: 'Size',
+        colspan: 6,
+        options: [
+          { name: 'SM', value: 'SM', label: 'Small', category: 'size' },
+          { name: 'MD', value: 'MD', label: 'Medium', category: 'size' },
+          { name: 'LG', value: 'LG', label: 'Large', category: 'size' },
+          { name: 'XLG', value: 'XLG', label: 'X-Large', category: 'size' },
+          { name: '2XLG', value: '2XLG', label: '2X-Large', category: 'size' },
+          { name: '3XLG', value: '3XLG', label: '3X-Large', category: 'size' },
+          { name: '4XLG', value: '4XLG', label: '4X-Large', category: 'size' }
+        ]
+      },
+      {
+        component: 'textfield',
+        type: 'number',
+        name: 'quantity',
+        qty: 2,
+        placeholder: 'Quantity',
+        label: 'Quantity',
+        colspan: 6
+
+      }
+    ]
+  },
+  {
+    category: 'UnderPad',
+    fields: [
+      {
+        component: 'select',
+        name: 'size',
+        placeholder: 'Underpad',
+        label: 'Underpad',
+        colspan: 6,
+        options: [
+          { name: 'Regular', value: 'Regular', label: 'Regular', category: 'underpad' },
+          { name: 'Reusable', value: 'Reusable', label: 'Reusable', category: 'underpad' },
+          { name: 'SPC', value: 'SPC', label: 'SPC', category: 'underpad' },
+        ]
+      },
+      {
+        component: 'textfield',
+        type: 'number',
+        name: 'Quantity',
+        qty: 2,
+        label: 'Quantity',
+        colspan: 6
+
+      }
+    ]
+  },
+  {
+    category: 'Underwear',
+    fields: [
+      {
+        component: 'select',
+        name: 'size',
+        label: 'Size',
+        placeholder: 'Size',
+        colspan: 6,
+        options: [
+          { name: 'SM', value: 'SM', label: 'Small', category: 'size' },
+          { name: 'MD', value: 'MD', label: 'Medium', category: 'size' },
+          { name: 'LG', value: 'LG', label: 'Large', category: 'size' },
+          { name: 'XLG', value: 'XLG', label: 'X-Large', category: 'size' },
+          { name: '2XLG', value: '2XLG', label: '2X-Large', category: 'size' },
+          { name: '3XLG', value: '3XLG', label: '3X-Large', category: 'size' },
+          { name: '4XLG', value: '4XLG', label: '4X-Large', category: 'size' }
+        ]
+      },
+      {
+        component: 'textfield',
+        type: 'number',
+        name: 'quantity',
+        qty: 2,
+        placeholder: 'Quantity',
+        label: 'Quantity',
+        colspan: 6
+
+      }
+    ]
+  },
 ]

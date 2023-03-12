@@ -21,6 +21,7 @@ import OfficeExpensesReport from './Layouts/Pages/Reports/Transaction/office';
 import MedicalExpensesReport from './Layouts/Pages/Reports/Transaction/medical';
 import InvoiceExpensesReport from './Layouts/Pages/Reports/Transaction/invoice';
 import ComponentToPrint from './Layouts/Document/PrintComponent';
+import WebOrder from "./Layouts/Pages/WebOrder";
 import { supabaseClient } from "./config/SupabaseClient";
 
 // date-fns
@@ -32,7 +33,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 // or for Moment.js
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from "@mui/x-date-pickers";
-
+const isTrue = false;
 const App = (props) => {
 	const [session, setSession] = useState(null)
 	const [signedIn, setSignedIn] = useState(true);
@@ -80,28 +81,32 @@ const App = (props) => {
 							<Route exact path="/" component={withRouter(Login)} />
 						</Switch>
 						:
-						<Switch>
-							<Route exact path="/stockroom" component={withRouter(StockRoom)} />
-							<Route exact path="/transaction" component={withRouter(Transaction)} />
-							<Route exact path="/distribution" component={withRouter(Distribution)} />
-							<Route exact path="/invoice" component={withRouter(Invoice)} />
-							<Route exact path="/vendor" component={withRouter(Vendor)} />
-							<Route exact path="/location" component={withRouter(Location)} />
-							<Route exact path="/patient" component={withRouter(Patient)} />
-							<Route exact path="/threshold" component={withRouter(Threshold)} />
-							<Route exact path="/employee" component={withRouter(Employee)} />
-							<Route exact path="/product" component={withRouter(Product)} />
-							<Route exact path="/document" component={withRouter(ComponentToPrint)} />
-							<Route exact path="/dashboard" component={withRouter(Dashboard)} />
-							<Route exact path="/clientexpensereport" component={withRouter(ClientExpensesReport)} />
-							<Route exact path="/officeexpensereport" component={withRouter(OfficeExpensesReport)} />
-							<Route exact path="/medicalexpensereport" component={withRouter(MedicalExpensesReport)} />
-							<Route exact path="/invoiceexpensereport" component={withRouter(InvoiceExpensesReport)} />
-							<Route exact path="/login" component={withRouter(Login)} />
-							<Route exact path="/" component={withRouter(Invoice)} />
+						!isTrue ?
+							<Route exact path="/" component={withRouter(WebOrder)} />
+							:
+							<Switch>
+								<Route exact path="/stockroom" component={withRouter(StockRoom)} />
+								<Route exact path="/transaction" component={withRouter(Transaction)} />
+								<Route exact path="/distribution" component={withRouter(Distribution)} />
+								<Route exact path="/invoice" component={withRouter(Invoice)} />
+								<Route exact path="/vendor" component={withRouter(Vendor)} />
+								<Route exact path="/location" component={withRouter(Location)} />
+								<Route exact path="/patient" component={withRouter(Patient)} />
+								<Route exact path="/threshold" component={withRouter(Threshold)} />
+								<Route exact path="/employee" component={withRouter(Employee)} />
+								<Route exact path="/product" component={withRouter(Product)} />
+								<Route exact path="/document" component={withRouter(ComponentToPrint)} />
+								<Route exact path="/dashboard" component={withRouter(Dashboard)} />
+								<Route exact path="/clientexpensereport" component={withRouter(ClientExpensesReport)} />
+								<Route exact path="/officeexpensereport" component={withRouter(OfficeExpensesReport)} />
+								<Route exact path="/medicalexpensereport" component={withRouter(MedicalExpensesReport)} />
+								<Route exact path="/invoiceexpensereport" component={withRouter(InvoiceExpensesReport)} />
+								<Route exact path="/login" component={withRouter(Login)} />
+								<Route exact path="/" component={withRouter(Invoice)} />
 
-						</Switch>
+							</Switch>
 					}
+
 
 				</Layout>
 

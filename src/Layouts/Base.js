@@ -7,43 +7,43 @@ import { ToastProvider, DefaultToastContainer } from 'react-toast-notifications'
 
 import { Grid } from '@mui/material';
 export const CustomToastContainer = props => (
-    // eslint-disable-next-line
-    <DefaultToastContainer {...props} style={{ zIndex: 9999 }} />
-  );
-
+  // eslint-disable-next-line
+  <DefaultToastContainer {...props} style={{ zIndex: 9999 }} />
+);
+let isTrue = false;
 const Base = (props) => {
-  console.log('props.children',props.isSignedIn);
-        
-        return (
-            <ToastProvider components={{ ToastContainer: CustomToastContainer }}>
-              {props.isSignedIn ? 
+  console.log('props.children', props.isSignedIn);
+
+  return (
+    <ToastProvider components={{ ToastContainer: CustomToastContainer }}>
+      {props.isSignedIn ?
         <React.Fragment>
-    
-        <Header
-              />
-        <main>
-        
+
+          <Header
+          />
+          <main>
+
             {props.children}
-        
-        </main>
+
+          </main>
         </React.Fragment>
-        : 
-          
+        :
+
         <main>
-            {props.children}
+          {props.children}
         </main>
-}
-        </ToastProvider>
-        )
+      }
+    </ToastProvider>
+  )
 
 }
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.token !== null
-  });
-  
-  const mapDispatchToProps = dispatch => ({
-    });
+  isAuthenticated: state.auth.token !== null
+});
+
+const mapDispatchToProps = dispatch => ({
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Base);
 
