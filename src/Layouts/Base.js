@@ -10,7 +10,7 @@ export const CustomToastContainer = props => (
   // eslint-disable-next-line
   <DefaultToastContainer {...props} style={{ zIndex: 9999 }} />
 );
-let isTrue = false;
+let isTrue = true;
 const Base = (props) => {
   console.log('props.children', props.isSignedIn);
 

@@ -33,7 +33,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 // or for Moment.js
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from "@mui/x-date-pickers";
-const isTrue = false;
+const isTrue = true;
 const App = (props) => {
 	const [session, setSession] = useState(null)
 	const [signedIn, setSignedIn] = useState(true);
