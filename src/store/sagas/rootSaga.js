@@ -10,10 +10,10 @@ import patientSaga from './patientSaga';
 import vendorSaga from './vendorSaga';
 import templateSaga from './templateSaga';
 import thresholdSaga from './thresholdSaga';
+import orderSaga from './orderSaga';
 export function* rootSaga() {
   yield all([
     authSaga(),
-
     invoiceSaga(),
     productSaga(),
     stockSaga(),
@@ -24,5 +24,6 @@ export function* rootSaga() {
     vendorSaga(),
     templateSaga(),
     thresholdSaga(),
+    orderSaga()
   ]);
 }

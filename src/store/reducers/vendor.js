@@ -10,21 +10,21 @@ const initialState = (): VendorState => ({
     status: null,
     error: null
   },
-  vendorUpdate : {
+  vendorUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  vendorCreate : {
+  vendorCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  vendorDelete : {
+  vendorDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
@@ -54,8 +54,8 @@ const SET_FETCH_VENDOR_SUCCEED = (state: VendorState, action: BaseAction) => ({
 
 const SET_FETCH_VENDOR_FAILURE = (state: VendorState) => ({
   ...state,
- vendorList: {
-    ...state.medicaid,
+  vendorList: {
+    ...state.vendorList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +88,7 @@ const SET_CREATE_VENDOR_SUCCEED = (state: VendorState, action: BaseAction) => ({
 
 const SET_CREATE_VENDOR_FAILURE = (state: VendorState) => ({
   ...state,
- vendorCreate: {
+  vendorCreate: {
     ...state.vendorCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +122,7 @@ const SET_UPDATE_VENDOR_SUCCEED = (state: VendorState, action: BaseAction) => ({
 
 const SET_UPDATE_VENDOR_FAILURE = (state: VendorState) => ({
   ...state,
- vendorUpdate: {
+  vendorUpdate: {
     ...state.vendorUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +155,7 @@ const SET_DELETE_VENDOR_SUCCEED = (state: VendorState, action: BaseAction) => ({
 
 const SET_DELETE_VENDOR_FAILURE = (state: VendorState) => ({
   ...state,
- vendorDelete: {
+  vendorDelete: {
     ...state.vendorDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +177,32 @@ const reducer = (state: VendorState = initialState(), action: BaseAction) => {
     case VENDOR_ACTIONS.RESET_FETCH_VENDOR_STATE:
       return RESET_FETCH_VENDOR_STATE(state);
 
-      case VENDOR_ACTIONS.ATTEMPT_TO_CREATE_VENDOR:
-        return ATTEMPT_TO_CREATE_VENDOR(state);
-      case VENDOR_ACTIONS.SET_CREATE_VENDOR_SUCCEED:
-        return SET_CREATE_VENDOR_SUCCEED(state, action);
-      case VENDOR_ACTIONS.SET_CREATE_VENDOR_FAILURE:
-        return SET_CREATE_VENDOR_FAILURE(state);
-      case VENDOR_ACTIONS.RESET_CREATE_VENDOR_STATE:
-        return RESET_CREATE_VENDOR_STATE(state);
+    case VENDOR_ACTIONS.ATTEMPT_TO_CREATE_VENDOR:
+      return ATTEMPT_TO_CREATE_VENDOR(state);
+    case VENDOR_ACTIONS.SET_CREATE_VENDOR_SUCCEED:
+      return SET_CREATE_VENDOR_SUCCEED(state, action);
+    case VENDOR_ACTIONS.SET_CREATE_VENDOR_FAILURE:
+      return SET_CREATE_VENDOR_FAILURE(state);
+    case VENDOR_ACTIONS.RESET_CREATE_VENDOR_STATE:
+      return RESET_CREATE_VENDOR_STATE(state);
 
-        case VENDOR_ACTIONS.ATTEMPT_TO_UPDATE_VENDOR:
-        return ATTEMPT_TO_UPDATE_VENDOR(state);
-      case VENDOR_ACTIONS.SET_UPDATE_VENDOR_SUCCEED:
-        return SET_UPDATE_VENDOR_SUCCEED(state, action);
-      case VENDOR_ACTIONS.SET_UPDATE_VENDOR_FAILURE:
-        return SET_UPDATE_VENDOR_FAILURE(state);
-      case VENDOR_ACTIONS.RESET_UPDATE_VENDOR_STATE:
-        return RESET_UPDATE_VENDOR_STATE(state);
+    case VENDOR_ACTIONS.ATTEMPT_TO_UPDATE_VENDOR:
+      return ATTEMPT_TO_UPDATE_VENDOR(state);
+    case VENDOR_ACTIONS.SET_UPDATE_VENDOR_SUCCEED:
+      return SET_UPDATE_VENDOR_SUCCEED(state, action);
+    case VENDOR_ACTIONS.SET_UPDATE_VENDOR_FAILURE:
+      return SET_UPDATE_VENDOR_FAILURE(state);
+    case VENDOR_ACTIONS.RESET_UPDATE_VENDOR_STATE:
+      return RESET_UPDATE_VENDOR_STATE(state);
 
-        case VENDOR_ACTIONS.ATTEMPT_TO_DELETE_VENDOR:
-          return ATTEMPT_TO_DELETE_VENDOR(state);
-        case VENDOR_ACTIONS.SET_DELETE_VENDOR_SUCCEED:
-          return SET_DELETE_VENDOR_SUCCEED(state, action);
-        case VENDOR_ACTIONS.SET_DELETE_VENDOR_FAILURE:
-          return SET_DELETE_VENDOR_FAILURE(state);
-        case VENDOR_ACTIONS.RESET_DELETE_VENDOR_STATE:
-          return RESET_DELETE_VENDOR_STATE(state);
+    case VENDOR_ACTIONS.ATTEMPT_TO_DELETE_VENDOR:
+      return ATTEMPT_TO_DELETE_VENDOR(state);
+    case VENDOR_ACTIONS.SET_DELETE_VENDOR_SUCCEED:
+      return SET_DELETE_VENDOR_SUCCEED(state, action);
+    case VENDOR_ACTIONS.SET_DELETE_VENDOR_FAILURE:
+      return SET_DELETE_VENDOR_FAILURE(state);
+    case VENDOR_ACTIONS.RESET_DELETE_VENDOR_STATE:
+      return RESET_DELETE_VENDOR_STATE(state);
     default:
       return state;
   }

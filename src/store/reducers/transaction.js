@@ -10,30 +10,28 @@ const initialState = (): TransactionState => ({
     status: null,
     error: null
   },
-  transactionUpdate : {
+  transactionUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  transactionCreate : {
+  transactionCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  transactionDelete : {
+  transactionDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
 });
 
 
-/*
-Medicaid
- */
+
 const ATTEMPT_TO_FETCH_TRANSACTION = (state: TransactionState) => ({
   ...state,
   transactionList: {
@@ -54,8 +52,8 @@ const SET_FETCH_TRANSACTION_SUCCEED = (state: TransactionState, action: BaseActi
 
 const SET_FETCH_TRANSACTION_FAILURE = (state: TransactionState) => ({
   ...state,
- transactionList: {
-    ...state.medicaid,
+  transactionList: {
+    ...state.transactionList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +86,7 @@ const SET_CREATE_TRANSACTION_SUCCEED = (state: TransactionState, action: BaseAct
 
 const SET_CREATE_TRANSACTION_FAILURE = (state: TransactionState) => ({
   ...state,
- transactionCreate: {
+  transactionCreate: {
     ...state.transactionCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +120,7 @@ const SET_UPDATE_TRANSACTION_SUCCEED = (state: TransactionState, action: BaseAct
 
 const SET_UPDATE_TRANSACTION_FAILURE = (state: TransactionState) => ({
   ...state,
- transactionUpdate: {
+  transactionUpdate: {
     ...state.transactionUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +153,7 @@ const SET_DELETE_TRANSACTION_SUCCEED = (state: TransactionState, action: BaseAct
 
 const SET_DELETE_TRANSACTION_FAILURE = (state: TransactionState) => ({
   ...state,
- transactionDelete: {
+  transactionDelete: {
     ...state.transactionDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +175,32 @@ const reducer = (state: TransactionState = initialState(), action: BaseAction) =
     case TRANSACTION_ACTIONS.RESET_FETCH_TRANSACTION_STATE:
       return RESET_FETCH_TRANSACTION_STATE(state);
 
-      case TRANSACTION_ACTIONS.ATTEMPT_TO_CREATE_TRANSACTION:
-        return ATTEMPT_TO_CREATE_TRANSACTION(state);
-      case TRANSACTION_ACTIONS.SET_CREATE_TRANSACTION_SUCCEED:
-        return SET_CREATE_TRANSACTION_SUCCEED(state, action);
-      case TRANSACTION_ACTIONS.SET_CREATE_TRANSACTION_FAILURE:
-        return SET_CREATE_TRANSACTION_FAILURE(state);
-      case TRANSACTION_ACTIONS.RESET_CREATE_TRANSACTION_STATE:
-        return RESET_CREATE_TRANSACTION_STATE(state);
+    case TRANSACTION_ACTIONS.ATTEMPT_TO_CREATE_TRANSACTION:
+      return ATTEMPT_TO_CREATE_TRANSACTION(state);
+    case TRANSACTION_ACTIONS.SET_CREATE_TRANSACTION_SUCCEED:
+      return SET_CREATE_TRANSACTION_SUCCEED(state, action);
+    case TRANSACTION_ACTIONS.SET_CREATE_TRANSACTION_FAILURE:
+      return SET_CREATE_TRANSACTION_FAILURE(state);
+    case TRANSACTION_ACTIONS.RESET_CREATE_TRANSACTION_STATE:
+      return RESET_CREATE_TRANSACTION_STATE(state);
 
-        case TRANSACTION_ACTIONS.ATTEMPT_TO_UPDATE_TRANSACTION:
-        return ATTEMPT_TO_UPDATE_TRANSACTION(state);
-      case TRANSACTION_ACTIONS.SET_UPDATE_TRANSACTION_SUCCEED:
-        return SET_UPDATE_TRANSACTION_SUCCEED(state, action);
-      case TRANSACTION_ACTIONS.SET_UPDATE_TRANSACTION_FAILURE:
-        return SET_UPDATE_TRANSACTION_FAILURE(state);
-      case TRANSACTION_ACTIONS.RESET_UPDATE_TRANSACTION_STATE:
-        return RESET_UPDATE_TRANSACTION_STATE(state);
+    case TRANSACTION_ACTIONS.ATTEMPT_TO_UPDATE_TRANSACTION:
+      return ATTEMPT_TO_UPDATE_TRANSACTION(state);
+    case TRANSACTION_ACTIONS.SET_UPDATE_TRANSACTION_SUCCEED:
+      return SET_UPDATE_TRANSACTION_SUCCEED(state, action);
+    case TRANSACTION_ACTIONS.SET_UPDATE_TRANSACTION_FAILURE:
+      return SET_UPDATE_TRANSACTION_FAILURE(state);
+    case TRANSACTION_ACTIONS.RESET_UPDATE_TRANSACTION_STATE:
+      return RESET_UPDATE_TRANSACTION_STATE(state);
 
-        case TRANSACTION_ACTIONS.ATTEMPT_TO_DELETE_TRANSACTION:
-          return ATTEMPT_TO_DELETE_TRANSACTION(state);
-        case TRANSACTION_ACTIONS.SET_DELETE_TRANSACTION_SUCCEED:
-          return SET_DELETE_TRANSACTION_SUCCEED(state, action);
-        case TRANSACTION_ACTIONS.SET_DELETE_TRANSACTION_FAILURE:
-          return SET_DELETE_TRANSACTION_FAILURE(state);
-        case TRANSACTION_ACTIONS.RESET_DELETE_TRANSACTION_STATE:
-          return RESET_DELETE_TRANSACTION_STATE(state);
+    case TRANSACTION_ACTIONS.ATTEMPT_TO_DELETE_TRANSACTION:
+      return ATTEMPT_TO_DELETE_TRANSACTION(state);
+    case TRANSACTION_ACTIONS.SET_DELETE_TRANSACTION_SUCCEED:
+      return SET_DELETE_TRANSACTION_SUCCEED(state, action);
+    case TRANSACTION_ACTIONS.SET_DELETE_TRANSACTION_FAILURE:
+      return SET_DELETE_TRANSACTION_FAILURE(state);
+    case TRANSACTION_ACTIONS.RESET_DELETE_TRANSACTION_STATE:
+      return RESET_DELETE_TRANSACTION_STATE(state);
     default:
       return state;
   }

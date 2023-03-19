@@ -10,30 +10,28 @@ const initialState = (): InvoiceState => ({
     status: null,
     error: null
   },
-  invoiceUpdate : {
+  invoiceUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  invoiceCreate : {
+  invoiceCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  invoiceDelete : {
+  invoiceDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
 });
 
 
-/*
-Medicaid
- */
+
 const ATTEMPT_TO_FETCH_INVOICE = (state: InvoiceState) => ({
   ...state,
   invoiceList: {
@@ -54,8 +52,8 @@ const SET_FETCH_INVOICE_SUCCEED = (state: InvoiceState, action: BaseAction) => (
 
 const SET_FETCH_INVOICE_FAILURE = (state: InvoiceState) => ({
   ...state,
- invoiceList: {
-    ...state.medicaid,
+  invoiceList: {
+    ...state.invoiceList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +86,7 @@ const SET_CREATE_INVOICE_SUCCEED = (state: InvoiceState, action: BaseAction) => 
 
 const SET_CREATE_INVOICE_FAILURE = (state: InvoiceState) => ({
   ...state,
- invoiceCreate: {
+  invoiceCreate: {
     ...state.invoiceCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +120,7 @@ const SET_UPDATE_INVOICE_SUCCEED = (state: InvoiceState, action: BaseAction) => 
 
 const SET_UPDATE_INVOICE_FAILURE = (state: InvoiceState) => ({
   ...state,
- invoiceUpdate: {
+  invoiceUpdate: {
     ...state.invoiceUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +153,7 @@ const SET_DELETE_INVOICE_SUCCEED = (state: InvoiceState, action: BaseAction) => 
 
 const SET_DELETE_INVOICE_FAILURE = (state: InvoiceState) => ({
   ...state,
- invoiceDelete: {
+  invoiceDelete: {
     ...state.invoiceDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +175,32 @@ const reducer = (state: InvoiceState = initialState(), action: BaseAction) => {
     case INVOICE_ACTIONS.RESET_FETCH_INVOICE_STATE:
       return RESET_FETCH_INVOICE_STATE(state);
 
-      case INVOICE_ACTIONS.ATTEMPT_TO_CREATE_INVOICE:
-        return ATTEMPT_TO_CREATE_INVOICE(state);
-      case INVOICE_ACTIONS.SET_CREATE_INVOICE_SUCCEED:
-        return SET_CREATE_INVOICE_SUCCEED(state, action);
-      case INVOICE_ACTIONS.SET_CREATE_INVOICE_FAILURE:
-        return SET_CREATE_INVOICE_FAILURE(state);
-      case INVOICE_ACTIONS.RESET_CREATE_INVOICE_STATE:
-        return RESET_CREATE_INVOICE_STATE(state);
+    case INVOICE_ACTIONS.ATTEMPT_TO_CREATE_INVOICE:
+      return ATTEMPT_TO_CREATE_INVOICE(state);
+    case INVOICE_ACTIONS.SET_CREATE_INVOICE_SUCCEED:
+      return SET_CREATE_INVOICE_SUCCEED(state, action);
+    case INVOICE_ACTIONS.SET_CREATE_INVOICE_FAILURE:
+      return SET_CREATE_INVOICE_FAILURE(state);
+    case INVOICE_ACTIONS.RESET_CREATE_INVOICE_STATE:
+      return RESET_CREATE_INVOICE_STATE(state);
 
-        case INVOICE_ACTIONS.ATTEMPT_TO_UPDATE_INVOICE:
-        return ATTEMPT_TO_UPDATE_INVOICE(state);
-      case INVOICE_ACTIONS.SET_UPDATE_INVOICE_SUCCEED:
-        return SET_UPDATE_INVOICE_SUCCEED(state, action);
-      case INVOICE_ACTIONS.SET_UPDATE_INVOICE_FAILURE:
-        return SET_UPDATE_INVOICE_FAILURE(state);
-      case INVOICE_ACTIONS.RESET_UPDATE_INVOICE_STATE:
-        return RESET_UPDATE_INVOICE_STATE(state);
+    case INVOICE_ACTIONS.ATTEMPT_TO_UPDATE_INVOICE:
+      return ATTEMPT_TO_UPDATE_INVOICE(state);
+    case INVOICE_ACTIONS.SET_UPDATE_INVOICE_SUCCEED:
+      return SET_UPDATE_INVOICE_SUCCEED(state, action);
+    case INVOICE_ACTIONS.SET_UPDATE_INVOICE_FAILURE:
+      return SET_UPDATE_INVOICE_FAILURE(state);
+    case INVOICE_ACTIONS.RESET_UPDATE_INVOICE_STATE:
+      return RESET_UPDATE_INVOICE_STATE(state);
 
-        case INVOICE_ACTIONS.ATTEMPT_TO_DELETE_INVOICE:
-          return ATTEMPT_TO_DELETE_INVOICE(state);
-        case INVOICE_ACTIONS.SET_DELETE_INVOICE_SUCCEED:
-          return SET_DELETE_INVOICE_SUCCEED(state, action);
-        case INVOICE_ACTIONS.SET_DELETE_INVOICE_FAILURE:
-          return SET_DELETE_INVOICE_FAILURE(state);
-        case INVOICE_ACTIONS.RESET_DELETE_INVOICE_STATE:
-          return RESET_DELETE_INVOICE_STATE(state);
+    case INVOICE_ACTIONS.ATTEMPT_TO_DELETE_INVOICE:
+      return ATTEMPT_TO_DELETE_INVOICE(state);
+    case INVOICE_ACTIONS.SET_DELETE_INVOICE_SUCCEED:
+      return SET_DELETE_INVOICE_SUCCEED(state, action);
+    case INVOICE_ACTIONS.SET_DELETE_INVOICE_FAILURE:
+      return SET_DELETE_INVOICE_FAILURE(state);
+    case INVOICE_ACTIONS.RESET_DELETE_INVOICE_STATE:
+      return RESET_DELETE_INVOICE_STATE(state);
     default:
       return state;
   }

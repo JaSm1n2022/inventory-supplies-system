@@ -31,9 +31,7 @@ const initialState = (): ThresholdState => ({
 });
 
 
-/*
-Medicaid
- */
+
 const ATTEMPT_TO_FETCH_THRESHOLD = (state: ThresholdState) => ({
   ...state,
   thresholdList: {
@@ -55,7 +53,7 @@ const SET_FETCH_THRESHOLD_SUCCEED = (state: ThresholdState, action: BaseAction) 
 const SET_FETCH_THRESHOLD_FAILURE = (state: ThresholdState) => ({
   ...state,
   thresholdList: {
-    ...state.medicaid,
+    ...state.thresholdList,
     status: ACTION_STATUSES.FAILED
   }
 });

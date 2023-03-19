@@ -37,6 +37,7 @@ const isTrue = true;
 const App = (props) => {
 	const [session, setSession] = useState(null)
 	const [signedIn, setSignedIn] = useState(true);
+	const [requestor, setRequestor] = useState('');
 	useEffect(() => {
 		supabaseClient.auth.getSession().then(({ data: { session } }) => {
 			setSession(session)
@@ -61,6 +62,7 @@ const App = (props) => {
 			if (event === 'SIGNED_OUT') {
 				setSignedIn(false)
 			} else {
+				setRequestor(session.user.email);
 				setSignedIn(true);
 			}
 		})
@@ -75,7 +77,7 @@ const App = (props) => {
 			</head>
 			<Router basename="/">
 
-				<Layout isSignedIn={signedIn && session}>
+				<Layout isSignedIn={signedIn && session} requestor={requestor}>
 					{!signedIn || !session ?
 						<Switch>
 							<Route exact path="/" component={withRouter(Login)} />

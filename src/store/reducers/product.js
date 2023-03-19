@@ -10,30 +10,28 @@ const initialState = (): ProductState => ({
     status: null,
     error: null
   },
-  productUpdate : {
+  productUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  productCreate : {
+  productCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  productDelete : {
+  productDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
 });
 
 
-/*
-Medicaid
- */
+
 const ATTEMPT_TO_FETCH_PRODUCT = (state: ProductState) => ({
   ...state,
   productList: {
@@ -54,8 +52,8 @@ const SET_FETCH_PRODUCT_SUCCEED = (state: ProductState, action: BaseAction) => (
 
 const SET_FETCH_PRODUCT_FAILURE = (state: ProductState) => ({
   ...state,
- productList: {
-    ...state.medicaid,
+  productList: {
+    ...state.productList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +86,7 @@ const SET_CREATE_PRODUCT_SUCCEED = (state: ProductState, action: BaseAction) => 
 
 const SET_CREATE_PRODUCT_FAILURE = (state: ProductState) => ({
   ...state,
- productCreate: {
+  productCreate: {
     ...state.productCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +120,7 @@ const SET_UPDATE_PRODUCT_SUCCEED = (state: ProductState, action: BaseAction) => 
 
 const SET_UPDATE_PRODUCT_FAILURE = (state: ProductState) => ({
   ...state,
- productUpdate: {
+  productUpdate: {
     ...state.productUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +153,7 @@ const SET_DELETE_PRODUCT_SUCCEED = (state: ProductState, action: BaseAction) => 
 
 const SET_DELETE_PRODUCT_FAILURE = (state: ProductState) => ({
   ...state,
- productDelete: {
+  productDelete: {
     ...state.productDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +175,32 @@ const reducer = (state: ProductState = initialState(), action: BaseAction) => {
     case PRODUCT_ACTIONS.RESET_FETCH_PRODUCT_STATE:
       return RESET_FETCH_PRODUCT_STATE(state);
 
-      case PRODUCT_ACTIONS.ATTEMPT_TO_CREATE_PRODUCT:
-        return ATTEMPT_TO_CREATE_PRODUCT(state);
-      case PRODUCT_ACTIONS.SET_CREATE_PRODUCT_SUCCEED:
-        return SET_CREATE_PRODUCT_SUCCEED(state, action);
-      case PRODUCT_ACTIONS.SET_CREATE_PRODUCT_FAILURE:
-        return SET_CREATE_PRODUCT_FAILURE(state);
-      case PRODUCT_ACTIONS.RESET_CREATE_PRODUCT_STATE:
-        return RESET_CREATE_PRODUCT_STATE(state);
+    case PRODUCT_ACTIONS.ATTEMPT_TO_CREATE_PRODUCT:
+      return ATTEMPT_TO_CREATE_PRODUCT(state);
+    case PRODUCT_ACTIONS.SET_CREATE_PRODUCT_SUCCEED:
+      return SET_CREATE_PRODUCT_SUCCEED(state, action);
+    case PRODUCT_ACTIONS.SET_CREATE_PRODUCT_FAILURE:
+      return SET_CREATE_PRODUCT_FAILURE(state);
+    case PRODUCT_ACTIONS.RESET_CREATE_PRODUCT_STATE:
+      return RESET_CREATE_PRODUCT_STATE(state);
 
-        case PRODUCT_ACTIONS.ATTEMPT_TO_UPDATE_PRODUCT:
-        return ATTEMPT_TO_UPDATE_PRODUCT(state);
-      case PRODUCT_ACTIONS.SET_UPDATE_PRODUCT_SUCCEED:
-        return SET_UPDATE_PRODUCT_SUCCEED(state, action);
-      case PRODUCT_ACTIONS.SET_UPDATE_PRODUCT_FAILURE:
-        return SET_UPDATE_PRODUCT_FAILURE(state);
-      case PRODUCT_ACTIONS.RESET_UPDATE_PRODUCT_STATE:
-        return RESET_UPDATE_PRODUCT_STATE(state);
+    case PRODUCT_ACTIONS.ATTEMPT_TO_UPDATE_PRODUCT:
+      return ATTEMPT_TO_UPDATE_PRODUCT(state);
+    case PRODUCT_ACTIONS.SET_UPDATE_PRODUCT_SUCCEED:
+      return SET_UPDATE_PRODUCT_SUCCEED(state, action);
+    case PRODUCT_ACTIONS.SET_UPDATE_PRODUCT_FAILURE:
+      return SET_UPDATE_PRODUCT_FAILURE(state);
+    case PRODUCT_ACTIONS.RESET_UPDATE_PRODUCT_STATE:
+      return RESET_UPDATE_PRODUCT_STATE(state);
 
-        case PRODUCT_ACTIONS.ATTEMPT_TO_DELETE_PRODUCT:
-          return ATTEMPT_TO_DELETE_PRODUCT(state);
-        case PRODUCT_ACTIONS.SET_DELETE_PRODUCT_SUCCEED:
-          return SET_DELETE_PRODUCT_SUCCEED(state, action);
-        case PRODUCT_ACTIONS.SET_DELETE_PRODUCT_FAILURE:
-          return SET_DELETE_PRODUCT_FAILURE(state);
-        case PRODUCT_ACTIONS.RESET_DELETE_PRODUCT_STATE:
-          return RESET_DELETE_PRODUCT_STATE(state);
+    case PRODUCT_ACTIONS.ATTEMPT_TO_DELETE_PRODUCT:
+      return ATTEMPT_TO_DELETE_PRODUCT(state);
+    case PRODUCT_ACTIONS.SET_DELETE_PRODUCT_SUCCEED:
+      return SET_DELETE_PRODUCT_SUCCEED(state, action);
+    case PRODUCT_ACTIONS.SET_DELETE_PRODUCT_FAILURE:
+      return SET_DELETE_PRODUCT_FAILURE(state);
+    case PRODUCT_ACTIONS.RESET_DELETE_PRODUCT_STATE:
+      return RESET_DELETE_PRODUCT_STATE(state);
     default:
       return state;
   }

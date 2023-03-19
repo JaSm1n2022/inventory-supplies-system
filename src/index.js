@@ -15,6 +15,7 @@ import productReducer from './store/reducers/product';
 import stockReducer from './store/reducers/stock';
 import transactionReducer from './store/reducers/transaction';
 import distributionReducer from './store/reducers/distribution';
+import orderReducer from './store/reducers/order';
 import employeeReducer from './store/reducers/employee';
 import patientReducer from './store/reducers/patient';
 import thresholdReducer from './store/reducers/threshold';
@@ -33,7 +34,8 @@ const rootReducer = combineReducers({
     patient: patientReducer,
     vendor: vendorReducer,
     template: templateReducer,
-    threshold: thresholdReducer
+    threshold: thresholdReducer,
+    order: orderReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();

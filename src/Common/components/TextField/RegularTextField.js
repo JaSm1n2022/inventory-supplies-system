@@ -76,7 +76,7 @@ export default function RegularTextField(props) {
           fontSize: size || 12,
           marginLeft: '0',
           marginRight: '0',
-          height: height || 30,
+          height: height || 40,
 
 
           background: colorBkg

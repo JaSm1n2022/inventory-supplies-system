@@ -297,6 +297,35 @@ export type DistributionState = {
 
 };
 
+export type OrderState = {
+  orderList: {
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+
+  orderUpdate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+
+  orderDelete: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  },
+  orderCreate: {
+
+    data: ?Object,
+    error: ?string,
+    status: ?string
+  }
+
+};
+
 
 
 export type MediaUploadState = {

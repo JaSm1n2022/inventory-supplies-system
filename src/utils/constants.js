@@ -554,6 +554,8 @@ export const ORDER_FORM = [
         label: 'Size',
         placeholder: 'Size',
         colspan: 6,
+        uom: 'BG',
+        isMandatory: true,
         options: [
           { name: 'SM', value: 'SM', label: 'Small', category: 'size' },
           { name: 'MD', value: 'MD', label: 'Medium', category: 'size' },
@@ -568,9 +570,11 @@ export const ORDER_FORM = [
         component: 'textfield',
         type: 'number',
         name: 'quantity',
-        qty: 2,
-        placeholder: 'Quantity',
-        label: 'Quantity',
+        isMandatory: true,
+        tooltip: '1 bag is 20 pcs',
+        value: 2,
+        placeholder: 'Bag Quantity',
+        label: 'Bag Quantity',
         colspan: 6
 
       }
@@ -584,6 +588,9 @@ export const ORDER_FORM = [
         name: 'size',
         placeholder: 'Underpad',
         label: 'Underpad',
+        uom: 'BG',
+        isMandatory: true,
+        value: { name: 'Regular', value: 'Regular', label: 'Regular', category: 'underpad' },
         colspan: 6,
         options: [
           { name: 'Regular', value: 'Regular', label: 'Regular', category: 'underpad' },
@@ -594,9 +601,12 @@ export const ORDER_FORM = [
       {
         component: 'textfield',
         type: 'number',
-        name: 'Quantity',
-        qty: 2,
-        label: 'Quantity',
+        isMandatory: true,
+        name: 'quantity',
+        value: 2,
+        tooltip: '1 bag is 10 pcs',
+        placeholder: 'Bag Quantity',
+        label: 'Bag Quantity',
         colspan: 6
 
       }
@@ -609,8 +619,10 @@ export const ORDER_FORM = [
         component: 'select',
         name: 'size',
         label: 'Size',
+        isMandatory: true,
         placeholder: 'Size',
         colspan: 6,
+        uom: 'BG',
         options: [
           { name: 'SM', value: 'SM', label: 'Small', category: 'size' },
           { name: 'MD', value: 'MD', label: 'Medium', category: 'size' },
@@ -625,9 +637,11 @@ export const ORDER_FORM = [
         component: 'textfield',
         type: 'number',
         name: 'quantity',
-        qty: 2,
-        placeholder: 'Quantity',
-        label: 'Quantity',
+        isMandatory: true,
+        tooltip: '1 bag is 20 pcs',
+        value: 2,
+        placeholder: 'Bag Quantity',
+        label: 'Bag Quantity',
         colspan: 6
 
       }

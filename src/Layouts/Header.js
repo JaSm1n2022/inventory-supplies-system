@@ -98,7 +98,7 @@ function Header({
     <React.Fragment>
       {!isTrue ?
         <Grid container justifyItems="center" justifyContent="center">
-          <img src={Hospice} alt="" style={{ height: '50px', width: '200px' }} />
+
         </Grid>
         :
         <Grid container>

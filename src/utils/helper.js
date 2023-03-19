@@ -29,7 +29,7 @@ class Helper {
     }
     return `${year}-${month}-${day}`;
   }
-  static formatDateRangeByCriteriaV2(selectedMenu) {
+  static formatDateRangeByCriteriaV2(selectedMenu, mode) {
     let dateFrom = this.getCurrentDateInYYYYMMDD();
     let dateTo = this.getCurrentDateInYYYYMMDD();
 
@@ -38,6 +38,9 @@ class Helper {
     const fmt = "YYYY-MM-DD"; // do not change as backend accepts this format
     let date1 = null;
     let date2 = null;
+    if (mode === 'created') {
+      dateTo.add(1, "days").utc().format(fmt);
+    }
     switch (selectedMenu) {
       case "Today":
       case "today":

@@ -10,30 +10,28 @@ const initialState = (): EmployeeState => ({
     status: null,
     error: null
   },
-  employeeUpdate : {
+  employeeUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  employeeCreate : {
+  employeeCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  employeeDelete : {
+  employeeDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
 });
 
 
-/*
-Medicaid
- */
+
 const ATTEMPT_TO_FETCH_EMPLOYEE = (state: EmployeeState) => ({
   ...state,
   employeeList: {
@@ -54,8 +52,8 @@ const SET_FETCH_EMPLOYEE_SUCCEED = (state: EmployeeState, action: BaseAction) =>
 
 const SET_FETCH_EMPLOYEE_FAILURE = (state: EmployeeState) => ({
   ...state,
- employeeList: {
-    ...state.medicaid,
+  employeeList: {
+    ...state.employeeList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +86,7 @@ const SET_CREATE_EMPLOYEE_SUCCEED = (state: EmployeeState, action: BaseAction) =
 
 const SET_CREATE_EMPLOYEE_FAILURE = (state: EmployeeState) => ({
   ...state,
- employeeCreate: {
+  employeeCreate: {
     ...state.employeeCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +120,7 @@ const SET_UPDATE_EMPLOYEE_SUCCEED = (state: EmployeeState, action: BaseAction) =
 
 const SET_UPDATE_EMPLOYEE_FAILURE = (state: EmployeeState) => ({
   ...state,
- employeeUpdate: {
+  employeeUpdate: {
     ...state.employeeUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +153,7 @@ const SET_DELETE_EMPLOYEE_SUCCEED = (state: EmployeeState, action: BaseAction) =
 
 const SET_DELETE_EMPLOYEE_FAILURE = (state: EmployeeState) => ({
   ...state,
- employeeDelete: {
+  employeeDelete: {
     ...state.employeeDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +175,32 @@ const reducer = (state: EmployeeState = initialState(), action: BaseAction) => {
     case EMPLOYEE_ACTIONS.RESET_FETCH_EMPLOYEE_STATE:
       return RESET_FETCH_EMPLOYEE_STATE(state);
 
-      case EMPLOYEE_ACTIONS.ATTEMPT_TO_CREATE_EMPLOYEE:
-        return ATTEMPT_TO_CREATE_EMPLOYEE(state);
-      case EMPLOYEE_ACTIONS.SET_CREATE_EMPLOYEE_SUCCEED:
-        return SET_CREATE_EMPLOYEE_SUCCEED(state, action);
-      case EMPLOYEE_ACTIONS.SET_CREATE_EMPLOYEE_FAILURE:
-        return SET_CREATE_EMPLOYEE_FAILURE(state);
-      case EMPLOYEE_ACTIONS.RESET_CREATE_EMPLOYEE_STATE:
-        return RESET_CREATE_EMPLOYEE_STATE(state);
+    case EMPLOYEE_ACTIONS.ATTEMPT_TO_CREATE_EMPLOYEE:
+      return ATTEMPT_TO_CREATE_EMPLOYEE(state);
+    case EMPLOYEE_ACTIONS.SET_CREATE_EMPLOYEE_SUCCEED:
+      return SET_CREATE_EMPLOYEE_SUCCEED(state, action);
+    case EMPLOYEE_ACTIONS.SET_CREATE_EMPLOYEE_FAILURE:
+      return SET_CREATE_EMPLOYEE_FAILURE(state);
+    case EMPLOYEE_ACTIONS.RESET_CREATE_EMPLOYEE_STATE:
+      return RESET_CREATE_EMPLOYEE_STATE(state);
 
-        case EMPLOYEE_ACTIONS.ATTEMPT_TO_UPDATE_EMPLOYEE:
-        return ATTEMPT_TO_UPDATE_EMPLOYEE(state);
-      case EMPLOYEE_ACTIONS.SET_UPDATE_EMPLOYEE_SUCCEED:
-        return SET_UPDATE_EMPLOYEE_SUCCEED(state, action);
-      case EMPLOYEE_ACTIONS.SET_UPDATE_EMPLOYEE_FAILURE:
-        return SET_UPDATE_EMPLOYEE_FAILURE(state);
-      case EMPLOYEE_ACTIONS.RESET_UPDATE_EMPLOYEE_STATE:
-        return RESET_UPDATE_EMPLOYEE_STATE(state);
+    case EMPLOYEE_ACTIONS.ATTEMPT_TO_UPDATE_EMPLOYEE:
+      return ATTEMPT_TO_UPDATE_EMPLOYEE(state);
+    case EMPLOYEE_ACTIONS.SET_UPDATE_EMPLOYEE_SUCCEED:
+      return SET_UPDATE_EMPLOYEE_SUCCEED(state, action);
+    case EMPLOYEE_ACTIONS.SET_UPDATE_EMPLOYEE_FAILURE:
+      return SET_UPDATE_EMPLOYEE_FAILURE(state);
+    case EMPLOYEE_ACTIONS.RESET_UPDATE_EMPLOYEE_STATE:
+      return RESET_UPDATE_EMPLOYEE_STATE(state);
 
-        case EMPLOYEE_ACTIONS.ATTEMPT_TO_DELETE_EMPLOYEE:
-          return ATTEMPT_TO_DELETE_EMPLOYEE(state);
-        case EMPLOYEE_ACTIONS.SET_DELETE_EMPLOYEE_SUCCEED:
-          return SET_DELETE_EMPLOYEE_SUCCEED(state, action);
-        case EMPLOYEE_ACTIONS.SET_DELETE_EMPLOYEE_FAILURE:
-          return SET_DELETE_EMPLOYEE_FAILURE(state);
-        case EMPLOYEE_ACTIONS.RESET_DELETE_EMPLOYEE_STATE:
-          return RESET_DELETE_EMPLOYEE_STATE(state);
+    case EMPLOYEE_ACTIONS.ATTEMPT_TO_DELETE_EMPLOYEE:
+      return ATTEMPT_TO_DELETE_EMPLOYEE(state);
+    case EMPLOYEE_ACTIONS.SET_DELETE_EMPLOYEE_SUCCEED:
+      return SET_DELETE_EMPLOYEE_SUCCEED(state, action);
+    case EMPLOYEE_ACTIONS.SET_DELETE_EMPLOYEE_FAILURE:
+      return SET_DELETE_EMPLOYEE_FAILURE(state);
+    case EMPLOYEE_ACTIONS.RESET_DELETE_EMPLOYEE_STATE:
+      return RESET_DELETE_EMPLOYEE_STATE(state);
     default:
       return state;
   }

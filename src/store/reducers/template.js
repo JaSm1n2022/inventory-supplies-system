@@ -10,21 +10,21 @@ const initialState = (): TemplateState => ({
     status: null,
     error: null
   },
-  templateUpdate : {
+  templateUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  templateCreate : {
+  templateCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  templateDelete : {
+  templateDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
@@ -54,8 +54,8 @@ const SET_FETCH_TEMPLATE_SUCCEED = (state: TemplateState, action: BaseAction) =>
 
 const SET_FETCH_TEMPLATE_FAILURE = (state: TemplateState) => ({
   ...state,
- templateList: {
-    ...state.medicaid,
+  templateList: {
+    ...state.templateList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +88,7 @@ const SET_CREATE_TEMPLATE_SUCCEED = (state: TemplateState, action: BaseAction) =
 
 const SET_CREATE_TEMPLATE_FAILURE = (state: TemplateState) => ({
   ...state,
- templateCreate: {
+  templateCreate: {
     ...state.templateCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +122,7 @@ const SET_UPDATE_TEMPLATE_SUCCEED = (state: TemplateState, action: BaseAction) =
 
 const SET_UPDATE_TEMPLATE_FAILURE = (state: TemplateState) => ({
   ...state,
- templateUpdate: {
+  templateUpdate: {
     ...state.templateUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +155,7 @@ const SET_DELETE_TEMPLATE_SUCCEED = (state: TemplateState, action: BaseAction) =
 
 const SET_DELETE_TEMPLATE_FAILURE = (state: TemplateState) => ({
   ...state,
- templateDelete: {
+  templateDelete: {
     ...state.templateDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +177,32 @@ const reducer = (state: TemplateState = initialState(), action: BaseAction) => {
     case TEMPLATE_ACTIONS.RESET_FETCH_TEMPLATE_STATE:
       return RESET_FETCH_TEMPLATE_STATE(state);
 
-      case TEMPLATE_ACTIONS.ATTEMPT_TO_CREATE_TEMPLATE:
-        return ATTEMPT_TO_CREATE_TEMPLATE(state);
-      case TEMPLATE_ACTIONS.SET_CREATE_TEMPLATE_SUCCEED:
-        return SET_CREATE_TEMPLATE_SUCCEED(state, action);
-      case TEMPLATE_ACTIONS.SET_CREATE_TEMPLATE_FAILURE:
-        return SET_CREATE_TEMPLATE_FAILURE(state);
-      case TEMPLATE_ACTIONS.RESET_CREATE_TEMPLATE_STATE:
-        return RESET_CREATE_TEMPLATE_STATE(state);
+    case TEMPLATE_ACTIONS.ATTEMPT_TO_CREATE_TEMPLATE:
+      return ATTEMPT_TO_CREATE_TEMPLATE(state);
+    case TEMPLATE_ACTIONS.SET_CREATE_TEMPLATE_SUCCEED:
+      return SET_CREATE_TEMPLATE_SUCCEED(state, action);
+    case TEMPLATE_ACTIONS.SET_CREATE_TEMPLATE_FAILURE:
+      return SET_CREATE_TEMPLATE_FAILURE(state);
+    case TEMPLATE_ACTIONS.RESET_CREATE_TEMPLATE_STATE:
+      return RESET_CREATE_TEMPLATE_STATE(state);
 
-        case TEMPLATE_ACTIONS.ATTEMPT_TO_UPDATE_TEMPLATE:
-        return ATTEMPT_TO_UPDATE_TEMPLATE(state);
-      case TEMPLATE_ACTIONS.SET_UPDATE_TEMPLATE_SUCCEED:
-        return SET_UPDATE_TEMPLATE_SUCCEED(state, action);
-      case TEMPLATE_ACTIONS.SET_UPDATE_TEMPLATE_FAILURE:
-        return SET_UPDATE_TEMPLATE_FAILURE(state);
-      case TEMPLATE_ACTIONS.RESET_UPDATE_TEMPLATE_STATE:
-        return RESET_UPDATE_TEMPLATE_STATE(state);
+    case TEMPLATE_ACTIONS.ATTEMPT_TO_UPDATE_TEMPLATE:
+      return ATTEMPT_TO_UPDATE_TEMPLATE(state);
+    case TEMPLATE_ACTIONS.SET_UPDATE_TEMPLATE_SUCCEED:
+      return SET_UPDATE_TEMPLATE_SUCCEED(state, action);
+    case TEMPLATE_ACTIONS.SET_UPDATE_TEMPLATE_FAILURE:
+      return SET_UPDATE_TEMPLATE_FAILURE(state);
+    case TEMPLATE_ACTIONS.RESET_UPDATE_TEMPLATE_STATE:
+      return RESET_UPDATE_TEMPLATE_STATE(state);
 
-        case TEMPLATE_ACTIONS.ATTEMPT_TO_DELETE_TEMPLATE:
-          return ATTEMPT_TO_DELETE_TEMPLATE(state);
-        case TEMPLATE_ACTIONS.SET_DELETE_TEMPLATE_SUCCEED:
-          return SET_DELETE_TEMPLATE_SUCCEED(state, action);
-        case TEMPLATE_ACTIONS.SET_DELETE_TEMPLATE_FAILURE:
-          return SET_DELETE_TEMPLATE_FAILURE(state);
-        case TEMPLATE_ACTIONS.RESET_DELETE_TEMPLATE_STATE:
-          return RESET_DELETE_TEMPLATE_STATE(state);
+    case TEMPLATE_ACTIONS.ATTEMPT_TO_DELETE_TEMPLATE:
+      return ATTEMPT_TO_DELETE_TEMPLATE(state);
+    case TEMPLATE_ACTIONS.SET_DELETE_TEMPLATE_SUCCEED:
+      return SET_DELETE_TEMPLATE_SUCCEED(state, action);
+    case TEMPLATE_ACTIONS.SET_DELETE_TEMPLATE_FAILURE:
+      return SET_DELETE_TEMPLATE_FAILURE(state);
+    case TEMPLATE_ACTIONS.RESET_DELETE_TEMPLATE_STATE:
+      return RESET_DELETE_TEMPLATE_STATE(state);
     default:
       return state;
   }

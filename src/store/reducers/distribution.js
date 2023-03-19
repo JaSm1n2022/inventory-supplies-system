@@ -10,21 +10,21 @@ const initialState = (): DistributionState => ({
     status: null,
     error: null
   },
-  distributionUpdate : {
+  distributionUpdate: {
     data: {},
     status: null,
     error: null
 
   },
-  distributionCreate : {
+  distributionCreate: {
     data: {},
     status: null,
     error: null
 
   },
-  distributionDelete : {
+  distributionDelete: {
     data: {},
-    status: null, 
+    status: null,
     error: null
 
   }
@@ -32,7 +32,6 @@ const initialState = (): DistributionState => ({
 
 
 /*
-Medicaid
  */
 const ATTEMPT_TO_FETCH_DISTRIBUTION = (state: DistributionState) => ({
   ...state,
@@ -54,8 +53,8 @@ const SET_FETCH_DISTRIBUTION_SUCCEED = (state: DistributionState, action: BaseAc
 
 const SET_FETCH_DISTRIBUTION_FAILURE = (state: DistributionState) => ({
   ...state,
- distributionList: {
-    ...state.medicaid,
+  distributionList: {
+    ...state.distributionList,
     status: ACTION_STATUSES.FAILED
   }
 });
@@ -88,7 +87,7 @@ const SET_CREATE_DISTRIBUTION_SUCCEED = (state: DistributionState, action: BaseA
 
 const SET_CREATE_DISTRIBUTION_FAILURE = (state: DistributionState) => ({
   ...state,
- distributionCreate: {
+  distributionCreate: {
     ...state.distributionCreate,
     status: ACTION_STATUSES.FAILED
   }
@@ -122,7 +121,7 @@ const SET_UPDATE_DISTRIBUTION_SUCCEED = (state: DistributionState, action: BaseA
 
 const SET_UPDATE_DISTRIBUTION_FAILURE = (state: DistributionState) => ({
   ...state,
- distributionUpdate: {
+  distributionUpdate: {
     ...state.distributionUpdate,
     status: ACTION_STATUSES.FAILED
   }
@@ -155,7 +154,7 @@ const SET_DELETE_DISTRIBUTION_SUCCEED = (state: DistributionState, action: BaseA
 
 const SET_DELETE_DISTRIBUTION_FAILURE = (state: DistributionState) => ({
   ...state,
- distributionDelete: {
+  distributionDelete: {
     ...state.distributionDelete,
     status: ACTION_STATUSES.FAILED
   }
@@ -177,32 +176,32 @@ const reducer = (state: DistributionState = initialState(), action: BaseAction) 
     case DISTRIBUTION_ACTIONS.RESET_FETCH_DISTRIBUTION_STATE:
       return RESET_FETCH_DISTRIBUTION_STATE(state);
 
-      case DISTRIBUTION_ACTIONS.ATTEMPT_TO_CREATE_DISTRIBUTION:
-        return ATTEMPT_TO_CREATE_DISTRIBUTION(state);
-      case DISTRIBUTION_ACTIONS.SET_CREATE_DISTRIBUTION_SUCCEED:
-        return SET_CREATE_DISTRIBUTION_SUCCEED(state, action);
-      case DISTRIBUTION_ACTIONS.SET_CREATE_DISTRIBUTION_FAILURE:
-        return SET_CREATE_DISTRIBUTION_FAILURE(state);
-      case DISTRIBUTION_ACTIONS.RESET_CREATE_DISTRIBUTION_STATE:
-        return RESET_CREATE_DISTRIBUTION_STATE(state);
+    case DISTRIBUTION_ACTIONS.ATTEMPT_TO_CREATE_DISTRIBUTION:
+      return ATTEMPT_TO_CREATE_DISTRIBUTION(state);
+    case DISTRIBUTION_ACTIONS.SET_CREATE_DISTRIBUTION_SUCCEED:
+      return SET_CREATE_DISTRIBUTION_SUCCEED(state, action);
+    case DISTRIBUTION_ACTIONS.SET_CREATE_DISTRIBUTION_FAILURE:
+      return SET_CREATE_DISTRIBUTION_FAILURE(state);
+    case DISTRIBUTION_ACTIONS.RESET_CREATE_DISTRIBUTION_STATE:
+      return RESET_CREATE_DISTRIBUTION_STATE(state);
 
-        case DISTRIBUTION_ACTIONS.ATTEMPT_TO_UPDATE_DISTRIBUTION:
-        return ATTEMPT_TO_UPDATE_DISTRIBUTION(state);
-      case DISTRIBUTION_ACTIONS.SET_UPDATE_DISTRIBUTION_SUCCEED:
-        return SET_UPDATE_DISTRIBUTION_SUCCEED(state, action);
-      case DISTRIBUTION_ACTIONS.SET_UPDATE_DISTRIBUTION_FAILURE:
-        return SET_UPDATE_DISTRIBUTION_FAILURE(state);
-      case DISTRIBUTION_ACTIONS.RESET_UPDATE_DISTRIBUTION_STATE:
-        return RESET_UPDATE_DISTRIBUTION_STATE(state);
+    case DISTRIBUTION_ACTIONS.ATTEMPT_TO_UPDATE_DISTRIBUTION:
+      return ATTEMPT_TO_UPDATE_DISTRIBUTION(state);
+    case DISTRIBUTION_ACTIONS.SET_UPDATE_DISTRIBUTION_SUCCEED:
+      return SET_UPDATE_DISTRIBUTION_SUCCEED(state, action);
+    case DISTRIBUTION_ACTIONS.SET_UPDATE_DISTRIBUTION_FAILURE:
+      return SET_UPDATE_DISTRIBUTION_FAILURE(state);
+    case DISTRIBUTION_ACTIONS.RESET_UPDATE_DISTRIBUTION_STATE:
+      return RESET_UPDATE_DISTRIBUTION_STATE(state);
 
-        case DISTRIBUTION_ACTIONS.ATTEMPT_TO_DELETE_DISTRIBUTION:
-          return ATTEMPT_TO_DELETE_DISTRIBUTION(state);
-        case DISTRIBUTION_ACTIONS.SET_DELETE_DISTRIBUTION_SUCCEED:
-          return SET_DELETE_DISTRIBUTION_SUCCEED(state, action);
-        case DISTRIBUTION_ACTIONS.SET_DELETE_DISTRIBUTION_FAILURE:
-          return SET_DELETE_DISTRIBUTION_FAILURE(state);
-        case DISTRIBUTION_ACTIONS.RESET_DELETE_DISTRIBUTION_STATE:
-          return RESET_DELETE_DISTRIBUTION_STATE(state);
+    case DISTRIBUTION_ACTIONS.ATTEMPT_TO_DELETE_DISTRIBUTION:
+      return ATTEMPT_TO_DELETE_DISTRIBUTION(state);
+    case DISTRIBUTION_ACTIONS.SET_DELETE_DISTRIBUTION_SUCCEED:
+      return SET_DELETE_DISTRIBUTION_SUCCEED(state, action);
+    case DISTRIBUTION_ACTIONS.SET_DELETE_DISTRIBUTION_FAILURE:
+      return SET_DELETE_DISTRIBUTION_FAILURE(state);
+    case DISTRIBUTION_ACTIONS.RESET_DELETE_DISTRIBUTION_STATE:
+      return RESET_DELETE_DISTRIBUTION_STATE(state);
     default:
       return state;
   }

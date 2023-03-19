@@ -19,9 +19,9 @@ const Base = (props) => {
       {props.isSignedIn ?
         <React.Fragment>
 
-          <Header
+          <Header requestor={props.requestor}
           />
-          <main>
+          <main requestor={props.requestor}>
 
             {props.children}
 
