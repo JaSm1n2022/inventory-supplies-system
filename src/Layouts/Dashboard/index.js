@@ -942,7 +942,9 @@ const Dashboard = (props) => {
       { info: "9465", ...transactionType },
       { info: "1003", ...transactionType },
       { info: "2002", ...transactionType },
-      { info: "4058", ...transactionType }
+      { info: "4058", ...transactionType },
+      { info: "1005", ...transactionType },
+      { info: "0947", ...transactionType }
     ];
 
 
