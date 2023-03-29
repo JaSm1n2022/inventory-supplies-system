@@ -1,10 +1,26 @@
+import { CameraAlt, Cameraswitch } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
 import Webcam from "react-webcam";
-const WebcamCapture = () => {
+const FACING_MODE_USER = "user";
+const FACING_MODE_ENVIRONMENT = "environment";
+
+const videoConstraints = {
+  facingMode: FACING_MODE_USER,
+};
+const Proof = () => {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [isRetake, setIsRetake] = useState(false);
+  const [facingMode, setFacingMode] = React.useState(FACING_MODE_USER);
+
+  const handleClick = React.useCallback(() => {
+    setFacingMode((prevState) =>
+      prevState === FACING_MODE_USER
+        ? FACING_MODE_ENVIRONMENT
+        : FACING_MODE_USER
+    );
+  }, []);
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setIsRetake(!isRetake);
@@ -21,19 +37,18 @@ const WebcamCapture = () => {
             audio={false}
             height={100 + "%"}
             width={100 + "%"}
-            audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
+            videoConstraints={{
+              ...videoConstraints,
+              facingMode,
+            }}
           />
-
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
+          <CameraAlt
             onClick={capture}
-          >
-            Capture photo
-          </Button>
+            style={{ fontSize: "24pt", color: "green" }}
+          />
+          <Cameraswitch style={{ fontSize: "24pt" }} onClick={handleClick} />
         </>
       )}
       {imgSrc && isRetake && <img src={imgSrc} />}
@@ -55,4 +70,4 @@ const WebcamCapture = () => {
     </>
   );
 };
-export default WebcamCapture;
+export default Proof;

@@ -6,6 +6,7 @@ import { Modal } from "@mui/material";
 import CameraModal from "./camera";
 import Close from "@mui/icons-material/Close";
 import WebcamCapture from "./WebcamCapture";
+import Proof from "./Proof";
 
 function getModalStyle() {
   const top = 50;
@@ -44,7 +45,7 @@ export default function PhotoSimple(props) {
           <Close onClick={() => props.closePhotoHandler()} />
         </Grid>
 
-        <WebcamCapture
+        <Proof
           closePhotoHandler={props.closePhotoHandler2}
           onUsePhotoHandler={props.onUsePhotoHandler2}
         />
