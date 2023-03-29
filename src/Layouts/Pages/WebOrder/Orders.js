@@ -177,7 +177,7 @@ const Orders = (props) => {
                 }}
               >
                 <CameraAlt
-                  style={{ fontSize: "24pt" }}
+                  style={{ display: "none", fontSize: "24pt" }}
                   onClick={() => takePhotoHandler()}
                 />
                 <CameraAlt

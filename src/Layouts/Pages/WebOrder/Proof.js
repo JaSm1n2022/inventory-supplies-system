@@ -1,7 +1,8 @@
 import { CameraAlt, Cameraswitch } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import Webcam from "react-webcam";
+
 const FACING_MODE_USER = "user";
 const FACING_MODE_ENVIRONMENT = "environment";
 
@@ -33,22 +34,46 @@ const Proof = () => {
     <>
       {!isRetake && (
         <>
-          <Webcam
-            audio={false}
-            height={100 + "%"}
-            width={100 + "%"}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={{
-              ...videoConstraints,
-              facingMode,
-            }}
-          />
-          <CameraAlt
-            onClick={capture}
-            style={{ fontSize: "24pt", color: "green" }}
-          />
-          <Cameraswitch style={{ fontSize: "24pt" }} onClick={handleClick} />
+          <Grid container justifyContent="space-between">
+            <div
+              style={{
+                display: "inline-flex",
+                gap: 6,
+                paddingBottom: 4,
+                paddingTop: 4,
+              }}
+            >
+              <CameraAlt
+                onClick={capture}
+                style={{ fontSize: "32pt", color: "green" }}
+              />
+              <Cameraswitch
+                style={{ fontSize: "32pt" }}
+                onClick={handleClick}
+              />
+            </div>
+          </Grid>
+          <div>
+            <Webcam
+              audio={false}
+              muted={true}
+              ref={webcamRef}
+              style={{
+                position: "absolute",
+                textAlign: "center",
+                zindex: 8,
+                right: 0,
+                height: "45vh",
+                width: "100%",
+                objectFit: "fill",
+              }}
+              screenshotFormat="image/jpeg"
+              videoConstraints={{
+                ...videoConstraints,
+                facingMode,
+              }}
+            />
+          </div>
         </>
       )}
       {imgSrc && isRetake && <img src={imgSrc} />}

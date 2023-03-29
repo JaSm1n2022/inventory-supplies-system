@@ -38,7 +38,7 @@ export default function PhotoSimple(props) {
   const [modalStyle] = useState(getModalStyle);
 
   const body = (
-    <Paper elevation={2} style={{ width: "200px", height: "300px" }}>
+    <Paper elevation={2} style={{ width: "100%", height: "60%" }}>
       <div style={{ paddingRight: 20, paddingLeft: 20, paddingTop: 20 }}>
         <Grid container justifyContent="space-between">
           <Typography variant="body">Photo</Typography>
