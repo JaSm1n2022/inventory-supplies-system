@@ -46,6 +46,7 @@ import { makeStyles } from "@mui/styles";
 import Proof from "./Proof";
 import { CameraAlt } from "@mui/icons-material";
 import Photo from "./Photo";
+import PhotoSimple from "./PhotoSimple";
 let orderList = [];
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +69,7 @@ const Orders = (props) => {
   const [categories, setCategories] = useState([]);
   const [isRefresh, setIsRefresh] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const [isPhotoOpen2, setIsPhotoOpen2] = useState(false);
   useEffect(() => {
     const dateRange = Helper.formatDateRangeByCriteriaV2(
       "last7Days",
@@ -89,7 +91,17 @@ const Orders = (props) => {
   const closePhotoHandler = () => {
     setIsPhotoOpen(false);
   };
+  const takePhotoHandler2 = () => {
+    setIsPhotoOpen2(true);
+  };
+  const closePhotoHandler2 = () => {
+    setIsPhotoOpen(false);
+  };
   const onUsePhotoHandler = (img) => {
+    console.log("[Images]", img);
+    setIsPhotoOpen(false);
+  };
+  const onUsePhotoHandler2 = (img) => {
     console.log("[Images]", img);
     setIsPhotoOpen(false);
   };
@@ -168,6 +180,10 @@ const Orders = (props) => {
                   style={{ fontSize: "24pt" }}
                   onClick={() => takePhotoHandler()}
                 />
+                <CameraAlt
+                  style={{ fontSize: "24pt" }}
+                  onClick={() => takePhotoHandler2()}
+                />
                 <Button variant="contained" size="small" color="primary">
                   Re-Order
                 </Button>
@@ -186,6 +202,13 @@ const Orders = (props) => {
           isOpen={isPhotoOpen}
           closePhotoHandler={closePhotoHandler}
           onUsePhotoHandler={onUsePhotoHandler}
+        />
+      )}
+      {isPhotoOpen2 && (
+        <PhotoSimple
+          isOpen={isPhotoOpen2}
+          closePhotoHandler={closePhotoHandler2}
+          onUsePhotoHandler={onUsePhotoHandler2}
         />
       )}
     </React.Fragment>
