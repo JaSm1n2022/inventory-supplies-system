@@ -33,7 +33,7 @@ export default function PhotoModal(props) {
   const { isOpen } = props;
 
   const body = (
-    <Paper elevation={2} style={{ width: "100%", height: "65%" }}>
+    <Paper elevation={2} style={{ width: "100%", height: "90%" }}>
       <div style={{ paddingRight: 20, paddingLeft: 20, paddingTop: 20 }}>
         <Grid container justifyContent="space-between">
           <Typography variant="body">Photo</Typography>
