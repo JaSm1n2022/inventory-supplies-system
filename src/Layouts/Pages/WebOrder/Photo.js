@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, Grid, Paper, Typography } from "@mui/material";
 import { Modal } from "@mui/material";
 import WebcamCapture from "./Proof";
+import CameraModal from "./camera";
+import Close from "@mui/icons-material/Close";
 
 function getModalStyle() {
   const top = 50;
@@ -32,14 +34,19 @@ export default function Photo(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
-  const handleClose = () => {
-    setOpen(false);
-  };
+
   const body = (
     <Paper elevation={2} style={{ width: "200px", height: "300px" }}>
       <div style={{ paddingRight: 20, paddingLeft: 20, paddingTop: 20 }}>
-        <Typography variant="h5">Take a photo</Typography>
-        <WebcamCapture />
+        <Grid container justifyContent="space-between">
+          <Typography variant="body">Photo</Typography>
+          <Close onClick={() => props.closePhotoHandler()} />
+        </Grid>
+
+        <CameraModal
+          closePhotoHandler={props.closePhotoHandler}
+          onUsePhotoHandler={props.onUsePhotoHandler}
+        />
       </div>
     </Paper>
   );
@@ -49,7 +56,7 @@ export default function Photo(props) {
       <Modal
         fullWidth={true}
         open={isOpen ? true : false}
-        onClose={handleClose}
+        onClose={props.onClosePhotoHandler}
         aria-labelledby="yn-modal"
         aria-describedby="yes-or-no"
         style={{

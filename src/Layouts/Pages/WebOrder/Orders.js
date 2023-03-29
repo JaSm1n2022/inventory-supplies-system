@@ -89,6 +89,10 @@ const Orders = (props) => {
   const closePhotoHandler = () => {
     setIsPhotoOpen(false);
   };
+  const onUsePhotoHandler = (img) => {
+    console.log("[Images]", img);
+    setIsPhotoOpen(false);
+  };
   return (
     <React.Fragment>
       <div className={classes.root} style={{ paddingTop: 10 }}>
@@ -177,7 +181,13 @@ const Orders = (props) => {
           );
         })}
       </div>
-      {isPhotoOpen && <Photo isOpen={isPhotoOpen} />}
+      {isPhotoOpen && (
+        <Photo
+          isOpen={isPhotoOpen}
+          closePhotoHandler={closePhotoHandler}
+          onUsePhotoHandler={onUsePhotoHandler}
+        />
+      )}
     </React.Fragment>
   );
 };
