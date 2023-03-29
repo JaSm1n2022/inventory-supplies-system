@@ -2,33 +2,20 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Avatar,
   Button,
-  CircularProgress,
-  Divider,
-  FormControlLabel,
   Grid,
-  Paper,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
+
 import { patientListStateSelector } from "../../../store/selectors/patientSelector";
 import {
   attemptToFetchPatient,
   resetFetchPatientState,
 } from "../../../store/actions/patientAction";
 import { connect } from "react-redux";
-import {
-  ACTION_STATUSES,
-  DEFAULT_ITEM,
-  ORDER_FORM,
-} from "../../../utils/constants";
-import SingleWithClearAutoComplete from "../../../Common/components/AutoComplete/SingleWithClearAutoComplete";
-import RegularTextField from "../../../Common/components/TextField/RegularTextField";
-import OrderBar from "../../OrderBar";
+import { ACTION_STATUSES, DEFAULT_ITEM } from "../../../utils/constants";
+
 import moment from "moment";
 import {
   orderCreateStateSelector,
@@ -43,10 +30,8 @@ import {
 } from "../../../store/actions/orderAction";
 import Helper from "../../../utils/helper";
 import { makeStyles } from "@mui/styles";
-import Proof from "./Proof";
 import { CameraAlt } from "@mui/icons-material";
-import Photo from "./Photo";
-import PhotoSimple from "./PhotoSimple";
+import PhotoModal from "./PhotoModal";
 let orderList = [];
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,7 +54,7 @@ const Orders = (props) => {
   const [categories, setCategories] = useState([]);
   const [isRefresh, setIsRefresh] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
-  const [isPhotoOpen2, setIsPhotoOpen2] = useState(false);
+  const [imgSrc, setImgSrc] = useState("");
   useEffect(() => {
     const dateRange = Helper.formatDateRangeByCriteriaV2(
       "last7Days",
@@ -86,25 +71,18 @@ const Orders = (props) => {
   }
 
   const takePhotoHandler = () => {
+    setImgSrc("");
     setIsPhotoOpen(true);
   };
   const closePhotoHandler = () => {
     setIsPhotoOpen(false);
   };
-  const takePhotoHandler2 = () => {
-    setIsPhotoOpen2(true);
-  };
-  const closePhotoHandler2 = () => {
-    setIsPhotoOpen(false);
-  };
   const onUsePhotoHandler = (img) => {
     console.log("[Images]", img);
+    setImgSrc(img);
     setIsPhotoOpen(false);
   };
-  const onUsePhotoHandler2 = (img) => {
-    console.log("[Images]", img);
-    setIsPhotoOpen(false);
-  };
+
   return (
     <React.Fragment>
       <div className={classes.root} style={{ paddingTop: 10 }}>
@@ -168,47 +146,86 @@ const Orders = (props) => {
                   );
                 })}
               </AccordionDetails>
-              <div
-                style={{
-                  display: "inline-flex",
-                  gap: 4,
-                  paddingBottom: 2,
-                  paddingLeft: 4,
-                }}
-              >
-                <CameraAlt
-                  style={{ display: "none", fontSize: "24pt" }}
-                  onClick={() => takePhotoHandler()}
-                />
-                <CameraAlt
-                  style={{ fontSize: "24pt" }}
-                  onClick={() => takePhotoHandler2()}
-                />
-                <Button variant="contained" size="small" color="primary">
-                  Re-Order
-                </Button>
-                {item.status === "Order" && (
-                  <Button variant="contained" size="small" color="secondary">
-                    Cancel
+              {item.status === "Ready to pickup" && (
+                <div
+                  style={{
+                    display: "inline-flex",
+                    gap: 2,
+                    paddingBottom: 4,
+                    paddingLeft: 4,
+                  }}
+                >
+                  {imgSrc && (
+                    <img src={imgSrc} alt="proof" height="50px" width="50px" />
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={takePhotoHandler}
+                    startIcon={<CameraAlt />}
+                  >
+                    Take Photo
                   </Button>
+                  <Button
+                    variant="contained"
+                    style={{
+                      border: "solid 1px #2196f3",
+                      color: "white",
+                      background: "green",
+                      fontFamily: "Roboto",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      fontStretch: "normal",
+                      fontStyle: "normal",
+                      lineHeight: 1.71,
+                      letterSpacing: "0.4px",
+                      textAlign: "left",
+                      cursor: "pointer",
+                    }}
+                    component="span"
+                  >
+                    Click to Pickup
+                  </Button>
+                </div>
+              )}
+              {item.status !== "Ready to pickup" &&
+                item.status !== "delivered" && (
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      gap: 4,
+                      paddingBottom: 2,
+                      paddingLeft: 4,
+                    }}
+                  >
+                    <CameraAlt
+                      style={{ display: "none", fontSize: "24pt" }}
+                      onClick={() => takePhotoHandler()}
+                    />
+                    <Button variant="contained" size="small" color="primary">
+                      Re-Order
+                    </Button>
+                    {item.status === "Order" && (
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="secondary"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
                 )}
-              </div>
             </Accordion>
           );
         })}
       </div>
+
       {isPhotoOpen && (
-        <Photo
+        <PhotoModal
           isOpen={isPhotoOpen}
           closePhotoHandler={closePhotoHandler}
           onUsePhotoHandler={onUsePhotoHandler}
-        />
-      )}
-      {isPhotoOpen2 && (
-        <PhotoSimple
-          isOpen={isPhotoOpen2}
-          closePhotoHandler={closePhotoHandler2}
-          onUsePhotoHandler={onUsePhotoHandler2}
         />
       )}
     </React.Fragment>

@@ -9,7 +9,7 @@ const FACING_MODE_ENVIRONMENT = "environment";
 const videoConstraints = {
   facingMode: FACING_MODE_USER,
 };
-const Proof = () => {
+const Proof = (props) => {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [isRetake, setIsRetake] = useState(false);
@@ -29,6 +29,9 @@ const Proof = () => {
   }, [webcamRef, setImgSrc]);
   const retakeHandler = () => {
     setIsRetake(!isRetake);
+  };
+  const usePhotoHandler = () => {
+    props.onUsePhotoHandler(imgSrc);
   };
   return (
     <>
@@ -87,7 +90,12 @@ const Proof = () => {
           >
             Retake
           </Button>
-          <Button size="small" variant="contained" color="success">
+          <Button
+            size="small"
+            variant="contained"
+            color="success"
+            onClick={usePhotoHandler}
+          >
             Use Photo
           </Button>
         </div>

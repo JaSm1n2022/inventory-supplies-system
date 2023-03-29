@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@mui/styles";
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import { Modal } from "@mui/material";
 
-import CameraModal from "./camera";
 import Close from "@mui/icons-material/Close";
-import WebcamCapture from "./WebcamCapture";
 import Proof from "./Proof";
 
 function getModalStyle() {
@@ -31,11 +29,8 @@ const useStyles = makeStyles((theme) => ({}));
  *
  */
 
-export default function PhotoSimple(props) {
-  const { noHandler, yesHandler, description, isOpen } = props;
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [modalStyle] = useState(getModalStyle);
+export default function PhotoModal(props) {
+  const { isOpen } = props;
 
   const body = (
     <Paper elevation={2} style={{ width: "100%", height: "60%" }}>
@@ -46,8 +41,8 @@ export default function PhotoSimple(props) {
         </Grid>
 
         <Proof
-          closePhotoHandler={props.closePhotoHandler2}
-          onUsePhotoHandler={props.onUsePhotoHandler2}
+          closePhotoHandler={props.closePhotoHandler}
+          onUsePhotoHandler={props.onUsePhotoHandler}
         />
       </div>
     </Paper>
