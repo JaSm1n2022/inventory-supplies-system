@@ -8,7 +8,7 @@ const CameraModal = (props) => {
   const camera = useRef(null);
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [image, setImage] = useState(null);
-  const [faceMode, setFaceMode] = useState("user");
+  const [faceMode, setFaceMode] = useState("environment");
   //...
   const switchCameraHandler = () => {
     if (faceMode === "user") {
@@ -50,7 +50,7 @@ const CameraModal = (props) => {
           </Tooltip>
           <Cameraswitch
             style={{ fontSize: "24pt" }}
-            onClick={() => switchCameraHandler()}
+            onClick={switchCameraHandler}
           />
         </div>
       </Grid>
