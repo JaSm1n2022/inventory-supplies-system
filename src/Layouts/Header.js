@@ -16,7 +16,7 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import Hospice from "../assets/images/logo/logo.png";
 
-const isTrue = false;
+const isTrue = true;
 
 function Header({ history }) {
   const { addToast } = useToasts();
