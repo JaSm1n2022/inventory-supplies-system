@@ -63,7 +63,7 @@ const Proof = () => {
                 textAlign: "center",
                 zindex: 8,
                 right: 0,
-                height: "45vh",
+                height: "40vh",
                 width: "100%",
                 objectFit: "fill",
               }}
