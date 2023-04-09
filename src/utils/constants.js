@@ -325,6 +325,7 @@ export const SUPPLY_VENDOR = [
   "Sams",
   "Walmart",
   "Mckesson",
+  "Walgreen",
   "99Only",
 ];
 export const SUPPLY_STATUS = [
@@ -428,6 +429,7 @@ export const SUPPLY_CATEGORY = [
   "Amazon Promotion Applied",
   "Seat Cushion",
   "Eye Drop",
+  "Solution",
 ];
 
 export const SUPPLY_PAYMENT_METHOD = ["Cash", "Card", "Check"];

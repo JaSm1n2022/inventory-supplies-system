@@ -1239,6 +1239,8 @@ const Dashboard = (props) => {
       { info: "1005", ...transactionType },
       { info: "0947", ...transactionType },
       { info: "0132", ...transactionType },
+      { info: "2015", ...transactionType },
+      { info: "3279", ...transactionType },
     ];
 
     transactionData.forEach((transact) => {
