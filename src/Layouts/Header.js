@@ -100,7 +100,7 @@ function Header({ history }) {
             <img
               src={Hospice}
               alt=""
-              style={{ height: "50px", width: "400px" }}
+              style={{ height: "50px", width: "150px" }}
             />
             <div style={{ paddingRight: "25px" }}>
               <Typography variant="h5">
