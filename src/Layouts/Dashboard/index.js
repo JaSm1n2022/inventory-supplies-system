@@ -1120,7 +1120,7 @@ const Dashboard = (props) => {
         });
       }
       patientGrandTotal += estimatedAmt;
-      if (estimatedAmt > 0 && patient.name.indexOf("C/O") === -1) {
+      if (estimatedAmt > 0 && patient && patient.name.indexOf("C/O") === -1) {
         patientDashboard.push({
           status: patient.status,
           soc: moment(patient.soc_at).format("YYYY-MM-DD"),
